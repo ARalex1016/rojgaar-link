@@ -9,7 +9,7 @@ import { useAuthStore } from "../../Store/useAuthStore";
 import { useJobStore } from "../../Store/useJobStore";
 
 // Utils
-import { capitalize } from "../../Utils/stringManager";
+import { capitalize } from "../../Utils/StringManager";
 
 const MyJobs = () => {
   const { isCreator, isCandidate } = useAuthStore();

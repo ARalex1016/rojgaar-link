@@ -95,8 +95,12 @@ function App() {
           element: <JobDetails />,
         },
         {
-          path: "myjobs/*",
+          path: "myjobs",
           element: isAuthenticated && !isAdmin ? <MyJobs /> : <NotFound />,
+        },
+        {
+          path: "myjobs/:jobId",
+          element: isAuthenticated && !isAdmin ? <JobDetails /> : <NotFound />,
         },
       ],
     },

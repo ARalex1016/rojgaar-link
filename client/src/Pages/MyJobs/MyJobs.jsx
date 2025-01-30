@@ -37,6 +37,7 @@ const MyJobs = () => {
 
   const fetchJobs = async (tab) => {
     setIsLoading(true);
+    setJobs([]);
 
     try {
       const res = await customRequest(apiEndpoints[tab]);
@@ -58,13 +59,21 @@ const MyJobs = () => {
   return (
     <>
       <div className="w-full">
-        <section className="w-full flex flex-row  justify-around flex-nowrap overflow-auto scrollbar-hide py-4">
+        {/* Add New Job Button */}
+        {isCreator && (
+          <button className="text-neutral/80 font-medium bg-green/80 rounded-md px-4 py-1 hover:text-neutral hover:bg-green float-right my-2">
+            Add New Job
+          </button>
+        )}
+
+        {/*Tabs */}
+        <section className="w-full flex flex-row  justify-around flex-nowrap gap-x-4 overflow-auto scrollbar-hide pb-2">
           {tabs.map((tab) => {
             return (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`min-w-16 text-neutral/80 font-medium  rounded-sm px-3 py-1 hover:text-neutral ${
+                className={`min-w-20 w-auto flex-shrink-0 text-neutral/80 font-medium  rounded-md px-4 py-1 hover:text-neutral ${
                   tab === activeTab
                     ? "bg-main/80 hover:bg-main"
                     : "bg-gray/80 hover:bg-gray"
@@ -76,6 +85,7 @@ const MyJobs = () => {
           })}
         </section>
 
+        {/* Job Cards */}
         <section className="w-full min-h-40 flex justify-around gap-x-8 gap-y-10 flex-wrap py-4">
           {jobs.length > 0 ? (
             jobs.map((job) => {

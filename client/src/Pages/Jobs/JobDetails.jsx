@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
+// Components
+import BackButton from "../../Components/BackButton";
+
 // Store
 import { useAuthStore } from "../../Store/useAuthStore";
 import { useJobStore } from "../../Store/useJobStore";
@@ -85,6 +88,9 @@ const Job = () => {
     <>
       {job && (
         <section className="w-full py-2 flex flex-col justify-center items-center gap-y-4">
+          {/* Back Button */}
+          <BackButton className="mt-2" />
+
           {/* Title */}
           <h2 className="text-neutral text-center font-medium text-xl">
             {job.title}

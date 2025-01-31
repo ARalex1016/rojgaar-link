@@ -23,7 +23,8 @@ export default {
         "inner-lg": "inset 0 4px 6px",
       },
       spacing: {
-        sideSpacing: "32px",
+        sideSpacing: "var(--sideSpacing)",
+        menuHeight: "var(--menuHeight)",
       },
       screens: {
         mobilesm: "0px",

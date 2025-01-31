@@ -95,10 +95,10 @@ export const FloatingLabelInput = ({
       <div className="w-full relative">
         <label
           htmlFor={id}
-          className={`bg-primary leading-[1] transition-all duration-200 ease-in absolute ${
+          className={`leading-[1] transition-all duration-200 ease-in absolute ${
             isFocused
-              ? "text-white text-[12px] -top-[7px] left-2"
-              : "text-white/40 text-[18px] top-[30%] left-4"
+              ? "text-white text-[12px] bg-primary -top-[7px] left-2"
+              : "text-white/40 text-[18px] bg-transparent top-[30%] left-4"
           }`}
         >
           {label}

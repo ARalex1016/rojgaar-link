@@ -10,6 +10,8 @@
   --neutral: 217, 217, 217;
   --text: 255, 255, 255;
   --text-opposite: 0, 0, 0;
+  --sideSpacing: 32px;
+  --menuHeight: 64px;
 }
 
 * {

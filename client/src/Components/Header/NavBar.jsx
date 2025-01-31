@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Store
@@ -25,12 +25,16 @@ const Link = ({ to, children }) => {
 };
 
 /* ALl Nav Links */
-const NavBar = () => {
+const NavBar = ({ closeNavBar }) => {
+  const navigate = useNavigate();
+
   const { isAdmin, isAuthenticated, logout } = useAuthStore();
 
   const handleLogout = async () => {
     try {
       await logout();
+
+      closeNavBar();
     } catch (error) {}
   };
 
@@ -102,7 +106,7 @@ export const MobileNavBar = ({ showMobileNav, closeNavBar }) => {
             ref={mobileNavBar}
             className="w-1/2 text-white text-lg font-medium bg-primary/50 backdrop-blur-[6px] flex flex-col items-center gap-y-3 shadow-md shadow-main/80 rounded-md overflow-hidden absolute right-sideSpacing top-full sm:hidden z-50"
           >
-            <NavBar />
+            <NavBar closeNavBar={closeNavBar} />
           </motion.nav>
         )}
       </AnimatePresence>

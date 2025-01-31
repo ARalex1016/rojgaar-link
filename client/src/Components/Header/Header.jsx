@@ -28,7 +28,7 @@ const Header = () => {
   return (
     <>
       <header className="w-[100vw] sticky top-0 z-50">
-        <SideSpacing className="w-full h-16 bg-primary/40 backdrop-blur-[5px] shadow-sm shadow-main/50 flex justify-between items-center ">
+        <SideSpacing className="w-full h-menuHeight bg-primary/40 backdrop-blur-[5px] shadow-sm shadow-main/50 flex justify-between items-center ">
           <h2 className="text-xl font-medium text-accent">Rojgaar Link</h2>
 
           {/*  Menu bar & Cross Icon  */}

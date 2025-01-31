@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
+// React Icons
+import { IoMdAdd } from "react-icons/io";
+
 // Components
 import JobCard from "../../Components/JobCard";
+import CreateJobComp from "./CreateJobComp";
 
 // Store
 import { useAuthStore } from "../../Store/useAuthStore";
@@ -20,6 +24,7 @@ const MyJobs = () => {
   );
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpenNewJob, setIsOpenNewJob] = useState(false);
 
   const tabs = isCandidate
     ? ["applied", "saved"]
@@ -56,18 +61,25 @@ const MyJobs = () => {
     }
   }, [activeTab]);
 
+  // Prevendt Scroll When New Job Component is Opened
+  useEffect(() => {
+    // Toggle body scroll based on isOpenNewJob
+    if (isOpenNewJob) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpenNewJob]);
+
   return (
     <>
       <div className="w-full">
-        {/* Add New Job Button */}
-        {isCreator && (
-          <button className="text-neutral/80 font-medium bg-green/80 rounded-md px-4 py-1 hover:text-neutral hover:bg-green float-right my-2">
-            Add New Job
-          </button>
-        )}
-
         {/*Tabs */}
-        <section className="w-full flex flex-row  justify-around flex-nowrap gap-x-4 overflow-auto scrollbar-hide pb-2">
+        <section className="w-full flex flex-row  justify-around flex-nowrap gap-x-4 overflow-auto scrollbar-hide my-2">
           {tabs.map((tab) => {
             return (
               <button
@@ -83,6 +95,16 @@ const MyJobs = () => {
               </button>
             );
           })}
+
+          {/* Add New Job Button */}
+          {isCreator && (
+            <button
+              onClick={() => setIsOpenNewJob((pre) => !pre)}
+              className="text-neutral/80 text-xs font-normal bg-blue rounded-md flex flex-row justify-center items-center gap-x-1 px-1 py-2 hover:px-3 transition-all duration-200 hover:text-neutral float-right fixed bottom-sideSpacing right-sideSpacing z-30 group md:relative md:bottom-0 md:right-0 md:py-0 md:px-3"
+            >
+              <IoMdAdd style={{ fontSize: "24px" }} /> Add New
+            </button>
+          )}
         </section>
 
         {/* Job Cards */}
@@ -99,6 +121,10 @@ const MyJobs = () => {
             </p>
           )}
         </section>
+
+        {isOpenNewJob && (
+          <CreateJobComp onClose={() => setIsOpenNewJob(false)} />
+        )}
       </div>
     </>
   );

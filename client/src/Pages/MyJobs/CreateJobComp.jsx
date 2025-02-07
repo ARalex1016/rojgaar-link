@@ -35,7 +35,10 @@ export const CreateJobComp = ({ onClose }) => {
   const handleCountryChange = (selectedCountry) => {
     setJobData((pre) => ({
       ...pre,
-      country: selectedCountry,
+      location: {
+        ...pre.location,
+        country: selectedCountry,
+      },
     }));
   };
 
@@ -65,15 +68,9 @@ export const CreateJobComp = ({ onClose }) => {
           handleInputChange={handleInputChange}
         />
 
-        {/* Countries */}
-        <div>
-          <CountrySelect
-            country={jobData.country}
-            handleCountryChange={handleCountryChange}
-            className="col-span-1"
-          />
-
-          <StateSelect country={jobData.country} />
+        {/* Countries && State*/}
+        <div className="w-full flex flex-row">
+          <CountrySelect country={jobData.country} className="w-1/2" />
         </div>
 
         {/* Salary */}

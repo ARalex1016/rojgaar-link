@@ -66,7 +66,10 @@ const Filters = () => {
   const handleCountryChange = (selectedCountry) => {
     setQuery((pre) => ({
       ...pre,
-      country: selectedCountry,
+      location: {
+        ...pre.location,
+        country: selectedCountry,
+      },
     }));
   };
 
@@ -128,7 +131,7 @@ const Filters = () => {
             duration: 0.05,
             ease: "easeInOut",
           }}
-          className="w-[100svw] -ml-sideSpacing px-sideSpacing shadow-md shadow-main/40 grid grid-cols-2 gap-x-4 gap-y-2 pt-2 pb-5 m-auto"
+          className="w-[100svw] -ml-sideSpacing px-sideSpacing shadow-md shadow-neutral/40 grid grid-cols-2 gap-x-4 gap-y-2 pt-2 pb-5 m-auto"
         >
           {/* Countries */}
           <CountrySelect

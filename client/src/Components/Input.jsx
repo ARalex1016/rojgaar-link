@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import countryList from "react-select-country-list";
-import { getStates } from "react-world-countries-and-states";
 
 // React Icons
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
@@ -220,7 +219,6 @@ export const CountrySelect = ({ country, handleCountryChange, className }) => {
 
   return (
     <>
-      {/* Countries */}
       <Select
         name="country"
         options={countries}
@@ -231,41 +229,6 @@ export const CountrySelect = ({ country, handleCountryChange, className }) => {
         className={`w-full ${className}`}
       />
     </>
-  );
-};
-
-export const StateSelect = ({
-  country,
-  state,
-  handleStateChange,
-  className,
-}) => {
-  const [stateOptions, setStateOptions] = useState([]);
-
-  useEffect(() => {
-    if (country) {
-      // Fetch states for the selected country
-      const states = getStates(country.value).map((state) => ({
-        value: state,
-        label: state,
-      }));
-      setStateOptions(states);
-    } else {
-      setStateOptions([]);
-    }
-  }, [country]);
-
-  return (
-    <Select
-      name="state"
-      options={stateOptions}
-      value={state}
-      onChange={handleStateChange}
-      placeholder={country ? "Select state" : "Select a country first"}
-      styles={customSelectStyles}
-      className={`w-full ${className}`}
-      isDisabled={!country} // Disable if no country is selected
-    />
   );
 };
 

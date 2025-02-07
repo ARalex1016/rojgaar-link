@@ -14,10 +14,13 @@ const BackButton = ({ className }) => {
     <>
       <button
         onClick={handleBackClick}
-        className={`text-red font-medium fixed top-menuHeight left-sideSpacing bg-transparent border-2 border-red rounded-md px-2 flex flex-row justify-center items-center gap-x-1 ${className}`}
+        className={`text-red font-medium fixed top-menuHeight left-sideSpacing bg-transparent border-2 border-red rounded-md pr-2 flex flex-row justify-center items-center gap-x-1 ${className}`}
       >
         <IoChevronBackOutline
-          style={{ color: "var(--red)", fontSize: "20px" }}
+          style={{
+            color: "var(--red)",
+            fontSize: "20px",
+          }}
         />{" "}
         Back
       </button>

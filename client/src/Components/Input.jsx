@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import countryList from "react-select-country-list";
+import { getStates } from "react-world-countries-and-states";
 
 // React Icons
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
@@ -12,23 +13,33 @@ import Slider from "@mui/material/Slider";
 // Store
 import { useJobStore } from "../Store/useJobStore";
 
+const customStyles =
+  "w-full text-white text-base bg-transparent border-2 border-main/80 outline-none focus:border-white pl-3 py-2 rounded-md mobilesm:text-sm sm:text-base";
+
 // Custom Styles for React Select
-const customStyles = {
+const customSelectStyles = {
   control: (base, state) => ({
     ...base,
-    backgroundColor: "rgb(var(--neutral))",
-    borderColor: state.isFocused ? "rgb(var(--main))" : undefined,
-    padding: "0 0",
+    backgroundColor: "rgb(var(--primary))",
+    borderColor: state.isFocused
+      ? "rgb(var(--neutral), 0.8)"
+      : "rgb(var(--main))",
+    borderWidth: "2px", // Set the border width explicitly
     borderRadius: "6px",
+    boxShadow: "none", // Ensure no extra shadow appears on focus
+    "&:hover": {
+      borderColor: state.isFocused ? "rgb(var(--neutral))" : "rgb(var(--main))", // Keep hover consistent with focus
+    },
   }),
+  // Other styles remain unchanged
   option: (base, state) => ({
     ...base,
     fontSize: "12px",
     backgroundColor: state.isSelected
-      ? "rgb(59 130 246)"
+      ? "rgb(var(--main))"
       : state.isFocused
-      ? "rgb(219 234 254)"
-      : "white",
+      ? "rgba(var(--main), 0.6)"
+      : "rgb(var(--neutral))",
     color: state.isSelected ? "white" : "black",
     padding: "0.5rem",
   }),
@@ -41,19 +52,20 @@ const customStyles = {
   }),
   placeholder: (base) => ({
     ...base,
-    color: "rgb(var(--primary), 0.8)",
+    color: "rgba(var(--neutral), 0.8)",
     fontSize: "12px",
   }),
   singleValue: (base) => ({
     ...base,
-    color: "rgb(var(--primary))",
+    color: "rgb(var(--neutral))",
     fontSize: "12px",
   }),
   dropdownIndicator: (base, state) => ({
     ...base,
-    color: state.isFocused
-      ? "rgb(var(--primary), 0.6)"
-      : "rgb(var(--primary), 0.6)",
+    color: "rgba(var(--neutral), 0.6)",
+    "&:hover": {
+      color: "rgba(var(--neutral))",
+    },
   }),
   indicatorsContainer: (base) => ({
     ...base,
@@ -61,21 +73,33 @@ const customStyles = {
   }),
   multiValue: (base) => ({
     ...base,
-    backgroundColor: "rgb(var(--main), 0.2)",
+    backgroundColor: "rgba(var(--main), 0.3)",
     borderRadius: "6px",
     padding: "0 2px",
+    "&:hover": {
+      backgroundColor: "rgba(var(--main), 0.5)",
+    },
   }),
   multiValueLabel: (base) => ({
     ...base,
-    color: "rgb(var(--main))",
+    color: "rgb(var(--neutral))",
   }),
   multiValueRemove: (base) => ({
     ...base,
-    color: "rgb(var(--main))",
+    color: "rgb(var(--red))",
     transition: "background-color 0.1s ease, color 0.1s ease",
     "&:hover": {
-      backgroundColor: "rgb(var(--main))",
-      color: "rgb(var(--neutral))",
+      color: "rgb(var(--red))",
+      backgroundColor: "rgb(var(--red), 0.2)",
+    },
+  }),
+  clearIndicator: (base, state) => ({
+    ...base,
+    color: "rgb(var(--red))", // Set the color to red
+    transition: "color 0.2s ease",
+    "&:hover": {
+      color: "rgba(var(--red))",
+      backgroundColor: "rgb(var(--red), 0.2)",
     },
   }),
 };
@@ -112,7 +136,7 @@ export const FloatingLabelInput = ({
           onChange={(e) => handleInputChange(e)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(value ? true : false)}
-          className="w-full text-white text-base bg-transparent border-2 border-main/60 outline-none focus:ring-2 focus:ring-white focus:border-none pl-3 py-2 rounded-md mobilesm:text-sm sm:text-base"
+          className={customStyles}
           style={{
             backgroundColor: "transparent",
           }}
@@ -203,10 +227,45 @@ export const CountrySelect = ({ country, handleCountryChange, className }) => {
         value={country}
         onChange={handleCountryChange}
         placeholder="Select country"
-        styles={customStyles}
+        styles={customSelectStyles}
         className={`w-full ${className}`}
       />
     </>
+  );
+};
+
+export const StateSelect = ({
+  country,
+  state,
+  handleStateChange,
+  className,
+}) => {
+  const [stateOptions, setStateOptions] = useState([]);
+
+  useEffect(() => {
+    if (country) {
+      // Fetch states for the selected country
+      const states = getStates(country.value).map((state) => ({
+        value: state,
+        label: state,
+      }));
+      setStateOptions(states);
+    } else {
+      setStateOptions([]);
+    }
+  }, [country]);
+
+  return (
+    <Select
+      name="state"
+      options={stateOptions}
+      value={state}
+      onChange={handleStateChange}
+      placeholder={country ? "Select state" : "Select a country first"}
+      styles={customSelectStyles}
+      className={`w-full ${className}`}
+      isDisabled={!country} // Disable if no country is selected
+    />
   );
 };
 
@@ -223,7 +282,7 @@ export const SortSelect = ({ handleSortChange, className }) => {
         options={options}
         onChange={handleSortChange}
         placeholder="Sort by"
-        styles={customStyles}
+        styles={customSelectStyles}
         className={`w-full ${className}`}
       />
     </>
@@ -258,7 +317,7 @@ export const CategorySelect = ({
         }
         placeholder="Select upto 5 categories"
         isSearchable
-        styles={customStyles}
+        styles={customSelectStyles}
         className={`${className}`}
       />
     </>
@@ -349,5 +408,75 @@ export const SalaryRange = ({ query = {}, handleSalaryChange, className }) => {
         </Box>
       </div>
     </>
+  );
+};
+
+export const TextAreaFloatingLabel = ({
+  label,
+  name,
+  id,
+  value,
+  handleInputChange,
+}) => {
+  const [isFocused, setIsFocused] = useState(false);
+
+  return (
+    <div className="w-full relative">
+      <label
+        htmlFor={id}
+        className={`leading-[1] transition-all duration-200 ease-in absolute ${
+          isFocused
+            ? "text-white text-[12px] bg-primary -top-[7px] left-2"
+            : "text-white/40 text-[18px] bg-transparent top-4 left-4"
+        }`}
+      >
+        {label}
+      </label>
+
+      <textarea
+        label={label}
+        name={name}
+        id={id}
+        value={value}
+        onChange={(e) => handleInputChange(e)}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(value ? true : false)}
+        className={`min-h-20 max-h-36 ${customStyles}`}
+      ></textarea>
+    </div>
+  );
+};
+
+export const SalaryInputWithCurrency = ({ currency, className }) => {
+  const currencies = [{ label: "$ (USD)", value: "$" }];
+
+  const defaultCurrency = currency || currencies[0].value;
+
+  const handleCurrencyChange = (value) => {
+    // console.log(value);
+  };
+
+  return (
+    <div className={`flex flex-row ${className}`}>
+      <input
+        type="number"
+        placeholder="Salary"
+        className={customStyles}
+        style={{
+          MozAppearance: "textfield",
+          WebkitAppearance: "none",
+          appearance: "none",
+        }}
+      />
+
+      <Select
+        name={currency}
+        options={currencies}
+        value={currencies.find((c) => c.value === defaultCurrency)}
+        onChange={(selectedOption) => handleCurrencyChange(selectedOption)}
+        placeholder=""
+        styles={customSelectStyles}
+      />
+    </div>
   );
 };

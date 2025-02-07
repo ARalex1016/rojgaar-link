@@ -35,6 +35,7 @@ const NavBar = ({ closeNavBar }) => {
       await logout();
 
       closeNavBar();
+      navigate("login");
     } catch (error) {}
   };
 
@@ -49,7 +50,7 @@ const NavBar = ({ closeNavBar }) => {
       {isAuthenticated ? (
         <p
           onClick={handleLogout}
-          className="w-20 text-neutral bg-red text-center rounded-md opacity-80 hover:opacity-100"
+          className="text-neutral/80 bg-red/80 text-center rounded-md px-2 cursor-pointer hover:neutral hover:bg-red hover:shadow-sm hover:shadow-red/60"
         >
           Logout
         </p>

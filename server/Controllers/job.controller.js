@@ -547,12 +547,12 @@ export const getJobById = async (req, res) => {
 
     // Check if is Applied or Saved
     if (user?.role === "candidate") {
-      const hasApplied = await Application.find({
+      const hasApplied = await Application.findOne({
         candidateId: user._id,
         jobId: job._id,
       });
 
-      const hasSaved = await SaveJob.find({
+      const hasSaved = await SaveJob.findOne({
         candidateId: user._id,
         jobId: job._id,
       });

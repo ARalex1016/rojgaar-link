@@ -63,6 +63,7 @@ const Job = () => {
       const res = await saveJob(jobId);
 
       toast.success(res.message);
+      setJob((pre) => ({ ...pre, hasSaved: true }));
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -77,6 +78,7 @@ const Job = () => {
       const res = await applyJob(jobId);
 
       toast.success(res.message);
+      setJob((pre) => ({ ...pre, hasApplied: true }));
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -87,7 +89,7 @@ const Job = () => {
   return (
     <>
       {job && (
-        <section className="w-full py-2 flex flex-col justify-center items-center gap-y-4">
+        <section className="w-full pt-6 flex flex-col justify-center items-center gap-y-4">
           {/* Back Button */}
           <BackButton className="mt-2" />
 

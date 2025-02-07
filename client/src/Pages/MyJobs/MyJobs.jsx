@@ -7,6 +7,7 @@ import { IoMdAdd } from "react-icons/io";
 // Components
 import JobCard from "../../Components/JobCard";
 import CreateJobComp from "./CreateJobComp";
+import NoData from "../../Components/NoData";
 
 // Store
 import { useAuthStore } from "../../Store/useAuthStore";
@@ -116,9 +117,7 @@ const MyJobs = () => {
               );
             })
           ) : (
-            <p className="text-neutral/80 text-center leading-10">
-              No data found
-            </p>
+            <NoData />
           )}
         </section>
 

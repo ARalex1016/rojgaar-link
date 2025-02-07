@@ -9,6 +9,7 @@ import {
   CategorySelect,
   SalaryRange,
 } from "../../Components/Input";
+import NoData from "../../Components/NoData";
 
 // React Icons
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
@@ -101,8 +102,6 @@ const Filters = () => {
 
     try {
       const res = await getAllActiveJobs(queryString);
-
-      console.log(res);
     } catch (error) {}
 
     queries = [];
@@ -212,6 +211,12 @@ const Jobs = () => {
         {/* All Jobs */}
         <section className="w-full min-h-40 flex justify-around gap-x-8 gap-y-10 flex-wrap py-4">
           {jobs && jobs.map((job) => <JobCard key={job._id} job={job} />)}
+
+          {jobs && jobs.length > 0 ? (
+            jobs.map((job) => <JobCard key={job._id} job={job} />)
+          ) : (
+            <NoData />
+          )}
         </section>
       </div>
     </>

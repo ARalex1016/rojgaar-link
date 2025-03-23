@@ -7,35 +7,35 @@ import { IoMdAdd } from "react-icons/io";
 // Components
 import JobCard from "../../Components/JobCard";
 import CreateJobComp from "./CreateJobComp";
+import TabsWithCounter from "../../Components/Tabs";
 import NoData from "../../Components/NoData";
+import Pagination from "../../Components/Pagination";
 
 // Store
 import { useAuthStore } from "../../Store/useAuthStore";
 import { useJobStore } from "../../Store/useJobStore";
 
-// Utils
-import { capitalize } from "../../Utils/StringManager";
-
 const MyJobs = () => {
   const { isCreator, isCandidate } = useAuthStore();
-  const { customRequest } = useJobStore();
+  const { counters, customRequest } = useJobStore();
 
   const [activeTab, setActiveTab] = useState(
     isCandidate ? "applied" : "pending"
   );
+  const [currentPage, setCurrentPage] = useState(1);
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpenNewJob, setIsOpenNewJob] = useState(false);
 
   const tabs = isCandidate
     ? ["applied", "saved"]
-    : ["pending", "live", "filled", "expired", "suspended"];
+    : ["pending", "active", "filled", "expired", "suspended"];
 
   const apiEndpoints = {
     applied: "/application/applied",
     saved: "/jobs/saved",
     pending: "/jobs/creator-jobs?status=pending",
-    live: "/jobs/creator-jobs?status=approved",
+    active: "/jobs/creator-jobs?status=active",
     filled: "/jobs/creator-jobs?status=filled",
     expired: "/jobs/creator-jobs?status=expired",
     suspended: "/jobs/creator-jobs?status=suspended",
@@ -46,8 +46,10 @@ const MyJobs = () => {
     setJobs([]);
 
     try {
-      const res = await customRequest(apiEndpoints[tab]);
-      setJobs(res.data);
+      let pageQuery = `&page=${currentPage}`;
+      const res = await customRequest(apiEndpoints[tab], pageQuery);
+
+      setJobs(res);
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -76,24 +78,26 @@ const MyJobs = () => {
     };
   }, [isOpenNewJob]);
 
+  // Handle Page Change
+  useEffect(() => {
+    fetchJobs(activeTab);
+  }, [currentPage]);
+
   return (
     <>
       <div className="w-full">
-        {/*Tabs */}
-        <section className="w-full flex flex-row  justify-around flex-nowrap gap-x-4 overflow-auto scrollbar-hide my-2">
-          {tabs.map((tab) => {
+        {/*Tabs with Counters*/}
+        <section className="w-full flex flex-row  justify-around flex-nowrap gap-x-4 overflow-auto scrollbar-hide pt-2 my-2">
+          {tabs.map((tab, index) => {
             return (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`min-w-20 w-auto flex-shrink-0 text-neutral/80 font-medium  rounded-md px-4 py-1 hover:text-neutral ${
-                  tab === activeTab
-                    ? "bg-main/80 hover:bg-main"
-                    : "bg-gray/80 hover:bg-gray"
-                }`}
+              <TabsWithCounter
+                key={index}
+                counter={counters && counters[tab]}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
               >
-                {capitalize(tab)}
-              </button>
+                {tab}
+              </TabsWithCounter>
             );
           })}
 
@@ -101,17 +105,26 @@ const MyJobs = () => {
           {isCreator && (
             <button
               onClick={() => setIsOpenNewJob((pre) => !pre)}
-              className="text-neutral/80 text-xs font-normal bg-blue rounded-md flex flex-row justify-center items-center gap-x-1 px-1 py-2 hover:px-3 transition-all duration-200 hover:text-neutral float-right fixed bottom-sideSpacing right-sideSpacing z-30 group md:relative md:bottom-0 md:right-0 md:py-0 md:px-3"
+              className="text-neutral/80 text-xs font-normal bg-customBlue rounded-md flex flex-row justify-center items-center gap-x-1 px-2 py-2 transition-all duration-200 float-right fixed bottom-sideSpacing right-sideSpacing z-30 group md:relative md:bottom-0 md:right-0 md:py-0 md:px-3 hover:text-neutral hover:px-3"
             >
               <IoMdAdd style={{ fontSize: "24px" }} /> Add New
             </button>
           )}
         </section>
 
+        {counters && counters[activeTab] > 0 && (
+          <p className="text-neutral/70 text-sm">
+            Total Jobs Found :{" "}
+            <span className="text-neutral font-bold">
+              {counters[activeTab]}
+            </span>
+          </p>
+        )}
+
         {/* Job Cards */}
         <section className="w-full min-h-40 flex justify-around gap-x-8 gap-y-10 flex-wrap py-4">
-          {jobs.length > 0 ? (
-            jobs.map((job) => {
+          {jobs?.data?.length > 0 ? (
+            jobs?.data?.map((job) => {
               return (
                 <JobCard key={job._id} job={isCandidate ? job.jobDate : job} />
               );
@@ -120,6 +133,14 @@ const MyJobs = () => {
             <NoData />
           )}
         </section>
+
+        {jobs && jobs?.data?.length > 0 && jobs.meta && (
+          <Pagination
+            totalPages={jobs.meta.totalPages}
+            currentPage={jobs.meta.currentPage}
+            setCurrentPage={setCurrentPage}
+          />
+        )}
 
         {isOpenNewJob && (
           <CreateJobComp onClose={() => setIsOpenNewJob(false)} />

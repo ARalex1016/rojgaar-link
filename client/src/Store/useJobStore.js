@@ -4,6 +4,7 @@ import { axiosInstance } from "./axios";
 export const useJobStore = create((set) => ({
   jobs: null,
   categories: null,
+  counters: null,
 
   getCategories: async () => {
     try {
@@ -19,13 +20,28 @@ export const useJobStore = create((set) => ({
     }
   },
 
+  // Get Job By Status
+  getAllJobs: async (status, pageQuery) => {
+    try {
+      const url = `/jobs/?status=${status}${pageQuery}`;
+
+      const res = await axiosInstance.get(url);
+
+      return res.data;
+    } catch (error) {
+      throw Error(
+        error?.response?.data?.message || "An unexpected error occurred"
+      );
+    }
+  },
+
   getAllActiveJobs: async (queryString) => {
     try {
       const url = queryString ? `/jobs/active?${queryString}` : `/jobs/active`;
 
       const res = await axiosInstance.get(url);
 
-      set({ jobs: res.data.data });
+      set({ jobs: res.data });
 
       return res.data.message;
     } catch (error) {
@@ -40,6 +56,20 @@ export const useJobStore = create((set) => ({
       const res = await axiosInstance.get(`/jobs/${jobId}`);
 
       return res.data.data;
+    } catch (error) {
+      throw Error(
+        error?.response?.data?.message || "An unexpected error occurred"
+      );
+    }
+  },
+
+  getCounters: async () => {
+    try {
+      const res = await axiosInstance.get("/jobs/counters");
+
+      set({ counters: res.data.data });
+
+      return;
     } catch (error) {
       throw Error(
         error?.response?.data?.message || "An unexpected error occurred"
@@ -71,13 +101,62 @@ export const useJobStore = create((set) => ({
     }
   },
 
-  customRequest: async (apiEndpoint) => {
-    // console.log(apiEndpoint);
-
+  // For My Jobs (for different end points)
+  customRequest: async (apiEndpoint, pageQuery) => {
     try {
-      const res = await axiosInstance.get(apiEndpoint);
+      const url = `${apiEndpoint}${pageQuery}`;
+
+      const res = await axiosInstance.get(url);
 
       return res.data;
+    } catch (error) {
+      throw Error(
+        error?.response?.data?.message || "An unexpected error occurred"
+      );
+    }
+  },
+
+  createJob: async (jobData) => {
+    try {
+      const res = await axiosInstance.post(`/jobs/create`, jobData);
+
+      return res.data;
+    } catch (error) {
+      throw Error(
+        error?.response?.data?.message || "An unexpected error occurred"
+      );
+    }
+  },
+
+  approveJob: async (jobId) => {
+    try {
+      const res = await axiosInstance.patch(`/jobs/${jobId}/approve`);
+
+      return res.data.message;
+    } catch (error) {
+      throw Error(
+        error?.response?.data?.message || "An unexpected error occurred"
+      );
+    }
+  },
+
+  suspendJob: async (jobId) => {
+    try {
+      const res = await axiosInstance.patch(`/jobs/${jobId}/suspend`);
+
+      return res.data.message;
+    } catch (error) {
+      throw Error(
+        error?.response?.data?.message || "An unexpected error occurred"
+      );
+    }
+  },
+
+  deleteJob: async (jobId) => {
+    try {
+      const res = await axiosInstance.delete(`/jobs/${jobId}`);
+
+      return res.data.message;
     } catch (error) {
       throw Error(
         error?.response?.data?.message || "An unexpected error occurred"

@@ -1,9 +1,12 @@
-export const getDateDetails = (dateString) => {
+export const getDateDetails = (dateString, numeric = true) => {
   const date = new Date(dateString);
 
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const day = date.getDate().toString().padStart(2, "0");
+  const options = {
+    year: "numeric",
+    month: numeric ? "numeric" : "long",
+    day: "numeric",
+  };
+  const formattedDate = date.toLocaleDateString("en-GB", options);
 
-  return `${day}-${month}-${year}`;
+  return formattedDate; // e.g. "11 February 2024"
 };

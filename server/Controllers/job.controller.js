@@ -1,4 +1,5 @@
 // Model
+import User from "../Models/user.model.js";
 import Jobs from "../Models/job.model.js";
 import Application from "../Models/application.model.js";
 import SaveJob from "../Models/save-job.models.js";
@@ -55,11 +56,12 @@ export const createJob = async (req, res) => {
   const {
     title,
     description,
-    salaryRange,
+    salary,
     location,
     companyName,
-    contactDetails,
     category,
+    otherCategory,
+    experienceLevel,
     maximumWorkers,
     lastSubmissionDate,
   } = req.body;
@@ -67,10 +69,12 @@ export const createJob = async (req, res) => {
   if (
     !title ||
     !description ||
+    !salary ||
     !location ||
+    !location.country ||
+    !location.state ||
     !companyName ||
-    !contactDetails ||
-    !category ||
+    !experienceLevel ||
     !maximumWorkers ||
     !lastSubmissionDate
   ) {
@@ -98,11 +102,15 @@ export const createJob = async (req, res) => {
     const jobData = {
       title,
       description,
-      salaryRange,
-      location,
+      salary,
       companyName,
-      contactDetails,
-      category,
+      category: category ? category[0] : null,
+      otherCategory: category.includes("Others") ? otherCategory : null,
+      location: {
+        country: location.country,
+        state: location.state,
+      },
+      experienceLevel,
       maximumWorkers,
       lastSubmissionDate,
       creatorId: req.user._id,
@@ -137,7 +145,7 @@ export const approveJob = async (req, res) => {
     });
   }
 
-  if (job.status !== "pending") {
+  if (job.status !== "pending" && job.status !== "suspended") {
     return res.status(400).json({
       status: "fail",
       message: "Can't approve the job",
@@ -169,7 +177,7 @@ export const approveJob = async (req, res) => {
 };
 
 export const suspendJob = async (req, res) => {
-  const { job, user } = req;
+  const { job } = req;
 
   if (job.status === "suspended") {
     return res.status(400).json({
@@ -178,14 +186,16 @@ export const suspendJob = async (req, res) => {
     });
   }
 
-  if (job.status !== "active") {
-    return res.status(400).json({
-      status: "fail",
-      message: "Can't suspend",
-    });
-  }
+  // if (job.status !== "active") {
+  //   return res.status(400).json({
+  //     status: "fail",
+  //     message: "Can't suspend",
+  //   });
+  // }
 
   try {
+    const preStatus = job.status;
+
     job.status = "suspended";
     const updatedJob = await job.save();
 
@@ -326,22 +336,27 @@ export const getAllSavedJobs = async (req, res) => {
 export const getAllActiveJobs = async (req, res) => {
   const {
     country,
+    state,
     category,
     minSalary,
     maxSalary,
+    experienceLevel,
     sortBy,
     page = 1,
-    limit = 10,
+    limit = 5,
   } = req.query;
 
   try {
     const query = { status: "active" };
 
-    // TODO: Implement filter by GeoCodes (like 50 km radius)
-
     if (country) {
       const decodedCountry = decodeURIComponent(country.trim());
       query["location.country"] = decodedCountry;
+    }
+
+    if (state) {
+      const decodedState = decodeURIComponent(country.trim());
+      query["location.state"] = decodedState;
     }
 
     if (category) {
@@ -349,14 +364,32 @@ export const getAllActiveJobs = async (req, res) => {
       const categoriesArray = decodedCategories
         .split(",")
         .map((cat) => cat.trim());
-      query.category = { $in: categoriesArray };
+
+      // Include jobs with "Others" and `otherCategory`
+      if (categoriesArray.includes("Others")) {
+        query.$or = [
+          {
+            category: {
+              $in: categoriesArray.filter((cat) => cat !== "Others"),
+            },
+          },
+          { category: "Others" },
+        ];
+      } else {
+        query.category = { $in: categoriesArray };
+      }
     }
 
     if (minSalary) {
-      query["salaryRange.min"] = { $gte: parseInt(minSalary, 10) };
+      query.salary = { ...query.salary, $gte: parseInt(minSalary, 10) };
     }
-    if (maxSalary && parseInt(maxSalary, 10) < 5000) {
-      query["salaryRange.max"] = { $lte: parseInt(maxSalary, 10) };
+
+    if (maxSalary) {
+      query.salary = { ...query.salary, $lte: parseInt(maxSalary, 10) };
+    }
+
+    if (experienceLevel) {
+      query.experienceLevel = experienceLevel;
     }
 
     let sortOption = {};
@@ -425,7 +458,7 @@ export const getAllActiveJobs = async (req, res) => {
 };
 
 export const getAllJobs = async (req, res) => {
-  const { status, page = 1, limit = 10 } = req.query;
+  const { status, page = 1, limit = 5 } = req.query;
   try {
     // Build the query object
     const query = {};
@@ -464,7 +497,7 @@ export const getAllJobs = async (req, res) => {
 };
 
 export const getAllCreatorJobs = async (req, res) => {
-  const { status, page = 1, limit = 10 } = req.query;
+  const { status, page = 1, limit = 5 } = req.query;
   const { user } = req;
 
   try {
@@ -485,7 +518,6 @@ export const getAllCreatorJobs = async (req, res) => {
     const creatorJobs = await Jobs.find(query)
       .select({
         description: 0,
-        contactDetails: 0,
         approvedBy: 0,
         approvedDate: 0,
         createdAt: 0,
@@ -511,10 +543,59 @@ export const getAllCreatorJobs = async (req, res) => {
     });
   } catch (error) {
     // Eorror
-
     res.status(500).json({
       status: "error",
       message: "Internal server error",
+    });
+  }
+};
+
+export const getCounters = async (req, res) => {
+  const { user } = req;
+
+  try {
+    // Initialize counters
+    const counters = {
+      pending: 0,
+      active: 0,
+      suspended: 0,
+      filled: 0,
+      expired: 0,
+      totalJobs: 0,
+    };
+
+    // List of statuses
+    const allStatus = ["pending", "active", "suspended", "filled", "expired"];
+
+    // Define a base query
+    const baseQuery = user.role === "creator" ? { creatorId: user._id } : {};
+
+    // Fetch counts for all statuses concurrently
+    const results = await Promise.all([
+      ...allStatus.map((status) =>
+        Jobs.countDocuments({ ...baseQuery, status })
+      ),
+      Jobs.countDocuments(baseQuery), // Fetch total jobs count
+    ]);
+
+    // Map results to counters
+    allStatus.forEach((status, index) => {
+      counters[status] = results[index];
+    });
+    counters.totalJobs = results[results.length - 1]; // Total jobs count
+
+    // Success response
+    res.status(200).json({
+      status: "success",
+      data: counters,
+      message: "Counters fetched successfully.",
+    });
+  } catch (error) {
+    // Error handling
+    console.error("Error fetching counters:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error.",
     });
   }
 };
@@ -524,6 +605,7 @@ export const getJobById = async (req, res) => {
 
   const isAdmin = user?.role === "admin";
   const isCreator = job.creatorId.equals(user?._id);
+
   try {
     const canView = await canViewJobDetails(
       job,
@@ -532,20 +614,66 @@ export const getJobById = async (req, res) => {
       isAdmin,
       isCreator
     );
+
     if (!canView) {
       return res.status(403).json({
         status: "fail",
         message: "You are not authorized to view the details of this job.",
       });
     }
+
+    let creator = null;
+
+    if ((isAdmin || isCreator) && job.creatorId) {
+      creator = await User.findById(job.creatorId).select("name email");
+
+      if (!creator) {
+        return res.status(404).json({
+          status: "fail",
+          message: "Creator ID not found!",
+        });
+      }
+    }
+
+    let approver = null;
+    if (isAdmin && job.approvedBy) {
+      approver = await User.findById(job.approvedBy).select("name email role");
+
+      if (!approver) {
+        return res.status(404).json({
+          status: "fail",
+          message: "Approver ID not found!",
+        });
+      }
+    }
+
     const jobDetails = {
       ...job.toObject(),
-      contactDetails: isAuthenticated ? job.contactDetails : undefined,
-      approvedBy: isAdmin ? job.approvedBy : undefined,
-      approvedDate: isAdmin ? job.approvedDate : undefined,
+      creatorId: undefined,
+      createdAt: undefined,
+      creatorDetails:
+        isAdmin || isCreator
+          ? {
+              creatorName: creator?.name || "N/A",
+              creatorEmail: creator?.email || "N/A",
+              creatorId: job.creatorId || "N/A",
+              createdAt: job.createdAt,
+            }
+          : undefined,
+      approvedBy: undefined,
+      approvedDate: undefined,
+      approverDetails: isAdmin
+        ? {
+            approverName: approver?.name || "N/A",
+            approverEmail: approver?.email || "N/A",
+            approverRole: approver?.role || "N/A",
+            approverId: job.approvedBy || "N/A",
+            approvedDate: job.approvedDate || "N/A",
+          }
+        : undefined,
     };
 
-    // Check if is Applied or Saved
+    // Check if candidate has applied or saved the job
     if (user?.role === "candidate") {
       const hasApplied = await Application.findOne({
         candidateId: user._id,
@@ -565,6 +693,7 @@ export const getJobById = async (req, res) => {
         jobDetails.hasSaved = true;
       }
     }
+
     // Success
     res.status(200).json({
       status: "success",

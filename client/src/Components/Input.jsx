@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import Select from "react-select";
 import countryList from "react-select-country-list";
+import { Country, State } from "country-state-city";
 
 // React Icons
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
@@ -29,6 +30,11 @@ const customSelectStyles = {
     "&:hover": {
       borderColor: state.isFocused ? "rgb(var(--neutral))" : "rgb(var(--main))", // Keep hover consistent with focus
     },
+  }),
+  input: (base) => ({
+    ...base,
+    color: "rgb(var(--neutral), 0.7)", // Set the text color here
+    fontSize: "12px",
   }),
   // Other styles remain unchanged
   option: (base, state) => ({
@@ -109,9 +115,20 @@ export const FloatingLabelInput = ({
   type = "text",
   id,
   value,
+  checked,
   handleInputChange,
+  className,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+
+  // Watch for changes in value and set focus state
+  useEffect(() => {
+    if (value) {
+      setIsFocused(true);
+    } else {
+      setIsFocused(false);
+    }
+  }, [value]);
 
   return (
     <>
@@ -121,8 +138,8 @@ export const FloatingLabelInput = ({
           className={`leading-[1] transition-all duration-200 ease-in absolute ${
             isFocused
               ? "text-white text-[12px] bg-primary -top-[7px] left-2"
-              : "text-white/40 text-[18px] bg-transparent top-[30%] left-4"
-          }`}
+              : "text-white/40 text-[16px] bg-transparent top-[30%] left-4"
+          } ${className}`}
         >
           {label}
         </label>
@@ -132,6 +149,7 @@ export const FloatingLabelInput = ({
           id={id}
           name={name}
           value={value}
+          checked={checked}
           onChange={(e) => handleInputChange(e)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(value ? true : false)}
@@ -191,7 +209,63 @@ export const PasswordInput = ({
   );
 };
 
-export const RadioInput = ({ label, name, value, id, handleInputChange }) => {
+export const DateInput = ({ label, name, id, value, handleInputChange }) => {
+  const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef(null);
+
+  const handleContainerClick = (e) => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
+  return (
+    <>
+      <div
+        className="w-full relative"
+        onClick={handleContainerClick}
+        style={{ cursor: "pointer" }}
+      >
+        <label htmlFor={id} className="text-neutral/60 text-xs font-semibold">
+          {label}
+        </label>
+
+        <input
+          type="date"
+          id={id}
+          name={name}
+          value={value}
+          ref={inputRef}
+          onChange={(e) => handleInputChange(e)}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(value ? true : false)}
+          className={`${customStyles} pr-4`}
+          style={{
+            backgroundColor: "transparent",
+          }}
+        />
+
+        <style>
+          {`
+          input:-webkit-autofill {
+            background-color: rgb(var(--primary)) !important;
+            color: white !important;
+          }
+        `}
+        </style>
+      </div>
+    </>
+  );
+};
+
+export const RadioInput = ({
+  label,
+  name,
+  value,
+  id,
+  checked,
+  handleInputChange,
+}) => {
   return (
     <>
       <div className="flex items-center gap-1">
@@ -200,12 +274,14 @@ export const RadioInput = ({ label, name, value, id, handleInputChange }) => {
           name={name}
           value={value}
           id={id}
-          onChange={(e) => handleInputChange(e)}
+          checked={checked}
+          onChange={(e) => handleInputChange(e.target.value)}
           className="peer hidden"
         />
+
         <label
           htmlFor={id}
-          className="w-[8ch] text-white/60 text-sm text-center border-2 border-main/60 rounded-md py-1 cursor-pointer peer-checked:text-white peer-checked:bg-main"
+          className="min-w-[8ch] text-white/60 text-sm text-center border-2 border-main/60 rounded-md py-1 cursor-pointer peer-checked:text-white peer-checked:bg-main px-2"
         >
           {label}
         </label>
@@ -214,25 +290,72 @@ export const RadioInput = ({ label, name, value, id, handleInputChange }) => {
   );
 };
 
-export const CountrySelect = ({ country, handleCountryChange, className }) => {
-  const countries = countryList().getData();
+export const CountryStateSelect = ({
+  country,
+  state,
+  onLocationChange,
+  className,
+}) => {
+  const [countries, setCountries] = useState(
+    Country.getAllCountries().map((c) => ({
+      value: c.isoCode,
+      label: c.name,
+    }))
+  );
+  const [states, setStates] = useState([]);
+
+  const handleCountryChange = (selectedCountry) => {
+    const newCountry = {
+      country: selectedCountry.label,
+      state: "", // Reset state when country changes
+    };
+
+    setStates([]);
+    onLocationChange(newCountry);
+
+    // Update states dropdown
+    setStates(
+      State.getStatesOfCountry(selectedCountry.value).map((s) => ({
+        key: s.isoCode,
+        value: s.isoCode,
+        label: s.name,
+      }))
+    );
+  };
+
+  const handleStateChange = (selectedState) => {
+    const newState = { state: selectedState.label };
+    onLocationChange(newState);
+  };
 
   return (
     <>
-      <Select
-        name="country"
-        options={countries}
-        value={country}
-        onChange={handleCountryChange}
-        placeholder="Select country"
-        styles={customSelectStyles}
-        className={`w-full ${className}`}
-      />
+      <div className={`flex flex-row items-center gap-x-2 ${className}`}>
+        <Select
+          name="country"
+          options={countries}
+          value={countries.find((c) => c.label === country) || null}
+          onChange={(selectedOption) => handleCountryChange(selectedOption)}
+          placeholder="Select country"
+          styles={customSelectStyles}
+          className={`w-full ${className}`}
+        />
+
+        <Select
+          name="state"
+          options={states}
+          value={states.find((s) => s.label === state) || null}
+          onChange={(selectedOption) => handleStateChange(selectedOption)}
+          placeholder="States"
+          styles={customSelectStyles}
+          className={`w-full ${className}`}
+        />
+      </div>
     </>
   );
 };
 
-export const SortSelect = ({ handleSortChange, className }) => {
+export const SortSelect = ({ value, handleSortChange, className }) => {
   const options = [
     { value: "low_to_high", label: "Salary: Low to High" },
     { value: "high_to_low", label: "Salary: High to Low" },
@@ -243,6 +366,7 @@ export const SortSelect = ({ handleSortChange, className }) => {
       <Select
         name="sort"
         options={options}
+        value={options.find((sortBy) => sortBy.value === value) || null}
         onChange={handleSortChange}
         placeholder="Sort by"
         styles={customSelectStyles}
@@ -254,6 +378,7 @@ export const SortSelect = ({ handleSortChange, className }) => {
 
 export const CategorySelect = ({
   selectedCategory,
+  placeholder,
   handleCategoryChange,
   className,
 }) => {
@@ -278,7 +403,7 @@ export const CategorySelect = ({
         onChange={(selected) =>
           handleCategoryChange(selected ? selected.map((opt) => opt.value) : [])
         }
-        placeholder="Select upto 5 categories"
+        placeholder={placeholder || "Select upto 5 categories"}
         isSearchable
         styles={customSelectStyles}
         className={`${className}`}
@@ -290,7 +415,7 @@ export const CategorySelect = ({
 export const SalaryRange = ({ query = {}, handleSalaryChange, className }) => {
   const { minSalary, maxSalary } = query;
 
-  const minRange = 400;
+  const minRange = 200;
   const maxRange = 5000;
 
   // Function to display the values in the slider (value in dollars)
@@ -374,6 +499,33 @@ export const SalaryRange = ({ query = {}, handleSalaryChange, className }) => {
   );
 };
 
+export const SalaryInputWithCurrency = ({
+  id,
+  name,
+  value,
+  handleSalaryChange,
+  className,
+}) => {
+  return (
+    <div className={`flex flex-row ${className}`}>
+      <input
+        id={id}
+        name={name}
+        type="number"
+        value={value}
+        placeholder="Salary"
+        onChange={handleSalaryChange}
+        className={`${customStyles} rounded-tr-none rounded-br-none`}
+        style={{
+          MozAppearance: "textfield",
+          WebkitAppearance: "none",
+          appearance: "none",
+        }}
+      />
+    </div>
+  );
+};
+
 export const TextAreaFloatingLabel = ({
   label,
   name,
@@ -404,42 +556,8 @@ export const TextAreaFloatingLabel = ({
         onChange={(e) => handleInputChange(e)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(value ? true : false)}
-        className={`min-h-20 max-h-36 ${customStyles}`}
+        className={`min-h-20 max-h-36 overflow-y-auto customScrollbarStyle ${customStyles}`}
       ></textarea>
-    </div>
-  );
-};
-
-export const SalaryInputWithCurrency = ({ currency, className }) => {
-  const currencies = [{ label: "$ (USD)", value: "$" }];
-
-  const defaultCurrency = currency || currencies[0].value;
-
-  const handleCurrencyChange = (value) => {
-    // console.log(value);
-  };
-
-  return (
-    <div className={`flex flex-row ${className}`}>
-      <input
-        type="number"
-        placeholder="Salary"
-        className={customStyles}
-        style={{
-          MozAppearance: "textfield",
-          WebkitAppearance: "none",
-          appearance: "none",
-        }}
-      />
-
-      <Select
-        name={currency}
-        options={currencies}
-        value={currencies.find((c) => c.value === defaultCurrency)}
-        onChange={(selectedOption) => handleCurrencyChange(selectedOption)}
-        placeholder=""
-        styles={customSelectStyles}
-      />
     </div>
   );
 };

@@ -14,6 +14,13 @@ import NotFound from "./Pages/NotFound";
 import Jobs from "./Pages/Jobs/Jobs";
 import JobDetails from "./Pages/Jobs/JobDetails";
 import MyJobs from "./Pages/MyJobs/MyJobs";
+import SupportUs from "./Pages/SupportUs/SupportUs";
+import User from "./Pages/User/User";
+import Donate from "./Pages/SupportUs/Donate";
+import TopDonors from "./Pages/SupportUs/TopDonors";
+
+// Admin
+import AdminJobs from "./Pages/Jobs/AdminJobs";
 
 // Store
 import { useAuthStore } from "./Store/useAuthStore";
@@ -40,18 +47,33 @@ const ProtectRoute = ({ children }) => {
 };
 
 function App() {
-  const { isAdmin, isAuthenticated, isCheckingAuth, checkAuth } =
+  const { isAdmin, isCreator, isAuthenticated, isCheckingAuth, checkAuth } =
     useAuthStore();
-  const { getCategories, getAllActiveJobs } = useJobStore();
+  const { getCategories, getAllActiveJobs, getCounters } = useJobStore();
 
   useEffect(() => {
-    checkAuth();
+    if (isAuthenticated) {
+      checkAuth();
+    }
   }, [checkAuth]);
 
   useEffect(() => {
     getCategories();
-    getAllActiveJobs();
-  }, [getCategories, getAllActiveJobs]);
+  }, [getCategories]);
+
+  useEffect(() => {
+    const fetchCounters = async () => {
+      try {
+        await getCounters();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (isAuthenticated && (isAdmin || isCreator)) {
+      fetchCounters();
+    }
+  }, [isAuthenticated, isAdmin, isCreator]);
 
   const router = createBrowserRouter([
     {
@@ -87,6 +109,14 @@ function App() {
           element: <NotFound />,
         },
         {
+          path: "admin/jobs",
+          element: isAuthenticated && isAdmin ? <AdminJobs /> : <NotFound />,
+        },
+        {
+          path: "admin/jobs/:jobId",
+          element: isAuthenticated && isAdmin ? <JobDetails /> : <NotFound />,
+        },
+        {
           path: "jobs",
           element: <Jobs />,
         },
@@ -101,6 +131,24 @@ function App() {
         {
           path: "myjobs/:jobId",
           element: isAuthenticated && !isAdmin ? <JobDetails /> : <NotFound />,
+        },
+        {
+          path: "user",
+          element: <User />,
+        },
+        {
+          path: "support-us",
+          element: <SupportUs />,
+          children: [
+            {
+              index: true,
+              element: <Donate />,
+            },
+            {
+              path: "top-donors",
+              element: <TopDonors />,
+            },
+          ],
         },
       ],
     },

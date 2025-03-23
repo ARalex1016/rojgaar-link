@@ -13,6 +13,7 @@ import {
   getAllCreatorJobs,
   getAllJobs,
   getAllSavedJobs,
+  getCounters,
 } from "../Controllers/job.controller.js";
 import {
   protect,
@@ -48,6 +49,8 @@ router.get("/active", getAllActiveJobs);
 router.get("/creator-jobs", protect, authorize("creator"), getAllCreatorJobs);
 
 router.get("/saved", protect, authorize("candidate"), getAllSavedJobs);
+
+router.get("/counters", protect, authorize("admin", "creator"), getCounters);
 
 router.get("/:jobId", checkAuthentication, getJobById);
 

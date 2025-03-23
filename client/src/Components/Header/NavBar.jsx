@@ -11,7 +11,7 @@ const Link = ({ to, children }) => {
       <NavLink
         to={to}
         className={({ isActive }) =>
-          `w-20  text-lg font-medium ${
+          `w-24 text-lg font-medium ${
             isActive
               ? "text-accent"
               : "text-neutral opacity-60 hover:opacity-100"
@@ -31,11 +31,12 @@ const NavBar = ({ closeNavBar }) => {
   const { isAdmin, isAuthenticated, logout } = useAuthStore();
 
   const handleLogout = async () => {
+    navigate("login");
+
     try {
       await logout();
 
       closeNavBar();
-      navigate("login");
     } catch (error) {}
   };
 
@@ -47,10 +48,14 @@ const NavBar = ({ closeNavBar }) => {
 
       {isAuthenticated && !isAdmin && <Link to="/myjobs">My Jobs</Link>}
 
+      <Link to="/user">User</Link>
+
+      <Link to="/support-us">Support Us</Link>
+
       {isAuthenticated ? (
         <p
           onClick={handleLogout}
-          className="text-neutral/80 bg-red/80 text-center rounded-md px-2 cursor-pointer hover:neutral hover:bg-red hover:shadow-sm hover:shadow-red/60"
+          className="w-24 text-neutral/80 bg-red/80 text-center rounded-md px-2 cursor-pointer hover:neutral hover:bg-red hover:shadow-sm hover:shadow-red/60"
         >
           Logout
         </p>

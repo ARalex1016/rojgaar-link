@@ -16,25 +16,17 @@ const jobSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    salaryRange: {
-      min: { type: Number, required: true },
-      max: { type: Number, required: true },
+    salary: {
+      type: Number,
+      required: true,
     },
     location: {
       country: { type: String, required: true },
-      city: { type: String, required: true },
-      coordinates: {
-        type: [Number], // [longitude, latitude]
-        index: "2dsphere",
-      },
+      state: { type: String, required: true },
     },
     companyName: {
       type: String,
       required: true,
-    },
-    contactDetails: {
-      email: { type: String, required: true },
-      phone: { type: String, required: true },
     },
     category: {
       type: String,
@@ -46,6 +38,10 @@ const jobSchema = new mongoose.Schema(
       required: function () {
         return this.category === "Others";
       },
+    },
+    experienceLevel: {
+      type: String,
+      enum: ["beginer", "intermediate", "skilled"],
     },
     maximumWorkers: {
       type: Number,

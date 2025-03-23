@@ -71,7 +71,7 @@ const Login = () => {
 
           {/* Message */}
           <p
-            className={`w-full min-h-6 text-sm text-red-500 text-center ${
+            className={`w-full min-h-6 text-sm text-red text-center ${
               !message && "invisible"
             }`}
           >
@@ -100,7 +100,7 @@ const Login = () => {
             <button
               disabled={isLoggingIn}
               onClick={handleButtonCLick}
-              className="w-full max-w-72 h-10 text-white text-lg font-medium bg-main/60 rounded-md disabled:bg-gray-600"
+              className="w-full max-w-72 h-10 text-white text-lg font-medium bg-main/60 rounded-md disabled:bg-gray/60"
             >
               {isLoggingIn ? (
                 <BiLoaderAlt className="text-2xl animate-spin mx-auto" />

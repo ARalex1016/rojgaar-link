@@ -69,3 +69,10 @@ export const capitalize = (string) => {
   if (!string) return "";
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
+
+export const isValidObjectId = (id) => {
+  const objectIdRegex = /^[a-fA-F0-9]{24}$/;
+  return objectIdRegex.test(id);
+};
+
+export const isEmptyObject = (obj) => Object.keys(obj).length === 0;

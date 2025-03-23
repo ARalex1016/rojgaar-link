@@ -1,0 +1,44 @@
+>>>>>>>>>>>> FRONT END <<<<<<<<<<<<<<<<
+1. Home Page
+2. Job Page Filter modify  
+    - Gender Required
+
+3. My Job Page/ Create Job (Creator)
+    - Put Gender Requirement while creating Job (if required)
+    - Show all applied Candidates
+    - ShortList, Hire or Reject Candidates
+
+4. My Job Page/ Job Details (unsave feature) (Candidate)
+    - Show all Shortlisted or Hired Jobs
+
+5. Profile Page (Creator / Candidate)
+    - Add Profile Page
+    - If all compulsory things added, make them isEligible
+    - Creator - Eligible to Create Jobs 
+    - Candidate - Eligible to Apply for Jobs
+
+6. Job Page (Admin)
+7. User Page (Admin)
+
+8. Donation Page
+
+-------------------------------------------------------------
+
+>>>>>>>>>>>>> BACK END <<<<<<<<<<<<<<
+1. Modify Job Filter
+    - Add Filter in Backend (shown above)
+
+2. Show all Applied Candidated for particular Jobs (Creator)  
+
+3. Update Profile Page
+    - Add an isEligible features
+    - Only isEligible Candidates can Apply for any jobs
+    - Only isEligible Creators can Create Jobs
+    - isEligible can be seperate or same for Creator or Candidate
+
+4. Get All Jobs
+5. Get All Users
+6. Dashboard Metrics (Admin)
+
+7. Donate Fucntion
+8. Get Top Donors of the Month

@@ -28,7 +28,8 @@ const Link = ({ to, children }) => {
 const NavBar = ({ closeNavBar }) => {
   const navigate = useNavigate();
 
-  const { isAdmin, isAuthenticated, logout } = useAuthStore();
+  const { isAdmin, isCreator, isCandidate, isAuthenticated, logout } =
+    useAuthStore();
 
   const handleLogout = async () => {
     navigate("login");
@@ -44,6 +45,9 @@ const NavBar = ({ closeNavBar }) => {
     <>
       <Link to="/">Home</Link>
 
+      {isAuthenticated && (isCandidate || isCreator) && (
+        <Link to="/profile">Profile</Link>
+      )}
       <Link to="/jobs">Jobs</Link>
 
       {isAuthenticated && !isAdmin && <Link to="/myjobs">My Jobs</Link>}

@@ -13,7 +13,7 @@ import { passwordValidator } from "../utils/stringManager.js";
 import { generateJwtToken } from "../utils/generateJwtToken.js";
 
 export const signup = async (req, res) => {
-  const { name, email, password, confirmPassword } = req.body;
+  const { name, email, gender, password, confirmPassword } = req.body;
 
   if (!name || !email || !password || !confirmPassword) {
     return res.status(400).json({
@@ -24,7 +24,6 @@ export const signup = async (req, res) => {
 
   try {
     const isEmailExists = await User.findOne({ email });
-
     if (isEmailExists) {
       return res.status(400).json({
         status: "fail",
@@ -49,7 +48,6 @@ export const signup = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-
     const user = await User.create({ ...req.body, password: hashedPassword });
 
     // Create Candidate Profile
@@ -59,7 +57,6 @@ export const signup = async (req, res) => {
 
     // Update Admin Metrics
     await updateNewUser(user);
-
     const token = generateJwtToken(user, res);
 
     const { password: _, ...userWithoutPassword } = user.toObject();
@@ -79,6 +76,7 @@ export const signup = async (req, res) => {
     // Success
     res.status(201).json(response);
   } catch (error) {
+    // Error
     res.status(500).json({
       status: "error",
       message: "Internal server error!",
@@ -188,7 +186,7 @@ export const protect = async (req, res, next) => {
   try {
     const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
 
-    const user = await User.findById(decodedToken.userId);
+    const user = await User.findById(decodedToken.userId).select("-password");
 
     if (!user) {
       return res.status(401).json({
@@ -198,7 +196,6 @@ export const protect = async (req, res, next) => {
     }
 
     req.user = user;
-
     next();
   } catch (error) {
     // Error
@@ -264,6 +261,5 @@ export const authorize =
         message: "You do not have permission to perform this action!",
       });
     }
-
     next();
   };

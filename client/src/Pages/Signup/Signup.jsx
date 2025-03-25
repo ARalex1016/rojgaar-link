@@ -39,6 +39,7 @@ const Signup = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
     setUserData({
       ...userData,
       [name]: value,

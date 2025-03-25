@@ -8,6 +8,8 @@ import {
 // Pages
 import RootLayout from "./Layout/RootLayout";
 import Home from "./Pages/Home/Home";
+import CandidateProfile from "./Pages/Profile/CandidateProfile";
+import CreatorProfile from "./Pages/Profile/CreatorProfile";
 import Signup from "./Pages/Signup/Signup";
 import Login from "./Pages/Login/Login";
 import NotFound from "./Pages/NotFound";
@@ -47,14 +49,18 @@ const ProtectRoute = ({ children }) => {
 };
 
 function App() {
-  const { isAdmin, isCreator, isAuthenticated, isCheckingAuth, checkAuth } =
-    useAuthStore();
+  const {
+    user,
+    isAdmin,
+    isCreator,
+    isAuthenticated,
+    isCheckingAuth,
+    checkAuth,
+  } = useAuthStore();
   const { getCategories, getAllActiveJobs, getCounters } = useJobStore();
 
   useEffect(() => {
-    if (isAuthenticated) {
-      checkAuth();
-    }
+    checkAuth();
   }, [checkAuth]);
 
   useEffect(() => {
@@ -87,6 +93,22 @@ function App() {
         {
           path: "home",
           element: <Home />,
+        },
+        {
+          path: "profile",
+          element: isAuthenticated ? (
+            user?.role === "creator" ? (
+              <CreatorProfile />
+            ) : user?.role === "candidate" ? (
+              <CandidateProfile />
+            ) : user?.role === "admin" ? (
+              <NotFound />
+            ) : (
+              <NotFound />
+            )
+          ) : (
+            <NotFound />
+          ),
         },
         {
           path: "signup",

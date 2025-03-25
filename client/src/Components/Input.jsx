@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import Select from "react-select";
 import countryList from "react-select-country-list";
 import { Country, State } from "country-state-city";
+import toast from "react-hot-toast";
 
 // React Icons
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
@@ -258,14 +259,7 @@ export const DateInput = ({ label, name, id, value, handleInputChange }) => {
   );
 };
 
-export const RadioInput = ({
-  label,
-  name,
-  value,
-  id,
-  checked,
-  handleInputChange,
-}) => {
+export const RadioInput = ({ label, name, value, id, handleInputChange }) => {
   return (
     <>
       <div className="flex items-center gap-1">
@@ -274,8 +268,7 @@ export const RadioInput = ({
           name={name}
           value={value}
           id={id}
-          checked={checked}
-          onChange={(e) => handleInputChange(e.target.value)}
+          onChange={(e) => handleInputChange(e)}
           className="peer hidden"
         />
 
@@ -285,6 +278,77 @@ export const RadioInput = ({
         >
           {label}
         </label>
+      </div>
+    </>
+  );
+};
+
+export const FileUpload = ({
+  label,
+  name,
+  id,
+  img,
+  accept,
+  handleUpload,
+  className,
+}) => {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [isUploadingFile, setIsUploadingFile] = useState(false);
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = async () => {
+      const base64Image = reader.result;
+
+      setIsUploadingFile(true);
+      setSelectedFile(base64Image);
+
+      try {
+        let res = await handleUpload(base64Image);
+        toast.success(res.message);
+      } catch (error) {
+        setSelectedFile(null);
+      } finally {
+        setIsUploadingFile(false);
+      }
+    };
+  };
+
+  return (
+    <>
+      <div className="w-full aspect-video border-2 border-neutral/60 border-dashed rounded-md relative overflow-hidden">
+        {(selectedFile || img) && (
+          <img
+            src={selectedFile || img}
+            alt={label}
+            loading="lazy"
+            className={`absolute ${isUploadingFile && "animate-pulse"}`}
+          />
+        )}
+
+        <label
+          htmlFor={id}
+          className="w-full h-full text-neutral text-sm flex flex-row justify-center items-center absolute z-10"
+        >
+          {isUploadingFile
+            ? "Uploading..."
+            : `Click here to Upload your ${label}`}
+        </label>
+
+        <input
+          type="file"
+          name={name}
+          id={id}
+          disabled={isUploadingFile}
+          accept={accept || "image/*"}
+          onChange={handleFileUpload}
+          className="hidden"
+        />
       </div>
     </>
   );

@@ -21,6 +21,16 @@ export const useAuthStore = create((set) => ({
   isLoggingOut: false,
   isCheckingAuth: false,
 
+  setUser: async (newUser) => {
+    set({
+      user: newUser,
+      isAuthenticated: true,
+      isAdmin: newUser.role === "admin",
+      isCreator: newUser.role === "creator",
+      isCandidate: newUser.role === "candidate",
+    });
+  },
+
   signup: async (userData) => {
     set({ isSigningIn: true });
     try {

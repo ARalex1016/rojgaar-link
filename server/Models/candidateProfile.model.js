@@ -9,7 +9,6 @@ const candidateProfileSchema = new mongoose.Schema(
     },
     contact: {
       phoneNumber: String,
-      email: String,
       socialMedia: {
         facebook: { type: String },
         instagram: { type: String },
@@ -18,6 +17,7 @@ const candidateProfileSchema = new mongoose.Schema(
     },
     location: {
       country: { type: String },
+      state: { type: String },
     },
     education: [
       {

@@ -11,7 +11,7 @@ import adminMetricsRouter from "./Routes/admin-metrics.route.js";
 import chatRouter from "./Routes/chat.route.js";
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 
 app.use(

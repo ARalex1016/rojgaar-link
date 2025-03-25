@@ -2,6 +2,9 @@
 import User from "../Models/user.model.js";
 import CandidateProfile from "../Models/candidateProfile.model.js";
 
+// Lib
+import cloudinary from "../lib/cloudinary.js";
+
 export const getUserById = async (req, res) => {
   const { user: loggedInUser, targetUser } = req;
 
@@ -77,6 +80,34 @@ export const getAllUser = async (req, res) => {
       },
     });
   } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
+
+export const getProfile = async (req, res) => {
+  const { user } = req;
+
+  try {
+    let userProfile;
+
+    if (user.role === "candidate") {
+      userProfile = await CandidateProfile.findOne({ userId: user._id });
+    }
+
+    // if (user.role === "creator") {
+    //   userProfile = await CandidateProfile.findOne({ userId: user._id });
+    // }
+
+    // Success
+    res.status(200).json({
+      status: "success",
+      data: userProfile,
+    });
+  } catch (error) {
+    // Error
     res.status(500).json({
       status: "error",
       message: "Internal server error",
@@ -173,6 +204,100 @@ export const updateCandidateProfile = async (req, res) => {
       status: "success",
       message: "Profile details updated successfully!",
       data: updatedProfileDetails,
+    });
+  } catch (error) {
+    // Error
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
+
+export const uploadProfilePic = async (req, res) => {
+  const { profilePic } = req.body;
+  const { user } = req;
+
+  try {
+    if (!profilePic) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Profile pic is required",
+      });
+    }
+
+    const previousProfilePic = user.profilePic;
+
+    const uploadResponse = await cloudinary.uploader.upload(profilePic, {
+      folder: "Profile",
+    });
+
+    const updatedUser = await User.findByIdAndUpdate(
+      user._id,
+      { profilePic: uploadResponse.secure_url },
+      { new: true }
+    );
+
+    if (previousProfilePic) {
+      const parts = previousProfilePic.split("/");
+      const previousPublicId = parts[parts.length - 1].split(".")[0];
+
+      await cloudinary.uploader.destroy(`Profile/${previousPublicId}`);
+    }
+
+    // Success
+    res.status(200).json({
+      status: "success",
+      message: "Successfully Uploaded Profile Pic",
+      data: updatedUser,
+    });
+  } catch (error) {
+    // Error
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
+
+export const uploadResume = async (req, res) => {
+  const { resume } = req.body;
+  const { user } = req;
+
+  try {
+    if (!resume) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Resume is required",
+      });
+    }
+
+    const previousResume = await CandidateProfile.findOne({
+      userId: user._id,
+    }).select("_id resume");
+
+    const uploadResponse = await cloudinary.uploader.upload(resume, {
+      folder: "Resume",
+    });
+
+    const updatedCandidateProfile = await CandidateProfile.findByIdAndUpdate(
+      previousResume._id,
+      { resume: uploadResponse.secure_url },
+      { new: true }
+    );
+
+    if (previousResume && previousResume.resume) {
+      const parts = previousResume.resume.split("/");
+      const previousPublicId = parts[parts.length - 1].split(".")[0];
+
+      await cloudinary.uploader.destroy(`Resume/${previousPublicId}`);
+    }
+
+    // Success
+    res.status(200).json({
+      status: "success",
+      message: "Successfully Uploaded Resume",
+      data: updatedCandidateProfile,
     });
   } catch (error) {
     // Error

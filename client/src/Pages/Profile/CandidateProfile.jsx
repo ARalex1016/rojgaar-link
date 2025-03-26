@@ -7,7 +7,7 @@ import {
   FloatingLabelInput,
   FileUpload,
   CountryStateSelect,
-  SocialMediaSelect,
+  PhoneNumberInput,
 } from "../../Components/Input";
 import { SocialLinkAddOrDelete } from "../../Components/SocialMedia";
 
@@ -16,7 +16,7 @@ import { useAuthStore } from "../../Store/useAuthStore";
 import { useUserStore } from "../../Store/useUserStore";
 
 // Utils
-import { capitalize, isValidURL } from "../../Utils/StringManager";
+import { capitalize } from "../../Utils/StringManager";
 import { getDateDetails } from "../../Utils/DateManager";
 
 const SubTitle = ({ className, children }) => {
@@ -82,11 +82,14 @@ const CandidateProfile = () => {
 
   const [profileInfo, setProfileInfo] = useState(initialProfileInfo);
 
-  const handlePhoneNumberChange = (e) => {
+  const handlePhoneNumberChange = (phone) => {
+    console.log(phone);
+
     setProfileInfo((pre) => ({
       ...pre,
       contact: {
-        phoneNumber: e.target.value,
+        ...pre.contact,
+        phoneNumber: phone,
       },
     }));
   };
@@ -180,7 +183,7 @@ const CandidateProfile = () => {
         <div className="my-4 flex flex-col gap-y-2">
           <SubTitle>Contact Information</SubTitle>
 
-          <FloatingLabelInput
+          {/* <FloatingLabelInput
             label="Phone Number"
             name="phoneNumber"
             id="phoneNumber"
@@ -191,6 +194,11 @@ const CandidateProfile = () => {
             checked=""
             readOnly=""
             handleInputChange={handlePhoneNumberChange}
+          /> */}
+
+          <PhoneNumberInput
+            value={profileInfo.contact.phoneNumber}
+            handlePhoneNumberChange={handlePhoneNumberChange}
           />
 
           <SocialLinkAddOrDelete

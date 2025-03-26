@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import Select from "react-select";
 import countryList from "react-select-country-list";
 import { Country, State } from "country-state-city";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import toast from "react-hot-toast";
 
 // React Icons
@@ -283,6 +285,16 @@ export const RadioInput = ({ label, name, value, id, handleInputChange }) => {
         </label>
       </div>
     </>
+  );
+};
+
+export const PhoneNumberInput = ({ value, handlePhoneNumberChange }) => {
+  return (
+    <PhoneInput
+      country={"us"}
+      value={value}
+      onChange={handlePhoneNumberChange}
+    />
   );
 };
 

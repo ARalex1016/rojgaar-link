@@ -12,7 +12,6 @@ const candidateProfileSchema = new mongoose.Schema(
       socialMedia: {
         facebook: { type: String },
         instagram: { type: String },
-        whatsApp: { type: String },
       },
     },
     location: {

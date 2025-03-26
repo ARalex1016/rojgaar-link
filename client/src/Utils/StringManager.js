@@ -76,3 +76,14 @@ export const isValidObjectId = (id) => {
 };
 
 export const isEmptyObject = (obj) => Object.keys(obj).length === 0;
+
+export const isValidURL = (url) => {
+  const pattern = new RegExp(
+    "^(https?:\\/\\/)?" + // Protocol (http or https)
+      "((([a-zA-Z0-9$-_@.&+!*\\(\\),]|[a-zA-Z0-9-]+\\.[a-zA-Z]{2,}))" + // Domain
+      "(\\:[0-9]{1,5})?)" + // Optional port
+      "(\\/[a-zA-Z0-9$-_@.&+!*\\(\\),%]*)*$", // Path
+    "i"
+  );
+  return !!pattern.test(url);
+};

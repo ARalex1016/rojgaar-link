@@ -60,6 +60,9 @@ const customSelectStyles = {
     ...base,
     color: "rgba(var(--neutral), 0.8)",
     fontSize: "12px",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   }),
   singleValue: (base) => ({
     ...base,
@@ -472,6 +475,71 @@ export const CategorySelect = ({
         styles={customSelectStyles}
         className={`${className}`}
       />
+    </>
+  );
+};
+
+export const SocialMediaSelect = ({
+  options,
+  handleAddSocialLink,
+  className,
+}) => {
+  const [link, setLink] = useState("");
+  const [selectedSocial, setSelectedSocial] = useState(null);
+
+  const handleSelect = (e) => {
+    setSelectedSocial(e.value);
+  };
+
+  const handleChange = (e) => {
+    setLink(e.target.value);
+  };
+
+  const handleAddSocial = () => {
+    if (!selectedSocial) {
+      toast.error("Select Social Media First");
+      return;
+    }
+
+    if (!link) {
+      toast.error("Enter a valid URL");
+      return;
+    }
+
+    handleAddSocialLink(link, selectedSocial);
+
+    setLink("");
+  };
+
+  return (
+    <>
+      <div className="w-full flex flex-row gap-x-1">
+        <Select
+          options={options}
+          value={options.find((opt) => opt.value === selectedSocial) || null}
+          placeholder="Select an option..."
+          onChange={handleSelect}
+          styles={customSelectStyles}
+          className={`w-1/3 ${className}`}
+        />
+
+        <input
+          type="url"
+          name="socialLink"
+          id="socialLink"
+          value={link}
+          placeholder="Link here..."
+          onChange={handleChange}
+          className={`w-2/3 ${customStyles}`}
+        />
+      </div>
+
+      <button
+        onClick={handleAddSocial}
+        className="text-neutral text-lg font-medium bg-customBlue border-none outline-none rounded-md py-1 cursor-pointer"
+      >
+        Add Link
+      </button>
     </>
   );
 };

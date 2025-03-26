@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 // Components
 import ProfilePic from "./ProfilePic";
@@ -6,14 +7,16 @@ import {
   FloatingLabelInput,
   FileUpload,
   CountryStateSelect,
+  SocialMediaSelect,
 } from "../../Components/Input";
+import { SocialLinkAddOrDelete } from "../../Components/SocialMedia";
 
 // Store
 import { useAuthStore } from "../../Store/useAuthStore";
 import { useUserStore } from "../../Store/useUserStore";
 
 // Utils
-import { capitalize } from "../../Utils/StringManager";
+import { capitalize, isValidURL } from "../../Utils/StringManager";
 import { getDateDetails } from "../../Utils/DateManager";
 
 const SubTitle = ({ className, children }) => {
@@ -58,8 +61,21 @@ const CandidateProfile = () => {
       country: "",
       state: "",
     },
-    education: [],
-    experience: [],
+    education: [
+      {
+        degree: String,
+        institution: String,
+        yearOfGraduation: Number,
+      },
+    ],
+    experience: [
+      {
+        jobTitle: String,
+        company: String,
+        yearsOfExperience: Number,
+        description: String,
+      },
+    ],
     skills: [],
     resume: "",
   };
@@ -161,7 +177,7 @@ const CandidateProfile = () => {
         </div>
 
         {/* Contact Information */}
-        <div className="my-4">
+        <div className="my-4 flex flex-col gap-y-2">
           <SubTitle>Contact Information</SubTitle>
 
           <FloatingLabelInput
@@ -175,6 +191,11 @@ const CandidateProfile = () => {
             checked=""
             readOnly=""
             handleInputChange={handlePhoneNumberChange}
+          />
+
+          <SocialLinkAddOrDelete
+            socialMediaObj={profileInfo.contact.socialMedia}
+            setProfileInfo={setProfileInfo}
           />
         </div>
 

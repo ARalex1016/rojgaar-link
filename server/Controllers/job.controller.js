@@ -659,10 +659,10 @@ export const getCounters = async (req, res) => {
 };
 
 export const getJobById = async (req, res) => {
-  const { job, isAuthenticated, user } = req;
+  const { user, isAuthenticated, job } = req;
 
   const isAdmin = user?.role === "admin";
-  const isCreator = job.creatorId.equals(user?._id);
+  const isCreator = job?.creatorId.equals(user?._id);
 
   try {
     const canView = await canViewJobDetails(
@@ -753,10 +753,87 @@ export const getJobById = async (req, res) => {
       }
     }
 
+    // Applied User Details Counters
+    if (job.status === "active" && (isCreator || isAdmin)) {
+      let statuses = ["pending", "shortlisted", "hired", "rejected"];
+
+      const applications = await Promise.all(
+        statuses.map((status) =>
+          Application.countDocuments({
+            jobId: job._id,
+            ...(status !== "pending" && { status }),
+          })
+        )
+      );
+
+      const applicationDetails = {
+        totalApplications: await Application.countDocuments({ jobId: job._id }),
+        pending: applications[0],
+        shortlisted: applications[1],
+        hired: applications[2],
+        rejected: applications[3],
+      };
+
+      jobDetails["applicationDetails"] = applicationDetails;
+    }
+
     // Success
     res.status(200).json({
       status: "success",
       data: jobDetails,
+    });
+  } catch (error) {
+    // Error
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
+
+export const getAllAppliedCandidates = async (req, res) => {
+  const { user, job } = req;
+  const { page = 1, limit = 10 } = req.query;
+
+  const pageNumber = parseInt(page, 10);
+  const limitNumber = parseInt(limit, 10);
+
+  const isAdmin = user?.role === "admin";
+  const isCreator = job?.creatorId.equals(user?._id);
+
+  const jobId = job._id;
+
+  try {
+    if (!isAdmin && !isCreator) {
+      return res.status(400).json({
+        status: "fail",
+        message: "You are not authorized to perform this action!",
+      });
+    }
+
+    // Fetch applications and candidates in parallel
+    const [applications, applicationUsers] = await Promise.all([
+      Application.find({ jobId })
+        .select("candidateId jobId createdAt status")
+        .skip((pageNumber - 1) * limitNumber)
+        .limit(limitNumber),
+      Application.find({ jobId })
+        .populate("candidateId", "name profilePic") // Populate candidate data
+        .skip((pageNumber - 1) * limitNumber)
+        .limit(limitNumber),
+    ]);
+
+    const appliedUsers = applications.map((application, index) => ({
+      ...application.toObject(),
+      name: applicationUsers[index]?.candidateId?.name || "",
+      profilePic: applicationUsers[index]?.candidateId?.profilePic || "",
+    }));
+
+    // Success
+    res.status(200).json({
+      status: "success",
+      message: "Successfully retrieved data",
+      data: appliedUsers,
     });
   } catch (error) {
     // Error

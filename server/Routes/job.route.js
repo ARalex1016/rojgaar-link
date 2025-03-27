@@ -10,6 +10,7 @@ import {
   deleteJob,
   updateJob,
   getJobById,
+  getAllAppliedCandidates,
   getAllActiveJobs,
   getAllCreatorJobs,
   getAllJobs,
@@ -54,6 +55,13 @@ router.get("/saved", protect, authorize("candidate"), getAllSavedJobs);
 router.get("/counters", protect, authorize("admin", "creator"), getCounters);
 
 router.get("/:jobId", checkAuthentication, getJobById);
+
+router.get(
+  "/:jobId/applied-candidates",
+  protect,
+  authorize("admin", "creator"),
+  getAllAppliedCandidates
+);
 
 router.post(
   "/create",

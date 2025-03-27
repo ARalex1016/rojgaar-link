@@ -16,9 +16,6 @@ import { useJobStore } from "../../Store/useJobStore";
 import { getDateDetails } from "../../Utils/DateManager";
 import { capitalize } from "../../Utils/StringManager";
 
-// React Icons
-import { BiLoaderAlt } from "react-icons/bi";
-
 const Title = ({ children, className }) => {
   return (
     <p
@@ -82,7 +79,11 @@ const Job = () => {
   }, [jobId]);
 
   useEffect(() => {
-    setJobCreator(isAuthenticated && isCreator && job?.creatorId === user._id);
+    setJobCreator(
+      isAuthenticated &&
+        isCreator &&
+        job?.creatorDetails?.creatorId === user?._id
+    );
   }, [job, isAuthenticated, isCreator, user]);
 
   const updateCounter = async () => {
@@ -280,6 +281,49 @@ const Job = () => {
               <ExpandableText text={job?.description} />
             </div>
           </section>
+
+          {/* Application Details */}
+          {(jobCreator || isAdmin) && (
+            <section className="w-full bg-black shadow-inner-lg shadow-neutral/40 rounded-md grid grid-cols-2 gap-x-2 gap-y-2 px-8 py-4 my-2">
+              <h2 className="text-neutral text-center text-lg font-medium col-span-2">
+                Application Details
+              </h2>
+
+              <p className="text-neutral/80 text-sm col-span-1">
+                Total Applications
+              </p>
+              <p className="text-neutral text-center text-sm col-span-1">
+                {job?.applicationDetails?.totalApplications}
+              </p>
+
+              <p className="text-neutral/80 text-sm col-span-1">Hired</p>
+              <p className="text-neutral text-center text-sm col-span-1">
+                {job?.applicationDetails?.hired}
+              </p>
+
+              <p className="text-neutral/80 text-sm col-span-1">Pending</p>
+              <p className="text-neutral text-center text-sm col-span-1">
+                {job?.applicationDetails?.pending}
+              </p>
+
+              <p className="text-neutral/80 text-sm col-span-1">Shortlisted</p>
+              <p className="text-neutral text-center text-sm col-span-1">
+                {job?.applicationDetails?.shortlisted}
+              </p>
+
+              <p className="text-neutral/80 text-sm col-span-1">Rejected</p>
+              <p className="text-neutral text-center text-sm col-span-1">
+                {job?.applicationDetails?.rejected}
+              </p>
+
+              <button
+                onClick={() => navigate("applications")}
+                className="w-full text-neutral/80 text-lg bg-main/80 rounded-md col-span-2 py-1 hover:text-neutral hover:bg-main mt-1"
+              >
+                View All Applications
+              </button>
+            </section>
+          )}
 
           {/* Creator Details */}
           {(isAdmin || isCreator) && job.creatorDetails && (

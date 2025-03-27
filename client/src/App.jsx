@@ -16,6 +16,7 @@ import NotFound from "./Pages/NotFound";
 import Jobs from "./Pages/Jobs/Jobs";
 import JobDetails from "./Pages/Jobs/JobDetails";
 import MyJobs from "./Pages/MyJobs/MyJobs";
+import Applications from "./Pages/MyJobs/Application/Applications";
 import SupportUs from "./Pages/SupportUs/SupportUs";
 import User from "./Pages/User/User";
 import Donate from "./Pages/SupportUs/Donate";
@@ -153,6 +154,15 @@ function App() {
         {
           path: "myjobs/:jobId",
           element: isAuthenticated && !isAdmin ? <JobDetails /> : <NotFound />,
+        },
+        {
+          path: "myjobs/:jobId/applications",
+          element:
+            isAuthenticated && (isCreator || isAdmin) ? (
+              <Applications />
+            ) : (
+              <NotFound />
+            ),
         },
         {
           path: "user",

@@ -74,6 +74,20 @@ export const useJobStore = create((set) => ({
     }
   },
 
+  getAllAppliedCandidates: async (jobId, page) => {
+    try {
+      const res = await axiosInstance.get(
+        `/jobs/${jobId}/applied-candidates?page=${page}`
+      );
+
+      return res.data;
+    } catch (error) {
+      throw Error(
+        error?.response?.data?.message || "An unexpected error occurred"
+      );
+    }
+  },
+
   getCounters: async () => {
     try {
       const res = await axiosInstance.get("/jobs/counters");

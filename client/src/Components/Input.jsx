@@ -525,14 +525,14 @@ export const SocialMediaSelect = ({
 
   return (
     <>
-      <div className="w-full flex flex-row gap-x-1">
+      <div className="w-full flex flex-row">
         <Select
           options={options}
           value={options.find((opt) => opt.value === selectedSocial) || null}
           placeholder="Select an option..."
           onChange={handleSelect}
           styles={customSelectStyles}
-          className={`w-1/3 ${className}`}
+          className={`w-3/12 ${className}`}
         />
 
         <input
@@ -542,16 +542,16 @@ export const SocialMediaSelect = ({
           value={link}
           placeholder="Link here..."
           onChange={handleChange}
-          className={`w-2/3 ${customStyles}`}
+          className={`w-6/12 ${customStyles} border-r-0 rounded-none`}
         />
-      </div>
 
-      <button
-        onClick={handleAddSocial}
-        className="text-neutral text-lg font-medium bg-customBlue border-none outline-none rounded-md py-1 cursor-pointer"
-      >
-        Add Link
-      </button>
+        <button
+          onClick={handleAddSocial}
+          className="w-3/12 text-neutral text-sm font-medium bg-customBlue border-none outline-none rounded-r-md cursor-pointer px-1"
+        >
+          Add Link
+        </button>
+      </div>
     </>
   );
 };

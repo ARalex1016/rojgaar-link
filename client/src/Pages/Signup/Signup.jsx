@@ -153,7 +153,9 @@ const Signup = () => {
             <button
               disabled={isSigningIn}
               onClick={handleButtonCLick}
-              className="w-full max-w-72 h-10 text-white text-lg font-medium bg-main/60 rounded-md disabled:bg-gray-600"
+              className={`w-full max-w-72 h-10 text-white text-lg font-medium rounded-md disabled:bg-gray-600 ${
+                isSigningIn ? "bg-gray" : "bg-main/60"
+              }`}
             >
               {isSigningIn ? (
                 <BiLoaderAlt className="text-2xl animate-spin mx-auto" />

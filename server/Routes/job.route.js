@@ -3,6 +3,7 @@ import express from "express";
 // Controller
 import {
   saveJob,
+  removeJob,
   createJob,
   approveJob,
   suspendJob,
@@ -65,6 +66,8 @@ router.post(
 router.patch("/:jobId", protect, authorize("creator"), updateJob);
 
 router.post("/:jobId/save", protect, authorize("candidate"), saveJob);
+
+router.post("/:jobId/remove", protect, authorize("candidate"), removeJob);
 
 router.patch("/:jobId/approve", protect, authorize("admin"), approveJob);
 

@@ -2,6 +2,9 @@
 import User from "../Models/user.model.js";
 import CandidateProfile from "../Models/candidateProfile.model.js";
 
+// Utils
+import { checkEligibility } from "../utils/checkEligibility.js";
+
 // Lib
 import cloudinary from "../lib/cloudinary.js";
 
@@ -187,7 +190,7 @@ export const updateUserDetail = async (req, res) => {
   }
 };
 
-export const updateCandidateProfile = async (req, res) => {
+export const updatedProfileDetails = async (req, res) => {
   const { user } = req;
 
   try {
@@ -198,6 +201,15 @@ export const updateCandidateProfile = async (req, res) => {
       req.body,
       { new: true, runValidators: true }
     );
+
+    let previousEligibility = updatedProfileDetails.eligible;
+
+    let eligibility = checkEligibility(user, updatedProfileDetails);
+
+    if (eligibility !== previousEligibility) {
+      updatedProfileDetails.eligible = eligibility;
+      await updatedProfileDetails.save();
+    }
 
     // Success
     res.status(200).json({
@@ -291,6 +303,15 @@ export const uploadResume = async (req, res) => {
       const previousPublicId = parts[parts.length - 1].split(".")[0];
 
       await cloudinary.uploader.destroy(`Resume/${previousPublicId}`);
+    }
+
+    let previousEligibility = updatedCandidateProfile.eligible;
+
+    let eligibility = checkEligibility(user, updatedCandidateProfile);
+
+    if (eligibility !== previousEligibility) {
+      updatedCandidateProfile.eligible = eligibility;
+      await updatedCandidateProfile.save();
     }
 
     // Success

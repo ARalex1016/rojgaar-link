@@ -30,8 +30,8 @@ const Filters = ({ isOpen, toggleSection, currentPage }) => {
       state: "",
     },
     category: [],
-    minSalary: 500,
-    maxSalary: 700,
+    minSalary: 200,
+    maxSalary: 5000,
     experienceLevel: "",
     sortBy: null,
   };
@@ -296,7 +296,7 @@ const Jobs = () => {
         <p className="text-neutral/70 text-sm">
           Total Jobs Found :{" "}
           <span className="text-neutral font-bold">
-            {jobs?.meta?.totalJobs}
+            {jobs?.meta?.totalJobs ?? 0}
           </span>
         </p>
 

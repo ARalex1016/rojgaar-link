@@ -32,8 +32,8 @@ const MyJobs = () => {
     : ["pending", "active", "filled", "expired", "suspended"];
 
   const apiEndpoints = {
-    applied: "/application/applied",
-    saved: "/jobs/saved",
+    applied: "/application/applied?",
+    saved: "/jobs/saved?",
     pending: "/jobs/creator-jobs?status=pending",
     active: "/jobs/creator-jobs?status=active",
     filled: "/jobs/creator-jobs?status=filled",
@@ -43,10 +43,10 @@ const MyJobs = () => {
 
   const fetchJobs = async (tab) => {
     setIsLoading(true);
-    setJobs([]);
 
     try {
-      let pageQuery = `&page=${currentPage}`;
+      let pageQuery = `page=${currentPage}`;
+
       const res = await customRequest(apiEndpoints[tab], pageQuery);
 
       setJobs(res);
@@ -60,6 +60,8 @@ const MyJobs = () => {
   useEffect(() => {
     // Fetch jobs when the active tab changes
     if (!jobs[activeTab]) {
+      setJobs([]);
+
       fetchJobs(activeTab);
     }
   }, [activeTab]);
@@ -112,14 +114,12 @@ const MyJobs = () => {
           )}
         </section>
 
-        {counters && counters[activeTab] > 0 && (
-          <p className="text-neutral/70 text-sm">
-            Total Jobs Found :{" "}
-            <span className="text-neutral font-bold">
-              {counters[activeTab]}
-            </span>
-          </p>
-        )}
+        <p className="text-neutral/70 text-sm">
+          Total Jobs Found :{" "}
+          <span className="text-neutral font-bold">
+            {jobs?.meta?.totalJobs ?? 0}
+          </span>
+        </p>
 
         {/* Job Cards */}
         <section className="w-full min-h-40 flex justify-around gap-x-8 gap-y-10 flex-wrap py-4">
@@ -134,6 +134,7 @@ const MyJobs = () => {
           )}
         </section>
 
+        {/* Pagination */}
         {jobs && jobs?.data?.length > 0 && jobs.meta && (
           <Pagination
             totalPages={jobs.meta.totalPages}

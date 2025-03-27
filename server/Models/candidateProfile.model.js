@@ -35,6 +35,10 @@ const candidateProfileSchema = new mongoose.Schema(
     ],
     skills: [String],
     resume: { type: String },
+    eligible: {
+      type: Boolean,
+      default: false,
+    },
   },
   { strict: true, timestamps: true }
 );

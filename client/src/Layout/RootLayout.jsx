@@ -6,8 +6,14 @@ import Header from "../Components/Header/Header";
 import Footer from "../Components/Footer/Footer";
 import Background from "../Components/Background";
 import SideSpacing from "../Components/SideSpacing";
+import { LoadingLinear } from "../Components/Loading";
+
+// Store
+import { useAuthStore } from "../Store/useAuthStore";
 
 const RootLayout = () => {
+  const { isLoading } = useAuthStore();
+
   const location = useLocation();
   const hideFooter = ["/signup", "/login"];
 
@@ -17,6 +23,7 @@ const RootLayout = () => {
     <>
       <Background>
         <Header />
+        <LoadingLinear isVisible={isLoading} />
         <SideSpacing className="flex-1">
           <Outlet />
         </SideSpacing>

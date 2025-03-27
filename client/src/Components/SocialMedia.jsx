@@ -30,12 +30,12 @@ export const SocialLinkAddOrDelete = ({ socialMediaObj, setProfileInfo }) => {
   }, [socialMediaObj]);
 
   const handleAddSocialLink = (link, platform) => {
-    // let isValid = isValidURL(link);
+    let isValid = isValidURL(link);
 
-    // if (!isValid) {
-    //   toast.error("Link isn't valid!");
-    //   return;
-    // }
+    if (!isValid) {
+      toast.error("Link isn't valid!");
+      return;
+    }
 
     setProfileInfo((pre) => ({
       ...pre,

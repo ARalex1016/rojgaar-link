@@ -11,6 +11,9 @@ import {
 } from "../../Components/Input";
 import { SocialLinkAddOrDelete } from "../../Components/SocialMedia";
 
+// Icons
+import { Loader } from "lucide-react";
+
 // Store
 import { useAuthStore } from "../../Store/useAuthStore";
 import { useUserStore } from "../../Store/useUserStore";
@@ -47,7 +50,8 @@ const Para = ({ className, children }) => {
 
 const CandidateProfile = () => {
   const { user } = useAuthStore();
-  const { profile, getProfile, uploadResume } = useUserStore();
+  const { profile, getProfile, updatedProfileDetails, uploadResume } =
+    useUserStore();
 
   const initialProfileInfo = {
     contact: {
@@ -61,30 +65,12 @@ const CandidateProfile = () => {
       country: "",
       state: "",
     },
-    education: [
-      {
-        degree: String,
-        institution: String,
-        yearOfGraduation: Number,
-      },
-    ],
-    experience: [
-      {
-        jobTitle: String,
-        company: String,
-        yearsOfExperience: Number,
-        description: String,
-      },
-    ],
-    skills: [],
-    resume: "",
   };
 
   const [profileInfo, setProfileInfo] = useState(initialProfileInfo);
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
 
   const handlePhoneNumberChange = (phone) => {
-    console.log(phone);
-
     setProfileInfo((pre) => ({
       ...pre,
       contact: {
@@ -111,6 +97,18 @@ const CandidateProfile = () => {
       return res;
     } catch (error) {
       throw error;
+    }
+  };
+
+  const handleUpdate = async () => {
+    setIsUpdatingProfile(true);
+
+    try {
+      let res = await updatedProfileDetails(profileInfo);
+      toast.success(res.message);
+    } catch (error) {
+    } finally {
+      setIsUpdatingProfile(false);
     }
   };
 
@@ -164,40 +162,14 @@ const CandidateProfile = () => {
           />
         </div>
 
-        {/* Account Information */}
-        <div className="my-4">
-          <SubTitle>Account Information</SubTitle>
-
-          <Row>
-            <Para>Member Since</Para>
-            <Para>{getDateDetails(user?.createdAt, false)}</Para>
-          </Row>
-
-          <Row>
-            <Para>Account Status</Para>
-            <Para>Active</Para>
-          </Row>
-        </div>
-
         {/* Contact Information */}
         <div className="my-4 flex flex-col gap-y-2">
           <SubTitle>Contact Information</SubTitle>
 
-          {/* <FloatingLabelInput
-            label="Phone Number"
-            name="phoneNumber"
-            id="phoneNumber"
-            type="tel"
-            value={
-              profile?.contact?.phoneNumber || profileInfo?.contact?.phoneNumber
-            }
-            checked=""
-            readOnly=""
-            handleInputChange={handlePhoneNumberChange}
-          /> */}
-
           <PhoneNumberInput
-            value={profileInfo.contact.phoneNumber}
+            value={
+              profile?.contact?.phoneNumber || profileInfo.contact.phoneNumber
+            }
             handlePhoneNumberChange={handlePhoneNumberChange}
           />
 
@@ -207,6 +179,7 @@ const CandidateProfile = () => {
           />
         </div>
 
+        {/* Location */}
         <div className="my-4">
           <CountryStateSelect
             country={
@@ -217,6 +190,24 @@ const CandidateProfile = () => {
           />
         </div>
 
+        {/* Update Button */}
+        <button
+          disabled={isUpdatingProfile}
+          onClick={handleUpdate}
+          className={`w-full h-8 text-neutral text-lg rounded-md shadow-sm shadow-neutral/50 flex flex-row justify-center items-center py-1 mb-2 ${
+            isUpdatingProfile
+              ? "bg-gray cursor-not-allowed"
+              : "bg-red cursor-pointer"
+          }`}
+        >
+          {isUpdatingProfile ? (
+            <Loader className="size-6 animate-spin" />
+          ) : (
+            "Update"
+          )}
+        </button>
+
+        {/* Resume */}
         <div>
           <SubTitle>Resume</SubTitle>
 
@@ -228,6 +219,31 @@ const CandidateProfile = () => {
             accept=".pdf,.doc,.docx,.jpg,.png"
             handleUpload={handleResumeUpload}
           />
+        </div>
+
+        {/* Account Information */}
+        <div className="my-4">
+          <SubTitle>Account Information</SubTitle>
+
+          {user && (
+            <Row>
+              <Para>Member Since</Para>
+              <Para>{getDateDetails(user?.createdAt, false)}</Para>
+            </Row>
+          )}
+
+          {profile && (
+            <Row>
+              <Para>Eligible Status</Para>
+              <Para
+                className={`font-medium ${
+                  profile?.eligible ? "text-green-500" : "text-red"
+                }`}
+              >
+                {profile?.eligible ? "True" : "False"}
+              </Para>
+            </Row>
+          )}
         </div>
       </section>
     </>

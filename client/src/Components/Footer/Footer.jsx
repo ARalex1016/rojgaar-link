@@ -18,7 +18,7 @@ const Footer = () => {
 
   return (
     <>
-      <footer className="w-[100vw] bg-black grid grid-cols-2 gap-y-2 py-4 mt-8">
+      <footer className="w-[100vw] bg-black grid grid-cols-2 gap-y-2 py-6 mt-8">
         <FooterElements label="All Jobs" onClick={() => navigate("/jobs")} />
 
         <FooterElements

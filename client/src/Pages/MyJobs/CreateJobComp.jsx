@@ -82,10 +82,10 @@ export const CreateJobComp = ({ onClose }) => {
     }));
   };
 
-  const handleExperienceLevelChange = (value) => {
+  const handleExperienceLevelChange = (e) => {
     setJobData((pre) => ({
       ...pre,
-      experienceLevel: value,
+      experienceLevel: e.target.value,
     }));
   };
 

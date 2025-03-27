@@ -52,6 +52,37 @@ export const saveJob = async (req, res) => {
   }
 };
 
+export const removeJob = async (req, res) => {
+  const { user, job } = req;
+
+  try {
+    const existSaved = await SaveJob.findOneAndDelete({
+      candidateId: user._id,
+      jobId: job._id,
+    });
+
+    if (!existSaved) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Job isn't saved yet!",
+      });
+    }
+
+    // Success
+    res.status(201).json({
+      status: "success",
+      message: "Successfully removed the job",
+      data: null,
+    });
+  } catch (error) {
+    // Error
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
+
 export const createJob = async (req, res) => {
   const {
     title,
@@ -288,26 +319,41 @@ export const updateJob = async (req, res) => {
 };
 
 export const getAllSavedJobs = async (req, res) => {
+  const { page = 1, limit = 5 } = req.query;
+
   const { user } = req;
 
   try {
-    const savedJobs = await SaveJob.find({ candidateId: user._id });
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+
+    const savedJobs = await SaveJob.find({ candidateId: user._id })
+      .skip((pageNumber - 1) * limitNumber)
+      .limit(limitNumber);
+
+    // Get total count of saved jobs for the user
+    const totalJobs = await SaveJob.countDocuments({ candidateId: user._id });
 
     // Extract job IDs from savedJobs
     const jobIds = savedJobs.map((savedJob) => savedJob.jobId);
 
     //  Fetch all jobs in a single query
-    const jobs = await Jobs.find({ _id: { $in: jobIds } }).select({
-      description: 0,
-      contactDetails: 0,
-      approvedBy: 0,
-      approvedDate: 0,
-      createdAt: 0,
-      updatedAt: 0,
-    });
+    const jobs = await Jobs.find({ _id: { $in: jobIds } })
+      .select({
+        description: 0,
+        contactDetails: 0,
+        approvedBy: 0,
+        approvedDate: 0,
+        createdAt: 0,
+        updatedAt: 0,
+      })
+      .populate({
+        path: "creatorId",
+        select: "profilePic name",
+      });
 
     // Create a map of job IDs to job data
-    const jobsMap = jobs.reduce((acc, job) => {
+    const jobMap = jobs.reduce((acc, job) => {
       acc[job._id.toString()] = job;
       return acc;
     }, {});
@@ -315,7 +361,7 @@ export const getAllSavedJobs = async (req, res) => {
     // Merge Saved Jobs with their respective job details
     const combinedData = savedJobs.map((savedJob) => ({
       ...savedJob.toObject(),
-      jobDate: jobsMap[savedJob.jobId.toString()] || null, // Handle missing jobs gracefully
+      jobDate: jobMap[savedJob.jobId.toString()] || null, // Handle missing jobs gracefully
     }));
 
     // Success
@@ -323,6 +369,12 @@ export const getAllSavedJobs = async (req, res) => {
       status: "success",
       message: "Successfully retrieved all Saved Jobs",
       data: combinedData,
+      meta: {
+        totalJobs,
+        currentPage: pageNumber,
+        totalPages: Math.ceil(totalJobs / limitNumber),
+        limit: limitNumber,
+      },
     });
   } catch (error) {
     // Error
@@ -426,6 +478,10 @@ export const getAllActiveJobs = async (req, res) => {
           createdAt: 0,
           updatedAt: 0,
         })
+        .populate({
+          path: "creatorId",
+          select: "profilePic",
+        })
         .skip((pageNumber - 1) * limitNumber)
         .limit(limitNumber)
         .sort(sortOption),
@@ -510,7 +566,6 @@ export const getAllCreatorJobs = async (req, res) => {
     if (status) {
       query.status = status;
     }
-
     // Convert page and limit to numbers
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit, 10);
@@ -523,19 +578,21 @@ export const getAllCreatorJobs = async (req, res) => {
         createdAt: 0,
         updatedAt: 0,
       })
+      .populate({
+        path: "creatorId",
+        select: "profilePic",
+      })
       .skip((pageNumber - 1) * limitNumber)
       .limit(limitNumber);
-
     // Total count for pagination metadata
     const totalCreatorJobs = await Jobs.countDocuments(query);
-
     // Success
     res.status(200).json({
       status: "success",
       message: "Successfully retrieved all jobs",
       data: creatorJobs,
       meta: {
-        totalCreatorJobs,
+        totalJobs: totalCreatorJobs,
         currentPage: pageNumber,
         totalPages: Math.ceil(totalCreatorJobs / limitNumber),
         limit: limitNumber,
@@ -543,6 +600,7 @@ export const getAllCreatorJobs = async (req, res) => {
     });
   } catch (error) {
     // Eorror
+    console.log("error", error);
     res.status(500).json({
       status: "error",
       message: "Internal server error",
@@ -622,17 +680,17 @@ export const getJobById = async (req, res) => {
       });
     }
 
-    let creator = null;
+    let toSelect = (isAdmin || isCreator) && job.creatorId && "name email";
 
-    if ((isAdmin || isCreator) && job.creatorId) {
-      creator = await User.findById(job.creatorId).select("name email");
+    const creator = await User.findById(job.creatorId).select(
+      `profilePic ${toSelect}`
+    );
 
-      if (!creator) {
-        return res.status(404).json({
-          status: "fail",
-          message: "Creator ID not found!",
-        });
-      }
+    if (!creator) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Creator ID not found!",
+      });
     }
 
     let approver = null;
@@ -651,6 +709,7 @@ export const getJobById = async (req, res) => {
       ...job.toObject(),
       creatorId: undefined,
       createdAt: undefined,
+      creatorProfile: creator.profilePic,
       creatorDetails:
         isAdmin || isCreator
           ? {

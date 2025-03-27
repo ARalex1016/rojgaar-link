@@ -20,6 +20,7 @@ export const useAuthStore = create((set) => ({
   isLoggingIn: false,
   isLoggingOut: false,
   isCheckingAuth: false,
+  isLoading: false,
 
   setUser: async (newUser) => {
     set({
@@ -28,6 +29,12 @@ export const useAuthStore = create((set) => ({
       isAdmin: newUser.role === "admin",
       isCreator: newUser.role === "creator",
       isCandidate: newUser.role === "candidate",
+    });
+  },
+
+  setLoader: async (state) => {
+    set({
+      isLoading: state,
     });
   },
 
@@ -111,7 +118,7 @@ export const useAuthStore = create((set) => ({
   },
 
   logout: async () => {
-    set({ isLoggingOut: true });
+    set({ isLoggingOut: true, isLoading: true });
     try {
       const res = await axiosInstance.post("/auth/logout");
 
@@ -127,7 +134,7 @@ export const useAuthStore = create((set) => ({
       });
       throw Error;
     } finally {
-      set({ isLoggingOut: false });
+      set({ isLoggingOut: false, isLoading: false });
     }
   },
 }));

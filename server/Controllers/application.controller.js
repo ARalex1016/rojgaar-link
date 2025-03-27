@@ -11,26 +11,29 @@ export const applyJob = async (req, res) => {
       candidateId: user._id,
       jobId: job._id,
     });
-
     if (alreadyApplied) {
       return res.status(400).json({
         status: "fail",
         message: "You have already Applied in this job",
       });
     }
-
     // Get candidate profile
     const candidateProfile = await CandidateProfile.findOne({
       userId: user._id,
     }).select("-userId -appliedJobs -createdAt -updatedAt");
 
+    if (!candidateProfile.eligible) {
+      return res.status(400).json({
+        status: "fail",
+        message: "You are not Eligible to apply for job yet!",
+      });
+    }
     // Apply for job
     const application = await Application.create({
       candidateId: user._id,
       jobId: job._id,
       profileSnapshot: candidateProfile,
     });
-
     // TODO: Add applicants to creator (in real-time)
 
     // Success
@@ -39,6 +42,7 @@ export const applyJob = async (req, res) => {
       message: "Successfully Applied for job",
     });
   } catch (error) {
+    // Error
     res.status(500).json({
       status: "error",
       message: "Internal server error",
@@ -47,25 +51,55 @@ export const applyJob = async (req, res) => {
 };
 
 export const getAllAppliedJobs = async (req, res) => {
+  const { page = 1, limit = 5 } = req.query;
+
   const { user } = req;
 
   try {
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+
+    if (
+      isNaN(pageNumber) ||
+      isNaN(limitNumber) ||
+      pageNumber <= 0 ||
+      limitNumber <= 0
+    ) {
+      return res.status(400).json({
+        status: "error",
+        message:
+          "Invalid page or limit value. Please provide positive integers.",
+      });
+    }
+
     const appliedApplications = await Application.find({
       candidateId: user._id,
-    }).select("jobId status createdAt");
+    })
+      .select("jobId status createdAt")
+      .skip((pageNumber - 1) * limitNumber)
+      .limit(limitNumber);
+
+    const totalJobs = await Application.countDocuments({
+      candidateId: user._id,
+    });
 
     // Extract job IDs from applications
     const jobIds = appliedApplications.map((application) => application.jobId);
 
     // Fetch all jobs in a single query
-    const jobs = await Jobs.find({ _id: { $in: jobIds } }).select({
-      description: 0,
-      contactDetails: 0,
-      approvedBy: 0,
-      approvedDate: 0,
-      createdAt: 0,
-      updatedAt: 0,
-    });
+    const jobs = await Jobs.find({ _id: { $in: jobIds } })
+      .select({
+        description: 0,
+        contactDetails: 0,
+        approvedBy: 0,
+        approvedDate: 0,
+        createdAt: 0,
+        updatedAt: 0,
+      })
+      .populate({
+        path: "creatorId",
+        select: "profilePic name", // Add other fields if needed
+      });
 
     // Create a map of job IDs to job data
     const jobsMap = jobs.reduce((acc, job) => {
@@ -84,6 +118,12 @@ export const getAllAppliedJobs = async (req, res) => {
       status: "success",
       message: "Successfully retrieved all applications",
       data: combinedData,
+      meta: {
+        totalJobs,
+        currentPage: pageNumber,
+        totalPages: Math.ceil(totalJobs / limitNumber),
+        limit: limitNumber,
+      },
     });
   } catch (error) {
     res.status(500).json({

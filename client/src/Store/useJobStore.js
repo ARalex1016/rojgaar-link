@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import { axiosInstance } from "./axios";
 
+// Store
+import { useAuthStore } from "./useAuthStore";
+
 export const useJobStore = create((set) => ({
   jobs: null,
   categories: null,
@@ -36,6 +39,8 @@ export const useJobStore = create((set) => ({
   },
 
   getAllActiveJobs: async (queryString) => {
+    useAuthStore.getState().setLoader(true);
+
     try {
       const url = queryString ? `/jobs/active?${queryString}` : `/jobs/active`;
 
@@ -48,10 +53,14 @@ export const useJobStore = create((set) => ({
       throw Error(
         error?.response?.data?.message || "An unexpected error occurred"
       );
+    } finally {
+      useAuthStore.getState().setLoader(false);
     }
   },
 
   getJobById: async (jobId) => {
+    useAuthStore.getState().setLoader(true);
+
     try {
       const res = await axiosInstance.get(`/jobs/${jobId}`);
 
@@ -60,6 +69,8 @@ export const useJobStore = create((set) => ({
       throw Error(
         error?.response?.data?.message || "An unexpected error occurred"
       );
+    } finally {
+      useAuthStore.getState().setLoader(false);
     }
   },
 
@@ -89,6 +100,18 @@ export const useJobStore = create((set) => ({
     }
   },
 
+  removeJob: async (jobId) => {
+    try {
+      const res = await axiosInstance.post(`/jobs/${jobId}/remove`);
+
+      return res.data;
+    } catch (error) {
+      throw Error(
+        error?.response?.data?.message || "An unexpected error occurred"
+      );
+    }
+  },
+
   applyJob: async (jobId) => {
     try {
       const res = await axiosInstance.post(`/application/${jobId}/apply`);
@@ -103,9 +126,9 @@ export const useJobStore = create((set) => ({
 
   // For My Jobs (for different end points)
   customRequest: async (apiEndpoint, pageQuery) => {
+    useAuthStore.getState().setLoader(true);
     try {
-      const url = `${apiEndpoint}${pageQuery}`;
-
+      const url = `${apiEndpoint}&${pageQuery}`;
       const res = await axiosInstance.get(url);
 
       return res.data;
@@ -113,6 +136,8 @@ export const useJobStore = create((set) => ({
       throw Error(
         error?.response?.data?.message || "An unexpected error occurred"
       );
+    } finally {
+      useAuthStore.getState().setLoader(false);
     }
   },
 

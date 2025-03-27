@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import BackButton from "../../Components/BackButton";
 import ExpandableText from "../../Components/ExpandableText";
 import ButtonWithLoader from "../../Components/Button";
+import { ProfilePicSM } from "../../Components/Image";
 
 // Store
 import { useAuthStore } from "../../Store/useAuthStore";
@@ -43,8 +44,16 @@ const Job = () => {
 
   const { user, isAuthenticated, isAdmin, isCreator, isCandidate } =
     useAuthStore();
-  const { getJobById, saveJob, applyJob, approveJob, suspendJob, deleteJob } =
-    useJobStore();
+  const {
+    getJobById,
+    getCounters,
+    saveJob,
+    removeJob,
+    applyJob,
+    approveJob,
+    suspendJob,
+    deleteJob,
+  } = useJobStore();
 
   const { jobId } = useParams();
 
@@ -76,6 +85,10 @@ const Job = () => {
     setJobCreator(isAuthenticated && isCreator && job?.creatorId === user._id);
   }, [job, isAuthenticated, isCreator, user]);
 
+  const updateCounter = async () => {
+    await getCounters();
+  };
+
   // Candidate
   const handleSave = async () => {
     setIsSaving(true);
@@ -85,6 +98,21 @@ const Job = () => {
 
       toast.success(res.message);
       setJob((pre) => ({ ...pre, hasSaved: true }));
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Candidate
+  const handleRemove = async () => {
+    setIsSaving(true);
+    try {
+      const res = await removeJob(jobId);
+
+      toast.success(res.message);
+      setJob((pre) => ({ ...pre, hasSaved: false }));
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -121,6 +149,8 @@ const Job = () => {
         ...pre,
         status: "active",
       }));
+
+      await updateCounter();
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -141,6 +171,8 @@ const Job = () => {
         ...pre,
         status: "suspended",
       }));
+
+      await updateCounter();
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -159,6 +191,8 @@ const Job = () => {
 
       setJob(null);
       navigate(-1);
+
+      await updateCounter();
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -172,6 +206,13 @@ const Job = () => {
         <section className="w-full pt-6 flex flex-col justify-center items-center gap-y-4">
           {/* Back Button */}
           <BackButton className="mt-2" />
+
+          {/* Creator Profile */}
+          <ProfilePicSM
+            imgSrc={job?.creatorProfile}
+            alt="Creator-Pic"
+            className="absolute top-menuHeight right-sideSpacing mt-2"
+          />
 
           {/* Title */}
           <h2 className="text-neutral text-center font-medium mobilesm:text-lg mobile:text-xl">
@@ -328,37 +369,24 @@ const Job = () => {
           {/* Apply & Save (for Candidate) */}
           {isAuthenticated && isCandidate && (
             <section className="w-full flex flex-row justify-between mt-4">
-              <button
-                onClick={handleSave}
-                disabled={job.hasSaved || isSaving}
-                className={`w-1/3 text-lg text-neutral font-medium bg-blue/60 hover:bg-blue rounded-md py-1 disabled:text-neutral/90 disabled:bg-gray/60 disabled:cursor-not-allowed ${
-                  job.hasSaved && "cursor-not-allowed"
+              <ButtonWithLoader
+                label={job.hasSaved ? "Remove" : "Save"}
+                isLoading={isSaving}
+                onClick={job?.hasSaved ? handleRemove : handleSave}
+                className={`w-3/12 ${
+                  job.hasSaved
+                    ? "bg-rose-700/80 hover:bg-rose-700"
+                    : "bg-customBlue/80 hover:bg-customBlue"
                 }`}
-              >
-                {job.hasSaved ? (
-                  "Saved"
-                ) : isSaving ? (
-                  <BiLoaderAlt className="text-2xl animate-spin mx-auto" />
-                ) : (
-                  "Save Job"
-                )}
-              </button>
+              />
 
-              <button
+              <ButtonWithLoader
+                label={job.hasApplied ? "Applied" : "Apply Now"}
+                isLoading={isApplying}
+                disabled={job.hasApplied}
                 onClick={handleApply}
-                disabled={job.hasApplied || isApplying}
-                className={`w-1/3 text-lg text-neutral font-medium bg-main/60 hover:bg-main rounded-md py-1 disabled:text-neutral/90 disabled:bg-gray/60 disabled:cursor-not-allowed ${
-                  job.hasApplied && "cursor-not-allowed"
-                }`}
-              >
-                {job.hasApplied ? (
-                  "Applied"
-                ) : isApplying ? (
-                  <BiLoaderAlt className="text-2xl animate-spin mx-auto" />
-                ) : (
-                  "Apply Now"
-                )}
-              </button>
+                className={`w-3/12 text-sm bg-main/60 hover:bg-main`}
+              />
             </section>
           )}
 
@@ -371,7 +399,7 @@ const Job = () => {
                   label="Approve"
                   isLoading={isApproving}
                   onClick={handleApproveJob}
-                  className="w-1/5 bg-customBlue/80 hover:bg-customBlue"
+                  className="w-3/12 bg-customBlue/80 hover:bg-customBlue"
                 />
               )}
 
@@ -381,7 +409,7 @@ const Job = () => {
                   label="Suspend"
                   isLoading={isSuspending}
                   onClick={handleSuspend}
-                  className="w-1/5 bg-orange/70 hover:bg-orange/90"
+                  className="w-3/12 bg-orange/70 hover:bg-orange/90"
                 />
               )}
 
@@ -391,7 +419,7 @@ const Job = () => {
                   label="Update"
                   // isLoading={isDeleting}
                   // onClick={handleDelete}
-                  className="w-1/5 bg-customBlue/80 hover:bg-customBlue"
+                  className="w-3/12 bg-customBlue/80 hover:bg-customBlue"
                 />
               )}
 
@@ -401,7 +429,7 @@ const Job = () => {
                   label="Delete"
                   isLoading={isDeleting}
                   onClick={handleDelete}
-                  className="w-1/5 bg-red/80 hover:bg-red"
+                  className="w-3/12 bg-red/80 hover:bg-red"
                 />
               )}
             </section>

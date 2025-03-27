@@ -7,7 +7,7 @@ import {
   getAllUser,
   getProfile,
   updateUserDetail,
-  updateCandidateProfile,
+  updatedProfileDetails,
   uploadProfilePic,
   uploadResume,
   deleteUserById,
@@ -36,8 +36,8 @@ router.patch("/user-details", protect, updateUserDetail);
 router.patch(
   "/profile-details",
   protect,
-  authorize("candidate"),
-  updateCandidateProfile
+  authorize("candidate", "creator"),
+  updatedProfileDetails
 );
 
 router.patch(

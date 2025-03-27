@@ -65,6 +65,7 @@ const AdminJobs = () => {
   useEffect(() => {
     if (activeTab === tabs[0]) {
       setIsOpenSearch(true);
+      setJobs([]);
     } else if (tabs.includes(activeTab) && activeTab !== tabs[0]) {
       setIsOpenSearch(false);
 
@@ -125,11 +126,11 @@ const AdminJobs = () => {
           </section>
         )}
 
-        {counters && counters[activeTab] > 0 && (
+        {jobs?.meta?.totalJobs > 0 && (
           <p className="text-neutral/70 text-sm">
             Total Jobs Found :{" "}
             <span className="text-neutral font-bold">
-              {counters[activeTab]}
+              {jobs?.meta?.totalJobs}
             </span>
           </p>
         )}

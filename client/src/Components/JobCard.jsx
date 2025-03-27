@@ -1,5 +1,8 @@
 import { useNavigate } from "react-router-dom";
 
+// Component
+import { ProfilePicSM } from "./Image";
+
 // React Icons
 import { RxAvatar } from "react-icons/rx";
 
@@ -54,17 +57,11 @@ const JobCard = ({ job }) => {
       "
         >
           {/* Creator Profile */}
-          <div className="w-8 aspect-square bg-main rounded-full flex justify-center items-center absolute top-3 right-3">
-            {job?.creatorProfile ? (
-              <img
-                src={job.creatorProfile}
-                alt={`Profile picture of ${job.creatorName || "creator"}`}
-                className="w-full h-full object-cover rounded-full"
-              />
-            ) : (
-              <RxAvatar className="w-full h-full text-white/60" />
-            )}
-          </div>
+          <ProfilePicSM
+            imgSrc={job?.creatorId?.profilePic}
+            alt="Creator-Image"
+            className="absolute top-3 right-3"
+          />
 
           {/* Title */}
           <h2 className="w-5/6 text-main text-center font-medium truncate mb-2">

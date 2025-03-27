@@ -3,6 +3,7 @@ import AdminMetrics from "../Models/admin-metric.model.js";
 
 export const initializeAdminMetrics = async () => {
   const metrics = await AdminMetrics.findOne();
+  console.log(metrics);
 
   // If no document exists, create it with default values
   if (!metrics) {

@@ -92,7 +92,7 @@ export const useJobStore = create((set) => ({
     }
   },
 
-  getAppliedCandidateById: async ({ jobId, userId }) => {
+  getAppliedCandidateById: async (jobId, userId) => {
     try {
       const res = await axiosInstance.get(`/jobs/${jobId}/${userId}`);
 

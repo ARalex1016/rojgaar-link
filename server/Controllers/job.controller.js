@@ -870,14 +870,19 @@ export const getAppliedCandidateById = async (req, res) => {
       });
     }
 
-    const [candidate, profile] = await Promise.all([
-      User.findById(targetUser._id).select("name email gender profilePic"),
-      CandidateProfile.findById(targetUser._id).select(
-        "contact location resume createdAt"
-      ),
-    ]);
+    const profile = await CandidateProfile.findOne({
+      userId: targetUser._id,
+    }).select("contact location resume createdAt");
 
-    const candidateDetail = { ...candidate.toObject(), ...profile.toObject() };
+    const candidateDetail = {
+      ...profile.toObject(),
+      name: targetUser.name,
+      email: targetUser.email,
+      gender: targetUser.gender,
+      profilePic: targetUser.profilePic,
+      _id: targetUser._id,
+      profileId: profile._id,
+    };
 
     // Success
     res.status(200).json({

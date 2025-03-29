@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 // Components
 import BackButton from "../../../Components/BackButton";
 import { ExpandableTable } from "../../../Components/Table";
-import Pagination from "../../../Components/Pagination";
 
 // Store
 import { useJobStore } from "../../../Store/useJobStore";
@@ -13,8 +13,14 @@ const Applications = () => {
   const { jobId } = useParams();
   const { getAllAppliedCandidates, getAppliedCandidateById } = useJobStore();
 
+  // All Applied User State
   const [appliedUsers, setAppliedUser] = useState(null);
+
+  // Selected Applied User State
   const [appliedUserId, setAppliedUserId] = useState(null);
+  const [isFetchingUserDetail, setIsFetchingUserDetail] = useState(false);
+  const [appliedUserDetail, setAppliedUserDetail] = useState(null);
+
   const [page, setPage] = useState(1);
 
   const handleUserIdChange = (id) => {
@@ -27,17 +33,21 @@ const Applications = () => {
 
       setAppliedUser(res);
     } catch (error) {
-      console.log(error);
+      toast.error(error.message);
     }
   };
 
-  const fetchAppliedCandidateProfile = async () => {
+  const fetchAppliedCandidateProfileById = async () => {
+    setIsFetchingUserDetail(true);
+
     try {
       let res = await getAppliedCandidateById(jobId, appliedUserId);
 
-      console.log(res);
+      setAppliedUserDetail(res.data);
     } catch (error) {
-      console.log(error);
+      toast.error(error.message);
+    } finally {
+      setIsFetchingUserDetail(false);
     }
   };
 
@@ -47,7 +57,7 @@ const Applications = () => {
 
   useEffect(() => {
     if (appliedUserId) {
-      fetchAppliedCandidateProfile();
+      fetchAppliedCandidateProfileById();
     }
   }, [appliedUserId]);
 
@@ -61,6 +71,9 @@ const Applications = () => {
             data={appliedUsers?.data}
             meta={appliedUsers?.meta}
             toggleRow={handleUserIdChange}
+            isFetchingSelectedRowData={isFetchingUserDetail}
+            selectedRowId={appliedUserId}
+            selectedRowData={appliedUserDetail}
             setPage={setPage}
             className="mt-12"
           />

@@ -15,6 +15,7 @@ export default {
         white: "rgba(255, 255, 255)",
         black: "rgba(var(--black))",
         gray: "rgb(99, 99, 99)",
+        darkGray: "rgb(30, 30, 30)",
         customBlue: "rgb(0, 123, 255)",
         customGreen: "rgb(40, 167, 69)",
         orange: "rgb(255, 165, 0)",

@@ -43,9 +43,9 @@ export const getAdminMetrics = async (req, res) => {
   }
 };
 
-export const updateNewUser = async (user) => {
+export const updateNewUser = async (role) => {
   try {
-    await AdminMetrics.updateOne({}, { $inc: { totalUsers: 1 } });
+    await AdminMetrics.updateOne({}, { $inc: { [`users.${role}`]: 1 } });
 
     // TODO: New user (in real-time)
   } catch (error) {
@@ -57,7 +57,7 @@ export const updateNewUser = async (user) => {
   }
 };
 
-export const updateNewJob = async (job) => {
+export const updateNewJob = async () => {
   try {
     await AdminMetrics.updateOne(
       {},
@@ -80,53 +80,61 @@ export const updateNewJob = async (job) => {
   }
 };
 
-export const updateApproveJob = async (job) => {
-  try {
-    await AdminMetrics.updateOne(
-      {},
-      {
-        $inc: { "jobListings.active": 1, "jobListings.pending": -1 },
-      }
-    );
-
-    // TODO: Add the job to searching active joblistings (in real-time)
-    // TODO: Notify the creator of the job that there job post has been approved or listed
-  } catch (error) {
-    // Error
-    res.status(500).json({
-      status: "error",
-      message: "Internal server error!",
-    });
-  }
-};
-
-export const updateSuspendJob = async (job) => {
-  try {
-    await AdminMetrics.updateOne(
-      {},
-      {
-        $inc: { "jobListings.active": -1, "jobListings.suspended": 1 },
-      }
-    );
-
-    // TODO: Remove the job from searching active joblistings (in real-time)
-    // TODO: Notify the creator of the job that there job post has been suspended for investigation
-  } catch (error) {
-    // Error
-    res.status(500).json({
-      status: "error",
-      message: "Internal server error!",
-    });
-  }
-};
-
-export const updateDeletedJob = async (preStatus) => {
+export const updateJobStatus = async (newStatus, prevStatus) => {
   try {
     await AdminMetrics.updateOne(
       {},
       {
         $inc: {
-          [`jobListings.${preStatus}`]: -1,
+          [`jobListings.${newStatus}`]: 1,
+          [`jobListings.${prevStatus}`]: -1,
+        },
+      }
+    );
+  } catch (error) {
+    // Error
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
+
+export const updateRejectRemaining = async (
+  excludeStatuses = ["hired"],
+  totalRejected
+) => {
+  try {
+    let allStatus = ["pending", "shortlisted", "hired"];
+
+    // Determine statuses to reset
+    const resetFields = allStatus.reduce((acc, status) => {
+      if (!excludeStatuses.includes(status)) {
+        acc[`jobListings.${status}`] = 0; // Reset non-excluded statuses to 0
+      }
+      return acc;
+    }, {});
+
+    // Include the rejected count update
+    resetFields["jobListings.rejected"] = totalRejected;
+
+    await AdminMetrics.updateOne({}, { $set: resetFields });
+  } catch (error) {
+    // Error
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
+
+export const updateDeletedJob = async (prevStatus) => {
+  try {
+    await AdminMetrics.updateOne(
+      {},
+      {
+        $inc: {
+          [`jobListings.${prevStatus}`]: -1,
           "jobListings.totalJobListings": -1,
         },
       }

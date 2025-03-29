@@ -59,6 +59,8 @@ export const useUserStore = create((set) => ({
     try {
       const res = await axiosInstance.patch("/user/resume", resume);
 
+      set({ profile: res.data.data });
+
       return res.data;
     } catch (error) {
       throw Error(

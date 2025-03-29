@@ -3,12 +3,12 @@ import User from "../Models/user.model.js";
 import Jobs from "../Models/job.model.js";
 import Application from "../Models/application.model.js";
 import SaveJob from "../Models/save-job.models.js";
+import CandidateProfile from "../Models/candidateProfile.model.js";
 
 // Controller
 import {
   updateNewJob,
-  updateApproveJob,
-  updateSuspendJob,
+  updateJobStatus,
   updateDeletedJob,
   updateSearchAnalytics,
 } from "./admin-metrics.controller.js";
@@ -150,7 +150,7 @@ export const createJob = async (req, res) => {
     const job = await Jobs.create(jobData);
 
     // Update Admin Metrics
-    await updateNewJob(job);
+    await updateNewJob();
 
     // Success
     res.status(201).json({
@@ -184,6 +184,8 @@ export const approveJob = async (req, res) => {
   }
 
   try {
+    let prevStatus = job.status;
+
     job.status = "active";
     job.approvedBy = user._id;
     job.approvedDate = new Date();
@@ -191,7 +193,7 @@ export const approveJob = async (req, res) => {
     const updatedJob = await job.save();
 
     // Update Admin Metrics
-    await updateApproveJob(updatedJob);
+    await updateJobStatus("active", prevStatus);
 
     // Success
     res.status(200).json({
@@ -225,13 +227,13 @@ export const suspendJob = async (req, res) => {
   // }
 
   try {
-    const preStatus = job.status;
+    const prevStatus = job.status;
 
     job.status = "suspended";
     const updatedJob = await job.save();
 
     // Update Admin Metrics
-    await updateSuspendJob(updatedJob, preStatus);
+    await updateJobStatus("suspended", prevStatus);
 
     // Success
     res.status(200).json({
@@ -260,7 +262,7 @@ export const deleteJob = async (req, res) => {
   }
 
   try {
-    let preStatus = job.status;
+    let prevStatus = job.status;
 
     // Delete Job
     await Jobs.findByIdAndDelete(job._id);
@@ -269,7 +271,7 @@ export const deleteJob = async (req, res) => {
     await Application.deleteMany({ jobId: job._id });
 
     // Update Admin Metrics
-    await updateDeletedJob(preStatus);
+    await updateDeletedJob(prevStatus);
 
     // TODO: delete the job, and it's applications from all (in real-time)
 
@@ -793,7 +795,7 @@ export const getJobById = async (req, res) => {
 
 export const getAllAppliedCandidates = async (req, res) => {
   const { user, job } = req;
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 5 } = req.query;
 
   const pageNumber = parseInt(page, 10);
   const limitNumber = parseInt(limit, 10);
@@ -823,6 +825,8 @@ export const getAllAppliedCandidates = async (req, res) => {
         .limit(limitNumber),
     ]);
 
+    const totalUsers = await Application.countDocuments({ jobId });
+
     const appliedUsers = applications.map((application, index) => ({
       ...application.toObject(),
       name: applicationUsers[index]?.candidateId?.name || "",
@@ -834,6 +838,52 @@ export const getAllAppliedCandidates = async (req, res) => {
       status: "success",
       message: "Successfully retrieved data",
       data: appliedUsers,
+      meta: {
+        totalData: totalUsers,
+        currentPage: pageNumber,
+        totalPages: Math.ceil(totalUsers / limitNumber),
+        limit: limitNumber,
+      },
+    });
+  } catch (error) {
+    // Error
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
+
+export const getAppliedCandidateById = async (req, res) => {
+  const { user, targetUser, job } = req;
+
+  try {
+    const application = await Application.find({
+      candidateId: targetUser._id,
+      jobId: job._id,
+    });
+
+    if (!application) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Application not found for the specified job.",
+      });
+    }
+
+    const [candidate, profile] = await Promise.all([
+      User.findById(targetUser._id).select("name email gender profilePic"),
+      CandidateProfile.findById(targetUser._id).select(
+        "contact location resume createdAt"
+      ),
+    ]);
+
+    const candidateDetail = { ...candidate.toObject(), ...profile.toObject() };
+
+    // Success
+    res.status(200).json({
+      status: "success",
+      message: "Successfully retrieved user datail",
+      data: candidateDetail,
     });
   } catch (error) {
     // Error

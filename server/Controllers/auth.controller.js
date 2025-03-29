@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 // Models
 import User from "../Models/user.model.js";
 import CandidateProfile from "../Models/candidateProfile.model.js";
+import CreatorProfile from "../Models/creator-profile.model.js";
 
 // Controllers
 import { updateNewUser } from "./admin-metrics.controller.js";
@@ -13,12 +14,19 @@ import { passwordValidator } from "../utils/stringManager.js";
 import { generateJwtToken } from "../utils/generateJwtToken.js";
 
 export const signup = async (req, res) => {
-  const { name, email, gender, password, confirmPassword } = req.body;
+  const { name, email, gender, password, confirmPassword, role } = req.body;
 
-  if (!name || !email || !password || !confirmPassword) {
+  if (!name || !email || !gender || !password || !confirmPassword) {
     return res.status(400).json({
       status: "fail",
       message: "All fields are required!",
+    });
+  }
+
+  if (role === "admin") {
+    return res.status(400).json({
+      status: "fail",
+      message: "You do not have permission to perform this action!",
     });
   }
 
@@ -50,13 +58,17 @@ export const signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
     const user = await User.create({ ...req.body, password: hashedPassword });
 
-    // Create Candidate Profile
+    // Create Candidate || Creator Profile
     if (user.role === "candidate") {
       await CandidateProfile.create({ userId: user._id });
+    } else if (user.role === "creator") {
+      await CreatorProfile.create({ userId: user._id });
     }
 
     // Update Admin Metrics
-    await updateNewUser(user);
+    await updateNewUser(user.role);
+
+    // JWT Token
     const token = generateJwtToken(user, res);
 
     const { password: _, ...userWithoutPassword } = user.toObject();
@@ -76,6 +88,8 @@ export const signup = async (req, res) => {
     // Success
     res.status(201).json(response);
   } catch (error) {
+    console.log(error);
+
     // Error
     res.status(500).json({
       status: "error",

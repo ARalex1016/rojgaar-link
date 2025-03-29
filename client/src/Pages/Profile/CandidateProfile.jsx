@@ -237,7 +237,7 @@ const CandidateProfile = () => {
               <Para>Eligible Status</Para>
               <Para
                 className={`font-medium ${
-                  profile?.eligible ? "text-green-500" : "text-red"
+                  profile?.eligible ? "text-green-400" : "text-red"
                 }`}
               >
                 {profile?.eligible ? "True" : "False"}

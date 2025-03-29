@@ -75,10 +75,26 @@ export const useJobStore = create((set) => ({
   },
 
   getAllAppliedCandidates: async (jobId, page) => {
+    useAuthStore.getState().setLoader(true);
+
     try {
       const res = await axiosInstance.get(
         `/jobs/${jobId}/applied-candidates?page=${page}`
       );
+
+      return res.data;
+    } catch (error) {
+      throw Error(
+        error?.response?.data?.message || "An unexpected error occurred"
+      );
+    } finally {
+      useAuthStore.getState().setLoader(false);
+    }
+  },
+
+  getAppliedCandidateById: async ({ jobId, userId }) => {
+    try {
+      const res = await axiosInstance.get(`/jobs/${jobId}/${userId}`);
 
       return res.data;
     } catch (error) {

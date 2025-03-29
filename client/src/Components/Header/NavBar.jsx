@@ -100,7 +100,10 @@ export const MobileNavBar = ({ showMobileNav, closeNavBar }) => {
         {showMobileNav && (
           <motion.nav
             variants={{
-              initial: { maxHeight: 0, paddingBlock: 0 },
+              initial: {
+                maxHeight: 0,
+                paddingBlock: 0,
+              },
               final: {
                 maxHeight: "80vh",
                 paddingBlock: "16px",

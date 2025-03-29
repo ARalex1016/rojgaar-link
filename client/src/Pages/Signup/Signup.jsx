@@ -64,7 +64,7 @@ const Signup = () => {
       setUserData(initialData);
       setMessage("");
 
-      navigate("/");
+      navigate("/jobs");
     } catch (error) {
       toast.error(error.message);
     }
@@ -81,7 +81,7 @@ const Signup = () => {
 
           {/* Message */}
           <p
-            className={`w-full min-h-6 text-sm text-red-500 text-center ${
+            className={`w-full min-h-6 text-sm text-red text-center ${
               !message && "invisible"
             }`}
           >

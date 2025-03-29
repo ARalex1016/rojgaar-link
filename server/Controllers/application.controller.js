@@ -3,6 +3,12 @@ import Application from "../Models/application.model.js";
 import CandidateProfile from "../Models/candidateProfile.model.js";
 import Jobs from "../Models/job.model.js";
 
+// Controllers
+import {
+  updateJobStatus,
+  updateRejectRemaining,
+} from "./admin-metrics.controller.js";
+
 export const applyJob = async (req, res) => {
   const { user, job } = req;
 
@@ -34,6 +40,7 @@ export const applyJob = async (req, res) => {
       jobId: job._id,
       profileSnapshot: candidateProfile,
     });
+
     // TODO: Add applicants to creator (in real-time)
 
     // Success
@@ -211,6 +218,13 @@ export const hireApplication = async (req, res) => {
       });
     }
 
+    if (job.status !== "active") {
+      return res.status(400).json({
+        status: "fail",
+        message: "Hiring is not allowed as this job is not currently active.",
+      });
+    }
+
     // Check if the application is rejected
     if (application.status === "rejected") {
       return res.status(400).json({
@@ -227,6 +241,8 @@ export const hireApplication = async (req, res) => {
       });
     }
 
+    let prevStatus = job.status;
+
     // Mark application as shortlisted
     application.status = "hired";
     await application.save();
@@ -236,10 +252,16 @@ export const hireApplication = async (req, res) => {
 
     // Add workersHired from job
     job.workersHired += 1;
-    await job.save();
-    // TODO: also in real-time
 
-    // TODO: if job.maximumWorkers === job.workersHired, mark job as filled
+    if (job.workersHired + 1 === job.maximumWorkers) {
+      let newStatus = "filled";
+      job.status = newStatus;
+
+      await updateJobStatus(newStatus, prevStatus);
+    }
+    await job.save();
+
+    // TODO: also in real-time
 
     // Success
     res.status(200).json({
@@ -269,7 +291,7 @@ export const rejectRemainingApplication = async (req, res) => {
     excludeStatuses = ["hired"];
   } else {
     // Context: After shortlisting
-    excludeStatuses = ["shortlisted"];
+    excludeStatuses = ["shortlisted", "hired"];
   }
 
   // Reject all applications not in excludeStatuses
@@ -280,6 +302,11 @@ export const rejectRemainingApplication = async (req, res) => {
     },
     { $set: { status: "rejected" } }
   );
+
+  // Update Admin Metrics
+  if (result.modifiedCount > 0) {
+    await updateRejectRemaining(excludeStatuses, result.modifiedCount);
+  }
 
   // Success
   res.status(200).json({

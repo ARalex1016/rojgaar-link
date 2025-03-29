@@ -72,9 +72,7 @@ function App() {
     const fetchCounters = async () => {
       try {
         await getCounters();
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     };
 
     if (isAuthenticated && (isAdmin || isCreator)) {
@@ -146,6 +144,15 @@ function App() {
         {
           path: "jobs/:jobId",
           element: <JobDetails />,
+        },
+        {
+          path: "jobs/:jobId/applications",
+          element:
+            isAuthenticated && (isCreator || isAdmin) ? (
+              <Applications />
+            ) : (
+              <NotFound />
+            ),
         },
         {
           path: "myjobs",

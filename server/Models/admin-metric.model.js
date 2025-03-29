@@ -2,9 +2,19 @@ import mongoose from "mongoose";
 
 const adminMetricsSchema = new mongoose.Schema(
   {
-    totalUsers: {
-      type: Number,
-      default: 0,
+    users: {
+      candidate: {
+        type: Number,
+        default: 0,
+      },
+      creator: {
+        type: Number,
+        default: 0,
+      },
+      admin: {
+        type: Number,
+        default: 0,
+      },
     },
     jobListings: {
       totalJobListings: {
@@ -20,6 +30,14 @@ const adminMetricsSchema = new mongoose.Schema(
         default: 0,
       },
       suspended: {
+        type: Number,
+        default: 0,
+      },
+      filled: {
+        type: Number,
+        default: 0,
+      },
+      expired: {
         type: Number,
         default: 0,
       },

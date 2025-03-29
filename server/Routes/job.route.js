@@ -11,6 +11,7 @@ import {
   updateJob,
   getJobById,
   getAllAppliedCandidates,
+  getAppliedCandidateById,
   getAllActiveJobs,
   getAllCreatorJobs,
   getAllJobs,
@@ -24,7 +25,10 @@ import {
 } from "../Controllers/auth.controller.js";
 
 // Middleware
-import { jobIdParamHandler } from "../Middleware/param.middleware.js";
+import {
+  userIdParamHandler,
+  jobIdParamHandler,
+} from "../Middleware/param.middleware.js";
 
 import { jobCategories } from "../lib/jobCategories.js";
 
@@ -34,6 +38,7 @@ import limiter from "../utils/limiter.js";
 const router = express.Router();
 
 // Param Middleware
+router.param("userId", userIdParamHandler);
 router.param("jobId", jobIdParamHandler);
 
 // ALl Routes
@@ -61,6 +66,13 @@ router.get(
   protect,
   authorize("admin", "creator"),
   getAllAppliedCandidates
+);
+
+router.get(
+  "/:jobId/:userId",
+  protect,
+  authorize("admin", "creator"),
+  getAppliedCandidateById
 );
 
 router.post(

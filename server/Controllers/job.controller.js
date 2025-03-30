@@ -795,7 +795,13 @@ export const getJobById = async (req, res) => {
 
 export const getAllAppliedCandidates = async (req, res) => {
   const { user, job } = req;
-  const { page = 1, limit = 5 } = req.query;
+  const { status, page = 1, limit = 5 } = req.query;
+
+  const query = {};
+
+  if (status) {
+    query.status = status;
+  }
 
   const pageNumber = parseInt(page, 10);
   const limitNumber = parseInt(limit, 10);
@@ -814,24 +820,17 @@ export const getAllAppliedCandidates = async (req, res) => {
     }
 
     // Fetch applications and candidates in parallel
-    const [applications, applicationUsers] = await Promise.all([
-      Application.find({ jobId })
-        .select("candidateId jobId createdAt status")
-        .skip((pageNumber - 1) * limitNumber)
-        .limit(limitNumber),
-      Application.find({ jobId })
-        .populate("candidateId", "name profilePic") // Populate candidate data
-        .skip((pageNumber - 1) * limitNumber)
-        .limit(limitNumber),
-    ]);
+    const applications = await Application.find({ jobId, ...query })
+      .select("candidateId jobId profileSnapshot createdAt status")
+      .populate("candidateId", "name email profilePic") // Populate candidate details
+      .skip((pageNumber - 1) * limitNumber)
+      .limit(limitNumber);
 
-    const totalUsers = await Application.countDocuments({ jobId });
+    const totalUsers = await Application.countDocuments({ jobId, ...query });
 
-    const appliedUsers = applications.map((application, index) => ({
-      ...application.toObject(),
-      name: applicationUsers[index]?.candidateId?.name || "",
-      profilePic: applicationUsers[index]?.candidateId?.profilePic || "",
-    }));
+    const appliedUsers = applications.map((application) =>
+      application.toObject()
+    );
 
     // Success
     res.status(200).json({
@@ -844,51 +843,6 @@ export const getAllAppliedCandidates = async (req, res) => {
         totalPages: Math.ceil(totalUsers / limitNumber),
         limit: limitNumber,
       },
-    });
-  } catch (error) {
-    // Error
-    res.status(500).json({
-      status: "error",
-      message: "Internal server error",
-    });
-  }
-};
-
-export const getAppliedCandidateById = async (req, res) => {
-  const { user, targetUser, job } = req;
-
-  try {
-    const application = await Application.find({
-      candidateId: targetUser._id,
-      jobId: job._id,
-    });
-
-    if (!application) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Application not found for the specified job.",
-      });
-    }
-
-    const profile = await CandidateProfile.findOne({
-      userId: targetUser._id,
-    }).select("contact location resume createdAt");
-
-    const candidateDetail = {
-      ...profile.toObject(),
-      name: targetUser.name,
-      email: targetUser.email,
-      gender: targetUser.gender,
-      profilePic: targetUser.profilePic,
-      _id: targetUser._id,
-      profileId: profile._id,
-    };
-
-    // Success
-    res.status(200).json({
-      status: "success",
-      message: "Successfully retrieved user datail",
-      data: candidateDetail,
     });
   } catch (error) {
     // Error

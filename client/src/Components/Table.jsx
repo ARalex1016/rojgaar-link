@@ -78,68 +78,61 @@ const ExpandCollapseButton = ({
   );
 };
 
-const ExpandedRowData = ({
-  isFetchingSelectedRowData,
-  selectedRowData,
-  className,
-}) => {
+const ExpandedRowData = ({ rowData, className }) => {
   return (
     <>
-      {!isFetchingSelectedRowData && (
-        <td
-          colSpan="4"
-          className={`text-sm border-b-[1px] border-neutral/40 px-6 py-4 ${className}`}
+      <td
+        colSpan="4"
+        className={`text-sm border-b-[1px] border-neutral/40 px-6 py-4 ${className}`}
+      >
+        <p className="text-neutral/80">
+          Name:{" "}
+          <span className="text-neutral font-medium">
+            {rowData?.candidateId?.name}
+          </span>
+        </p>
+
+        <p className="text-neutral/80">
+          Email:{" "}
+          <span className="text-neutral font-medium">
+            {rowData?.candidateId?.email}
+          </span>
+        </p>
+
+        <p className="text-neutral/80">
+          Contact:{" "}
+          <span className="text-neutral font-medium">
+            {rowData?.profileSnapshot?.contact?.phoneNumber}
+          </span>
+        </p>
+
+        <p className="text-neutral/80">
+          Location:{" "}
+          <span className="text-neutral font-medium">
+            {rowData?.profileSnapshot?.location?.country}, State
+          </span>
+        </p>
+
+        <p className="text-neutral/80">
+          Applied At:{" "}
+          <span className="text-neutral font-medium">
+            {getDateDetails(rowData?.createdAt, false)}
+          </span>
+        </p>
+
+        <img
+          src={rowData?.profileSnapshot?.resume}
+          alt="Resume Image"
+          className="border-2 border-main/50 hover:border-main rounded-md my-2"
+        />
+
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          className="w-full text-lg text-neutral bg-customBlue rounded-md py-1 mx-auto my-2"
         >
-          <p className="text-neutral/80">
-            Name:{" "}
-            <span className="text-neutral font-medium">
-              {selectedRowData?.name}
-            </span>
-          </p>
-
-          <p className="text-neutral/80">
-            Email:{" "}
-            <span className="text-neutral font-medium">
-              {selectedRowData?.email}
-            </span>
-          </p>
-
-          <p className="text-neutral/80">
-            Contact:{" "}
-            <span className="text-neutral font-medium">
-              {selectedRowData?.contact?.phoneNumber}
-            </span>
-          </p>
-
-          <p className="text-neutral/80">
-            Location:{" "}
-            <span className="text-neutral font-medium">
-              {selectedRowData?.location?.country ?? "---"}{" "}
-              {selectedRowData?.location?.state ?? "---"}
-            </span>
-          </p>
-
-          <p className="text-neutral/80">
-            Applied At:{" "}
-            <span className="text-neutral font-medium">
-              {getDateDetails(selectedRowData?.createdAt, false)}
-            </span>
-          </p>
-
-          <img
-            src={selectedRowData?.resume}
-            alt="Resume Image"
-            className="border-2 border-main/50 hover:border-main rounded-md my-2"
-          />
-
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            className="w-full text-lg text-neutral bg-customBlue rounded-md py-1 mx-auto my-2"
-          >
-            Download Resume
-          </motion.button>
-        </td>
-      )}
+          Download Resume
+        </motion.button>
+      </td>
     </>
   );
 };
@@ -148,9 +141,7 @@ export const ExpandableTable = ({
   data = [],
   meta = {},
   toggleRow,
-  isFetchingSelectedRowData,
   selectedRowId,
-  selectedRowData,
   setPage,
   className,
 }) => {
@@ -172,31 +163,29 @@ export const ExpandableTable = ({
 
           <tbody>
             {data?.map((row, index) => (
-              <React.Fragment key={row?.candidateId}>
+              <React.Fragment key={row?._id}>
                 {/* Row */}
-                <Row
-                  isFetchingSelectedRowData={isFetchingSelectedRowData}
-                  isExpandedRow={selectedRowId === row?.candidateId}
-                >
+                <Row isExpandedRow={selectedRowId === row?.candidateId?._id}>
                   <Data className="font-medium px-4">
                     {meta?.limit * (meta?.currentPage - 1) + (index + 1)}
                   </Data>
 
                   <Data>
                     <ProfilePicSM
-                      imgSrc={row?.profilePic}
+                      imgSrc={row?.candidateId?.profilePic}
                       alt="User Profile"
                       className="size-8"
                     />
                   </Data>
 
-                  <Data className="hover:font-medium">{row?.name}</Data>
+                  <Data className="hover:font-medium">
+                    {row?.candidateId?.name}
+                  </Data>
 
                   <Data>
                     <ExpandCollapseButton
                       rowId={row?.candidateId}
                       selectedRowId={selectedRowId}
-                      isLoading={isFetchingSelectedRowData}
                       onClick={() => toggleRow(row?.candidateId)}
                     >
                       {selectedRowId === row?.candidateId ? (
@@ -234,10 +223,7 @@ export const ExpandableTable = ({
                       }}
                       className="overflow-hidden"
                     >
-                      <ExpandedRowData
-                        isFetchingSelectedRowData={isFetchingSelectedRowData}
-                        selectedRowData={selectedRowData}
-                      />
+                      <ExpandedRowData rowData={row} />
                     </motion.tr>
                   )}
                 </AnimatePresence>

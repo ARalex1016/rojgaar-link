@@ -11,7 +11,6 @@ import {
   updateJob,
   getJobById,
   getAllAppliedCandidates,
-  getAppliedCandidateById,
   getAllActiveJobs,
   getAllCreatorJobs,
   getAllJobs,
@@ -66,13 +65,6 @@ router.get(
   protect,
   authorize("admin", "creator"),
   getAllAppliedCandidates
-);
-
-router.get(
-  "/:jobId/:userId",
-  protect,
-  authorize("admin", "creator"),
-  getAppliedCandidateById
 );
 
 router.post(

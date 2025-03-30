@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 
 // Components
 import BackButton from "../../../Components/BackButton";
+import TabsWithCounter from "../../../Components/Tabs";
 import { ExpandableTable } from "../../../Components/Table";
 
 // Store
@@ -11,17 +12,14 @@ import { useJobStore } from "../../../Store/useJobStore";
 
 const Applications = () => {
   const { jobId } = useParams();
-  const { getAllAppliedCandidates, getAppliedCandidateById } = useJobStore();
+  const { getAllAppliedCandidates } = useJobStore();
 
-  // All Applied User State
+  const [activeStatus, setActiveStatus] = useState("pending");
   const [appliedUsers, setAppliedUser] = useState(null);
-
-  // Selected Applied User State
   const [appliedUserId, setAppliedUserId] = useState(null);
-  const [isFetchingUserDetail, setIsFetchingUserDetail] = useState(false);
-  const [appliedUserDetail, setAppliedUserDetail] = useState(null);
-
   const [page, setPage] = useState(1);
+
+  const allStatus = ["pending", "shortlisted", "hired", "rejected"];
 
   const handleUserIdChange = (id) => {
     setAppliedUserId((prevId) => (prevId === id ? "" : id));
@@ -29,7 +27,7 @@ const Applications = () => {
 
   const fetchAppliedCandidates = async () => {
     try {
-      let res = await getAllAppliedCandidates(jobId, page);
+      let res = await getAllAppliedCandidates(jobId, activeStatus, page);
 
       setAppliedUser(res);
     } catch (error) {
@@ -37,45 +35,38 @@ const Applications = () => {
     }
   };
 
-  const fetchAppliedCandidateProfileById = async () => {
-    setIsFetchingUserDetail(true);
-
-    try {
-      let res = await getAppliedCandidateById(jobId, appliedUserId);
-
-      setAppliedUserDetail(res.data);
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
-      setIsFetchingUserDetail(false);
-    }
-  };
-
   useEffect(() => {
     fetchAppliedCandidates();
-  }, [page]);
-
-  useEffect(() => {
-    if (appliedUserId) {
-      fetchAppliedCandidateProfileById();
-    }
-  }, [appliedUserId]);
+  }, [page, activeStatus]);
 
   return (
     <>
       <section>
         <BackButton className="mt-2" />
 
+        {/* Tabs */}
+        <section className="w-full flex flex-row  justify-around flex-nowrap gap-x-4 overflow-auto scrollbar-hide pt-2 mt-8 mb-4">
+          {allStatus?.map((status, index) => {
+            return (
+              <TabsWithCounter
+                key={index}
+                activeTab={activeStatus}
+                setActiveTab={setActiveStatus}
+              >
+                {status}
+              </TabsWithCounter>
+            );
+          })}
+        </section>
+
         {appliedUsers && (
           <ExpandableTable
             data={appliedUsers?.data}
             meta={appliedUsers?.meta}
             toggleRow={handleUserIdChange}
-            isFetchingSelectedRowData={isFetchingUserDetail}
             selectedRowId={appliedUserId}
-            selectedRowData={appliedUserDetail}
             setPage={setPage}
-            className="mt-12"
+            className=""
           />
         )}
       </section>

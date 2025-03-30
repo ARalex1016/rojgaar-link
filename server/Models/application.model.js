@@ -19,11 +19,11 @@ const applicationSchema = new mongoose.Schema(
         socialMedia: {
           facebook: { type: String },
           instagram: { type: String },
-          whatsApp: { type: String },
         },
       },
       location: {
         country: { type: String },
+        state: { type: String },
       },
       education: [
         {

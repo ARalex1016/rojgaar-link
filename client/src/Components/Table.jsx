@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiLoader } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 // Components
 import { ProfilePicSM } from "./Image";
+import { ButtonWithLoader } from "./Button";
 import Pagination from "./Pagination";
 
 // Icons
@@ -12,6 +14,9 @@ import { ChevronUp } from "lucide-react";
 
 // Utils
 import { getDateDetails } from "../Utils/DateManager";
+
+// Store
+import { useApplicationStore } from "../Store/useApplicationStore";
 
 const Head = ({ className, children }) => {
   return (
@@ -78,7 +83,29 @@ const ExpandCollapseButton = ({
   );
 };
 
-const ExpandedRowData = ({ rowData, className }) => {
+const ExpandedRowData = ({ rowData, filterOutRowId, className }) => {
+  const { shortListApplication, hireApplication } = useApplicationStore();
+
+  const [shortListing, setShortListing] = useState(false);
+  const [hiring, setHiring] = useState(false);
+  const [rejecting, setRejecting] = useState(false);
+
+  const handleShortListApplication = async (jobId, applicationId) => {
+    setShortListing(true);
+
+    try {
+      let res = await shortListApplication(jobId, applicationId);
+
+      filterOutRowId(applicationId);
+
+      toast.success(res.message);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setShortListing(false);
+    }
+  };
+
   return (
     <>
       <td
@@ -109,7 +136,12 @@ const ExpandedRowData = ({ rowData, className }) => {
         <p className="text-neutral/80">
           Location:{" "}
           <span className="text-neutral font-medium">
-            {rowData?.profileSnapshot?.location?.country}, State
+            {[
+              rowData?.profileSnapshot?.location?.country,
+              rowData?.profileSnapshot?.location?.state,
+            ]
+              .filter(Boolean)
+              .join(", ")}
           </span>
         </p>
 
@@ -123,15 +155,33 @@ const ExpandedRowData = ({ rowData, className }) => {
         <img
           src={rowData?.profileSnapshot?.resume}
           alt="Resume Image"
-          className="border-2 border-main/50 hover:border-main rounded-md my-2"
+          className="border-2 border-main/50 hover:border-main rounded-md mt-2"
         />
 
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          className="w-full text-lg text-neutral bg-customBlue rounded-md py-1 mx-auto my-2"
-        >
-          Download Resume
-        </motion.button>
+        {/* Action */}
+        <section className="w-full flex flex-row justify-around mt-4">
+          {rowData?.status !== "rejected" &&
+            rowData?.status !== "shortlisted" && (
+              <ButtonWithLoader
+                label="Shortlist"
+                isLoading={shortListing}
+                onClick={() =>
+                  handleShortListApplication(rowData?.jobId, rowData?._id)
+                }
+                className="w-1/5 bg-customBlue/80 hover:bg-customBlue"
+              />
+            )}
+
+          <ButtonWithLoader
+            label="Hire"
+            className="w-1/5 bg-customGreen/80 hover:bg-customGreen"
+          />
+
+          <ButtonWithLoader
+            label="Delete"
+            className="w-1/5 bg-red/80 hover:bg-red"
+          />
+        </section>
       </td>
     </>
   );
@@ -142,6 +192,7 @@ export const ExpandableTable = ({
   meta = {},
   toggleRow,
   selectedRowId,
+  filterOutRowId,
   setPage,
   className,
 }) => {
@@ -186,7 +237,7 @@ export const ExpandableTable = ({
                     <ExpandCollapseButton
                       rowId={row?.candidateId}
                       selectedRowId={selectedRowId}
-                      onClick={() => toggleRow(row?.candidateId)}
+                      onClick={() => toggleRow(row?.candidateId?._id)}
                     >
                       {selectedRowId === row?.candidateId ? (
                         <ChevronUp size={22} />
@@ -199,17 +250,16 @@ export const ExpandableTable = ({
 
                 {/* Expanded Row */}
                 <AnimatePresence>
-                  {selectedRowId === row?.candidateId && (
+                  {selectedRowId === row?.candidateId?._id && (
                     <motion.tr
                       variants={{
                         initial: {
-                          height: 0,
+                          maxHeight: 0,
                           opacity: 0,
-                          paddingBlock: 0,
                           overflow: "hidden",
                         },
                         final: {
-                          height: "auto",
+                          maxHeight: "80vh",
                           opacity: 1,
                           overflow: "hidden",
                         },
@@ -218,12 +268,15 @@ export const ExpandableTable = ({
                       animate="final"
                       exit="initial"
                       transition={{
-                        height: { duration: 0.5, ease: "easeInOut" },
-                        opacity: { duration: 0.3, ease: "easeInOut" },
+                        duration: 0.3,
+                        ease: "easeInOut",
                       }}
                       className="overflow-hidden"
                     >
-                      <ExpandedRowData rowData={row} />
+                      <ExpandedRowData
+                        rowData={row}
+                        filterOutRowId={filterOutRowId}
+                      />
                     </motion.tr>
                   )}
                 </AnimatePresence>

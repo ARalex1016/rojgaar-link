@@ -14,7 +14,7 @@ const BackButton = ({ className }) => {
     <>
       <button
         onClick={handleBackClick}
-        className={`mobilesm:text-sm mobile:text-base text-neutral font-medium fixed top-menuHeight left-sideSpacing bg-red border-2 border-red rounded-md py-[2px] pr-2 flex flex-row justify-center items-center gap-x-1 transition-all duration-200 hover:scale-105 ${className}`}
+        className={`mobilesm:text-sm mobile:text-base text-neutral font-medium fixed top-menuHeight left-sideSpacing z-20 bg-red border-2 border-red rounded-md py-[2px] pr-2 flex flex-row justify-center items-center gap-x-1 transition-all duration-200 hover:scale-105 ${className}`}
       >
         <IoChevronBackOutline
           style={{

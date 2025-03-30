@@ -29,7 +29,9 @@ const Pagination = ({ totalPages, currentPage, setCurrentPage, className }) => {
 
   return (
     <div
-      className={`w-full rounded-md mt-4 flex flex-row flex-nowrap justify-between gap-x-2 ${className}`}
+      className={`w-full rounded-md mt-4 flex flex-row flex-nowrap gap-x-2 ${
+        totalPages === 1 ? "justify-evenly" : "justify-between"
+      } ${className}`}
     >
       <Buttons
         disabled={currentPage <= 1}

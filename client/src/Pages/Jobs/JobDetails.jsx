@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 // Components
 import BackButton from "../../Components/BackButton";
 import ExpandableText from "../../Components/ExpandableText";
-import ButtonWithLoader from "../../Components/Button";
+import { ButtonWithLoader } from "../../Components/Button";
 import { ProfilePicSM } from "../../Components/Image";
 
 // Store

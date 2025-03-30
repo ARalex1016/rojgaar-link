@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import BackButton from "../../../Components/BackButton";
 import TabsWithCounter from "../../../Components/Tabs";
 import { ExpandableTable } from "../../../Components/Table";
+import NoData from "../../../Components/NoData";
 
 // Store
 import { useJobStore } from "../../../Store/useJobStore";
@@ -35,6 +36,12 @@ const Applications = () => {
     }
   };
 
+  const filterOutUserId = (applicationId) => {
+    setAppliedUser((pre) =>
+      pre.data.filter((application) => application._id !== applicationId)
+    );
+  };
+
   useEffect(() => {
     fetchAppliedCandidates();
   }, [page, activeStatus]);
@@ -45,7 +52,7 @@ const Applications = () => {
         <BackButton className="mt-2" />
 
         {/* Tabs */}
-        <section className="w-full flex flex-row  justify-around flex-nowrap gap-x-4 overflow-auto scrollbar-hide pt-2 mt-8 mb-4">
+        <section className="w-full flex flex-row  justify-around flex-nowrap gap-x-4 overflow-auto scrollbar-hide pt-2 mt-9 mb-4">
           {allStatus?.map((status, index) => {
             return (
               <TabsWithCounter
@@ -59,15 +66,18 @@ const Applications = () => {
           })}
         </section>
 
-        {appliedUsers && (
+        {appliedUsers?.data?.length >= 1 ? (
           <ExpandableTable
             data={appliedUsers?.data}
             meta={appliedUsers?.meta}
             toggleRow={handleUserIdChange}
             selectedRowId={appliedUserId}
+            filterOutRowId={filterOutUserId}
             setPage={setPage}
             className=""
           />
+        ) : (
+          <NoData />
         )}
       </section>
     </>

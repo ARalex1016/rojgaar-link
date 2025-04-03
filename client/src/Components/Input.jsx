@@ -264,10 +264,17 @@ export const DateInput = ({ label, name, id, value, handleInputChange }) => {
   );
 };
 
-export const RadioInput = ({ label, name, value, id, handleInputChange }) => {
+export const RadioInput = ({
+  label,
+  name,
+  value,
+  id,
+  handleInputChange,
+  className,
+}) => {
   return (
     <>
-      <div className="flex items-center gap-1">
+      <div className={`flex items-center gap-1 ${className}`}>
         <input
           type="radio"
           name={name}

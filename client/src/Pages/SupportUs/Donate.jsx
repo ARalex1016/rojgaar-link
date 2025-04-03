@@ -58,7 +58,7 @@ const Donate = () => {
       </p>
 
       {/* Donation Input Form */}
-      <section className="w-4/5 flex flex-col justify-center items-center gap-y-2 mt-5">
+      <section className="w-full max-w-[400px] flex flex-col justify-center items-center gap-y-2 mt-5">
         {/* Name */}
         <FloatingLabelInput
           label="Name"
@@ -78,7 +78,7 @@ const Donate = () => {
         />
 
         {/* Amount OPT */}
-        <section className="w-full flex flex-row justify-around gap-x-2">
+        <section className="w-full flex flex-row justify-between gap-x-2 overflow-auto scrollbar-hide">
           {[3, 5, 10, 50, 100].map((amount) => (
             <RadioInput
               key={amount}

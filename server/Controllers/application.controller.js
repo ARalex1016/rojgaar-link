@@ -276,6 +276,63 @@ export const hireApplication = async (req, res) => {
   }
 };
 
+export const rejectApplication = async (req, res) => {
+  const { job, application } = req;
+
+  try {
+    if (application.jobId.toString() !== job._id.toString()) {
+      return res.status(400).json({
+        status: "fail",
+        message: "This application does not belong to the specified job post.",
+      });
+    }
+
+    if (job.status !== "active") {
+      return res.status(400).json({
+        status: "fail",
+        message:
+          "Rejecting is not allowed as this job is not currently active.",
+      });
+    }
+
+    // Check if the application is rejected
+    if (application.status === "rejected") {
+      return res.status(400).json({
+        status: "fail",
+        message: "This application is already marked as rejected!",
+      });
+    }
+
+    // Check if the application is already hired
+    if (application.status === "hired") {
+      return res.status(400).json({
+        status: "fail",
+        message: "Hired applications can't be rejected!",
+      });
+    }
+
+    let prevStatus = job.status;
+
+    // Mark application as shortlisted
+    application.status = "rejected";
+    await application.save();
+
+    // TODO: send notification to the applicants, that there application was rejected
+    // TODO: update status from applicants (in real-time)
+
+    // Success
+    res.status(200).json({
+      status: "success",
+      message: "Successfully rejected the application!",
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
+
 export const rejectRemainingApplication = async (req, res) => {
   const { job } = req;
 

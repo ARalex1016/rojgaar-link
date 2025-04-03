@@ -4,19 +4,20 @@ import { FiLoader } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 // Components
-import { ProfilePicSM } from "./Image";
-import { ButtonWithLoader } from "./Button";
-import Pagination from "./Pagination";
+import { ProfilePicSM } from "../../../Components/Image";
+import { ButtonWithLoader } from "../../../Components/Button";
+import Pagination from "../../../Components/Pagination";
 
 // Icons
 import { ChevronDown } from "lucide-react";
 import { ChevronUp } from "lucide-react";
 
 // Utils
-import { getDateDetails } from "../Utils/DateManager";
+import { getDateDetails } from "../../../Utils/DateManager";
 
 // Store
-import { useApplicationStore } from "../Store/useApplicationStore";
+import { useApplicationStore } from "../../../Store/useApplicationStore";
+import { useJobStore } from "../../../Store/useJobStore";
 
 const Head = ({ className, children }) => {
   return (
@@ -83,8 +84,18 @@ const ExpandCollapseButton = ({
   );
 };
 
+const ContainerGrid = ({ className, children }) => {
+  return (
+    <section className={`w-full grid grid-cols-2 gap-y-1 ${className}`}>
+      {children}
+    </section>
+  );
+};
+
 const ExpandedRowData = ({ rowData, filterOutRowId, className }) => {
-  const { shortListApplication, hireApplication } = useApplicationStore();
+  const { shortListApplication, hireApplication, rejectApplication } =
+    useApplicationStore();
+  const { getCounters } = useJobStore();
 
   const [shortListing, setShortListing] = useState(false);
   const [hiring, setHiring] = useState(false);
@@ -106,88 +117,135 @@ const ExpandedRowData = ({ rowData, filterOutRowId, className }) => {
     }
   };
 
+  const handleHireApplication = async (jobId, applicationId) => {
+    setHiring(true);
+
+    try {
+      let res = await hireApplication(jobId, applicationId);
+
+      await getCounters();
+
+      filterOutRowId(applicationId);
+
+      toast.success(res.message);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setHiring(false);
+    }
+  };
+
+  const handleRejectApplication = async (jobId, applicationId) => {
+    setRejecting(true);
+
+    try {
+      let res = await rejectApplication(jobId, applicationId);
+
+      filterOutRowId(applicationId);
+
+      toast.success(res.message);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setRejecting(false);
+    }
+  };
+
   return (
     <>
       <td
         colSpan="4"
-        className={`text-sm border-b-[1px] border-neutral/40 px-6 py-4 ${className}`}
+        className={`text-sm border-b-[1px] border-neutral/40 px-4 py-4 ${className}`}
       >
-        <p className="text-neutral/80">
-          Name:{" "}
-          <span className="text-neutral font-medium">
+        <ContainerGrid>
+          <p className="text-neutral/80">Name</p>
+          <p className="text-neutral font-medium">
             {rowData?.candidateId?.name}
-          </span>
-        </p>
+          </p>
 
-        <p className="text-neutral/80">
-          Email:{" "}
-          <span className="text-neutral font-medium">
+          <p className="text-neutral/80">Email</p>
+          <p className="text-neutral font-medium">
             {rowData?.candidateId?.email}
-          </span>
-        </p>
+          </p>
 
-        <p className="text-neutral/80">
-          Contact:{" "}
-          <span className="text-neutral font-medium">
+          <p className="text-neutral/80">Contact</p>
+          <p className="text-neutral font-medium">
             {rowData?.profileSnapshot?.contact?.phoneNumber}
-          </span>
-        </p>
+          </p>
 
-        <p className="text-neutral/80">
-          Location:{" "}
-          <span className="text-neutral font-medium">
+          <p className="text-neutral/80">Location</p>
+          <p className="text-neutral font-medium">
             {[
               rowData?.profileSnapshot?.location?.country,
               rowData?.profileSnapshot?.location?.state,
             ]
               .filter(Boolean)
               .join(", ")}
-          </span>
-        </p>
+          </p>
 
-        <p className="text-neutral/80">
-          Applied At:{" "}
-          <span className="text-neutral font-medium">
+          <p className="text-neutral/80">Applied At</p>
+          <p className="text-neutral font-medium">
             {getDateDetails(rowData?.createdAt, false)}
-          </span>
-        </p>
+          </p>
 
-        <img
-          src={rowData?.profileSnapshot?.resume}
-          alt="Resume Image"
-          className="border-2 border-main/50 hover:border-main rounded-md mt-2"
-        />
+          <img
+            src={rowData?.profileSnapshot?.resume}
+            alt="Resume Image"
+            className="col-span-2 border-2 border-main/50 hover:border-main hover:shadow-md hover:shadow-main/40 rounded-md mt-2"
+          />
+
+          <button className="col-span-2 w-full text-lg text-neutral font-medium bg-customBlue rounded-md py-1 mt-1">
+            <a
+              href={rowData?.profileSnapshot?.resume}
+              download={`${rowData?.candidateId?.name}-resume`}
+            >
+              Download Resume
+            </a>
+          </button>
+        </ContainerGrid>
 
         {/* Action */}
         <section className="w-full flex flex-row justify-around mt-4">
-          {rowData?.status !== "rejected" &&
-            rowData?.status !== "shortlisted" && (
-              <ButtonWithLoader
-                label="Shortlist"
-                isLoading={shortListing}
-                onClick={() =>
-                  handleShortListApplication(rowData?.jobId, rowData?._id)
-                }
-                className="w-1/5 bg-customBlue/80 hover:bg-customBlue"
-              />
-            )}
+          {rowData?.status === "pending" && (
+            <ButtonWithLoader
+              label="Shortlist"
+              isLoading={shortListing}
+              onClick={() =>
+                handleShortListApplication(rowData?.jobId, rowData?._id)
+              }
+              className="w-1/5 h-8 bg-customBlue/80 hover:bg-customBlue"
+            />
+          )}
 
-          <ButtonWithLoader
-            label="Hire"
-            className="w-1/5 bg-customGreen/80 hover:bg-customGreen"
-          />
+          {rowData?.status === "shortlisted" && (
+            <ButtonWithLoader
+              label="Hire"
+              isLoading={hiring}
+              onClick={() =>
+                handleHireApplication(rowData?.jobId, rowData?._id)
+              }
+              className="w-1/5 h-8 bg-customGreen/80 hover:bg-customGreen"
+            />
+          )}
 
-          <ButtonWithLoader
-            label="Delete"
-            className="w-1/5 bg-red/80 hover:bg-red"
-          />
+          {(rowData?.status === "shortlisted" ||
+            rowData?.status === "pending") && (
+            <ButtonWithLoader
+              label="Reject"
+              isLoading={rejecting}
+              onClick={() =>
+                handleRejectApplication(rowData?.jobId, rowData?._id)
+              }
+              className="w-1/5 bg-red/80 hover:bg-red"
+            />
+          )}
         </section>
       </td>
     </>
   );
 };
 
-export const ExpandableTable = ({
+const ApplicationTable = ({
   data = [],
   meta = {},
   toggleRow,
@@ -303,3 +361,5 @@ export const ExpandableTable = ({
     </>
   );
 };
+
+export default ApplicationTable;

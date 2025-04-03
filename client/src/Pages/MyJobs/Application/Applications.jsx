@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 // Components
 import BackButton from "../../../Components/BackButton";
 import TabsWithCounter from "../../../Components/Tabs";
-import { ExpandableTable } from "../../../Components/Table";
+import ApplicationTable from "./ApplicationTable";
 import NoData from "../../../Components/NoData";
 
 // Store
@@ -37,10 +37,16 @@ const Applications = () => {
   };
 
   const filterOutUserId = (applicationId) => {
-    setAppliedUser((pre) =>
-      pre.data.filter((application) => application._id !== applicationId)
-    );
+    setAppliedUser((pre) => ({
+      ...pre,
+      data: pre.data.filter((application) => application._id !== applicationId),
+    }));
   };
+
+  useEffect(() => {
+    setAppliedUser(null);
+    setAppliedUserId(null);
+  }, [activeStatus]);
 
   useEffect(() => {
     fetchAppliedCandidates();
@@ -67,7 +73,7 @@ const Applications = () => {
         </section>
 
         {appliedUsers?.data?.length >= 1 ? (
-          <ExpandableTable
+          <ApplicationTable
             data={appliedUsers?.data}
             meta={appliedUsers?.meta}
             toggleRow={handleUserIdChange}

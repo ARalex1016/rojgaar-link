@@ -9,6 +9,7 @@ import {
   getAllAppliedJobs,
   shortListApplication,
   hireApplication,
+  rejectApplication,
   rejectRemainingApplication,
 } from "../Controllers/application.controller.js";
 import { protect, authorize } from "../Controllers/auth.controller.js";
@@ -48,7 +49,14 @@ router.patch(
 );
 
 router.patch(
-  "/:jobId/reject",
+  "/:jobId/:applicationId/reject",
+  protect,
+  authorize("creator"),
+  rejectApplication
+);
+
+router.patch(
+  "/:jobId/reject-all-remaiing",
   protect,
   authorize("creator"),
   validateJobStatus,

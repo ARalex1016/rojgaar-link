@@ -19,7 +19,7 @@ const TabsWithCounter = ({
   return (
     <div className="relative overflow-visible inline-block">
       {counter && (
-        <p className="w-5 h-5 text-primary text-xs font-medium flex items-center justify-center bg-orange rounded-full absolute -top-2 -right-2">
+        <p className="w-5 h-5 text-neutral text-xs font-medium bg-customBlue flex items-center justify-center rounded-full absolute -top-2 -right-2">
           {counter}
         </p>
       )}

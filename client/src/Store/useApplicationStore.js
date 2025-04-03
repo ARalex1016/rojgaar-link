@@ -18,8 +18,22 @@ export const useApplicationStore = create((set) => ({
 
   hireApplication: async (jobId, applicationId) => {
     try {
-      const res = await axiosInstance.delete(
+      const res = await axiosInstance.patch(
         `/application/${jobId}/${applicationId}/hire`
+      );
+
+      return res.data;
+    } catch (error) {
+      throw Error(
+        error?.response?.data?.message || "An unexpected error occurred"
+      );
+    }
+  },
+
+  rejectApplication: async (jobId, applicationId) => {
+    try {
+      const res = await axiosInstance.patch(
+        `/application/${jobId}/${applicationId}/reject`
       );
 
       return res.data;

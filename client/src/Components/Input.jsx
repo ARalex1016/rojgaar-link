@@ -269,6 +269,7 @@ export const RadioInput = ({
   name,
   value,
   id,
+  checked,
   handleInputChange,
   className,
 }) => {
@@ -280,6 +281,7 @@ export const RadioInput = ({
           name={name}
           value={value}
           id={id}
+          checked={checked}
           onChange={(e) => handleInputChange(e)}
           className="peer hidden"
         />

@@ -7,7 +7,12 @@ import {
   RadioInput,
 } from "../../Components/Input";
 
+// Store
+import { useAuthStore } from "../../Store/useAuthStore";
+
 const Donate = () => {
+  const { user, isAuthenticated } = useAuthStore();
+
   const [donation, setDonation] = useState({
     name: "",
     amount: "",
@@ -25,10 +30,10 @@ const Donate = () => {
   };
 
   // For Amount Options
-  const handleRadioChange = (value) => {
+  const handleRadioChange = (e) => {
     setDonation((pre) => ({
       ...pre,
-      amount: value,
+      amount: e.target.value,
     }));
   };
 
@@ -64,6 +69,7 @@ const Donate = () => {
           label="Name"
           id="name"
           name="name"
+          value={isAuthenticated && user?.name}
           handleInputChange={handleInputChange}
         />
 
@@ -97,6 +103,7 @@ const Donate = () => {
           label="Message"
           id="message"
           name="message"
+          value={donation.message}
           handleInputChange={handleInputChange}
         />
 

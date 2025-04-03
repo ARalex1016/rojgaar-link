@@ -12,6 +12,10 @@ const donationSchema = new mongoose.Schema(
       required: true,
     },
     message: String, // Optional message
+    keepPrivate: {
+      type: Boolean,
+      default: false,
+    },
     paymentMethod: {
       type: String,
       enum: ["Stripe", "Visa", "Mastercard", "GooglePay"],

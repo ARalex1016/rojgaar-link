@@ -13,12 +13,14 @@ import { useAuthStore } from "../../Store/useAuthStore";
 const Donate = () => {
   const { user, isAuthenticated } = useAuthStore();
 
-  const [donation, setDonation] = useState({
+  const initialDonation = {
     name: "",
     amount: "",
     message: "",
     keepPrivate: false,
-  });
+  };
+
+  const [donation, setDonation] = useState(initialDonation);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

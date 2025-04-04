@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Components
 import {
@@ -54,6 +54,16 @@ const Donate = () => {
     console.log(donation);
   };
 
+  // Sync user.name to donation.name when available
+  useEffect(() => {
+    if (isAuthenticated && user?.name) {
+      setDonation((prev) => ({
+        ...prev,
+        name: user.name,
+      }));
+    }
+  }, [isAuthenticated, user?.name]);
+
   return (
     <>
       <p className="text-neutral text-xl text-center font-medium">
@@ -71,7 +81,8 @@ const Donate = () => {
           label="Name"
           id="name"
           name="name"
-          value={isAuthenticated && user?.name}
+          readOnly={isAuthenticated && user?.name}
+          value={donation.name}
           handleInputChange={handleInputChange}
         />
 

@@ -1,3 +1,8 @@
+import { useState, useEffect } from "react";
+
+// Icons
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
 const Buttons = ({ currentPage, onClick, disabled, children, className }) => {
   return (
     <button
@@ -13,19 +18,47 @@ const Buttons = ({ currentPage, onClick, disabled, children, className }) => {
 };
 
 const Pagination = ({ totalPages, currentPage, setCurrentPage, className }) => {
+  const [width, setWidth] = useState(window.innerWidth);
+  const [totalDisplayPages, setTotalDisplayPages] = useState(3);
+
   let prePageNo = Array.from(
-    { length: 3 },
+    { length: totalDisplayPages },
     (_, index) => currentPage - index - 1
   )
     .filter((page) => page > 0)
     .reverse();
 
   let nextPageNo = Array.from(
-    { length: 4 },
+    { length: totalDisplayPages + 1 },
     (_, index) => currentPage + index
   ).filter((page) => page <= totalPages);
 
   const displayPageNo = [...prePageNo, ...nextPageNo];
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (width < 400) {
+      setTotalDisplayPages(1);
+    } else if (width < 500) {
+      setTotalDisplayPages(2);
+    } else if (width < 768) {
+      setTotalDisplayPages(3);
+    } else if (width < 1024) {
+      setTotalDisplayPages(4);
+    } else if (width < 1280) {
+      setTotalDisplayPages(5);
+    } else if (width < 1536) {
+      setTotalDisplayPages(6);
+    } else {
+      setTotalDisplayPages(7);
+    }
+  }, [width]);
 
   return (
     <div
@@ -38,7 +71,7 @@ const Pagination = ({ totalPages, currentPage, setCurrentPage, className }) => {
         onClick={() => setCurrentPage((pre) => Math.max(pre - 1, 1))}
         className="bg-red"
       >
-        Pre
+        <ChevronLeft />
       </Buttons>
 
       {displayPageNo.map((page) => {
@@ -58,7 +91,7 @@ const Pagination = ({ totalPages, currentPage, setCurrentPage, className }) => {
         onClick={() => setCurrentPage((pre) => Math.min(pre + 1, totalPages))}
         className="bg-red"
       >
-        Next
+        <ChevronRight />
       </Buttons>
     </div>
   );

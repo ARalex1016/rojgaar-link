@@ -436,7 +436,7 @@ const Job = () => {
 
           {/* Approve / Suspend / Update / Delete Job (for Admin || jobCreator) */}
           {isAuthenticated && (isAdmin || jobCreator) && (
-            <section className="w-full flex flex-row justify-between mb-4">
+            <section className="w-full flex flex-row justify-around mb-4">
               {/* Approve Button */}
               {isAdmin && job.status !== "active" && (
                 <ButtonWithLoader
@@ -458,14 +458,12 @@ const Job = () => {
               )}
 
               {/* Update Button */}
-              {jobCreator && (
+              {/* {jobCreator && (
                 <ButtonWithLoader
                   label="Update"
-                  // isLoading={isDeleting}
-                  // onClick={handleDelete}
                   className="w-3/12 bg-customBlue/80 hover:bg-customBlue"
                 />
-              )}
+              )} */}
 
               {/* Delete Button */}
               {(isAdmin || jobCreator) && (

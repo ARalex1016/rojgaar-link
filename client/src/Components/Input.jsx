@@ -122,6 +122,7 @@ export const FloatingLabelInput = ({
   id,
   value,
   checked,
+  readOnly,
   handleInputChange,
   className,
 }) => {
@@ -156,6 +157,7 @@ export const FloatingLabelInput = ({
           name={name}
           value={value}
           checked={checked}
+          readOnly={readOnly}
           onChange={(e) => handleInputChange(e)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(value ? true : false)}

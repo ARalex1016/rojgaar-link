@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // Component
@@ -23,6 +23,8 @@ import {
 
 const Signup = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const roleFromState = location.state?.role || "";
 
   const { isSigningIn, signup } = useAuthStore();
 
@@ -69,6 +71,12 @@ const Signup = () => {
       toast.error(error.message);
     }
   };
+
+  useEffect(() => {
+    if (roleFromState === "creator") {
+      setUserData((prev) => ({ ...prev, role: "creator" }));
+    }
+  }, [roleFromState]);
 
   return (
     <>

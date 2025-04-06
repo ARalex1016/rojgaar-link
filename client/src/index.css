@@ -14,7 +14,7 @@
   --red: 220, 20, 60;
   --black: 0, 0, 0;
   --customBlue: 0, 123, 255;
-  --sideSpacing: 32px;
+  --sideSpacing: 20px;
   --menuHeight: 64px;
 }
 
@@ -64,4 +64,10 @@ body {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+@media (min-width: 500px) {
+  :root {
+    --sideSpacing: 32px;
+  }
 }

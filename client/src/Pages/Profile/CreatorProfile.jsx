@@ -4,7 +4,7 @@ import ProfilePic from "./ProfilePic";
 const CreatorProfile = () => {
   return (
     <>
-      <div>
+      <section className="w-full py-2">
         {/* Profile */}
         <div className="w-full flex flex-col justify-center items-center">
           <h1 className="text-neutral text-xl font-medium">Profile</h1>
@@ -15,7 +15,7 @@ const CreatorProfile = () => {
           {/* Profile Pic */}
           <ProfilePic />
         </div>
-      </div>
+      </section>
     </>
   );
 };

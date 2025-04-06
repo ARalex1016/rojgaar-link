@@ -1,6 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import Stripe from "stripe";
 
 // Route
 import authRouter from "./Routes/auth.route.js";

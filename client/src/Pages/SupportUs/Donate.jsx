@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 
+// Stripe
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+
 // Components
 import {
   FloatingLabelInput,
@@ -9,9 +12,14 @@ import {
 
 // Store
 import { useAuthStore } from "../../Store/useAuthStore";
+import { useDonationStore } from "../../Store/useDonationStore";
 
 const Donate = () => {
   const { user, isAuthenticated } = useAuthStore();
+  const { createDonationIntent } = useDonationStore();
+
+  const stripe = useStripe();
+  const elements = useElements();
 
   const initialDonation = {
     name: "",
@@ -21,6 +29,8 @@ const Donate = () => {
   };
 
   const [donation, setDonation] = useState(initialDonation);
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -39,19 +49,44 @@ const Donate = () => {
     }));
   };
 
-  const handleDonteClick = () => {
+  const handleDonteClick = async () => {
     if (!donation.amount) {
       alert("Please enter the amount to donate.");
       return;
     }
 
-    if (Number(donation.amount) < 3) {
+    if (Number(donation.amount) < 2) {
       alert("Minimum donation amount is $3.");
       return;
     }
 
-    // Donation Logic
-    console.log(donation);
+    setIsLoading(true);
+
+    try {
+      let res = await createDonationIntent(donation);
+
+      const { clientSecret } = res.data;
+
+      const paymentResult = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+          billing_details: { name: donation.name },
+        },
+      });
+
+      if (paymentResult.error) {
+        alert(paymentResult.error.message);
+      } else {
+        if (paymentResult.paymentIntent.status === "succeeded") {
+          setSuccess("Donation successful!");
+          alert("successful donation");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Sync user.name to donation.name when available
@@ -141,12 +176,22 @@ const Donate = () => {
           </label>
         </div>
 
+        {!stripe || !elements ? (
+          <p className="text-yellow-500 text-sm">Stripe is not loaded</p>
+        ) : null}
+
+        <CardElement
+          options={{ style: { base: { fontSize: "16px" } } }}
+          className="border p-2 rounded bg-white"
+        />
+
         {/* Button (Donate Now) */}
         <button
+          disabled={!stripe || isLoading}
           onClick={handleDonteClick}
           className="w-full text-lg text-neutral/80 font-medium bg-main/80 rounded-md cursor-pointer py-1 mt-2 hover:text-neutral hover:bg-main"
         >
-          Donate Now
+          {isLoading ? "Processing..." : "Donate"}
         </button>
       </section>
     </>

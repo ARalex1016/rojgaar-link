@@ -1,7 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import Stripe from "stripe";
 
 // Route
 import authRouter from "./Routes/auth.route.js";
@@ -10,6 +9,7 @@ import jobRouter from "./Routes/job.route.js";
 import applicationRouter from "./Routes/application.route.js";
 import adminMetricsRouter from "./Routes/admin-metrics.route.js";
 import chatRouter from "./Routes/chat.route.js";
+import donationRouter from "./Routes/donation.route.js";
 
 const app = express();
 app.use(express.json({ limit: "10mb" }));
@@ -28,5 +28,6 @@ app.use("/api/v1/jobs/", jobRouter);
 app.use("/api/v1/application/", applicationRouter);
 app.use("/api/v1/admin-metrics/", adminMetricsRouter);
 app.use("/api/v1/chat/", chatRouter);
+app.use("/api/v1/donation/", donationRouter);
 
 export default app;

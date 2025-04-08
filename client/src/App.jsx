@@ -21,6 +21,7 @@ import SupportUs from "./Pages/SupportUs/SupportUs";
 import User from "./Pages/User/User";
 import Donate from "./Pages/SupportUs/Donate";
 import TopDonors from "./Pages/SupportUs/TopDonors";
+import ThanksPage from "./Pages/SupportUs/ThanksPage";
 
 // Admin
 import AdminJobs from "./Pages/Jobs/AdminJobs";
@@ -186,6 +187,10 @@ function App() {
             {
               path: "top-donors",
               element: <TopDonors />,
+            },
+            {
+              path: "thanks",
+              element: <ThanksPage />,
             },
           ],
         },

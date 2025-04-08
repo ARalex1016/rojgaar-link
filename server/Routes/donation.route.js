@@ -7,4 +7,6 @@ const router = express.Router();
 
 router.post("/create-payment-intent", createDonationIntent);
 
+router.post("/webhooks/stripe", createDonationIntent);
+
 export default router;

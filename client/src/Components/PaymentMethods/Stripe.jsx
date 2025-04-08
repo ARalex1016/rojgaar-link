@@ -13,12 +13,13 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
+// Store
+import { useDonationStore } from "../../Store/useDonationStore";
+import { useUserStore } from "../../Store/useUserStore";
+
 const stripePromise = loadStripe(
   "pk_test_51RArHMH8vXcBquDzkXdS7uNsKqEPSPkMhpbhiTsx0dCUOQ8ryIqg9ilAzBx0vKXrIH5B8FeTIFCCg7P81Z8e2z3N00eqazJv65"
 );
-
-// Store
-import { useDonationStore } from "../../Store/useDonationStore";
 
 const StripeCheckOutPage = ({ data, clientSecret }) => {
   const stripe = useStripe();
@@ -115,6 +116,7 @@ const StripeCheckOutPage = ({ data, clientSecret }) => {
 
 const StripeElement = ({ data }) => {
   const { createDonationIntent } = useDonationStore();
+  const { user } = useUserStore();
 
   const [clientSecret, setClientSecret] = useState("");
   const [loading, setLoading] = useState(true);
@@ -123,10 +125,16 @@ const StripeElement = ({ data }) => {
     const createStripeIntent = async () => {
       setLoading(true);
       try {
-        const res = await createDonationIntent(data);
+        const res = await createDonationIntent({
+          amount: data.amount,
+          name: data.name,
+          message: data.message,
+          keepPrivate: data.keepPrivate,
+          donorId: user ? user?._id : null,
+        });
+
         setClientSecret(res.data.clientSecret);
       } catch (error) {
-        console.error("Error creating Stripe intent:", error);
         alert(
           "Failed to initialize the payment process. Please try again later."
         );

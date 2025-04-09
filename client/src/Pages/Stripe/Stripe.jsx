@@ -31,6 +31,7 @@ const StripeCheckOutPage = ({ data, clientSecret }) => {
 
   const paymentElementOptions = {
     layout: "tabs",
+    defaultCollapsed: false,
   };
 
   const validateAmount = () => {
@@ -173,7 +174,11 @@ const StripeElement = () => {
   return (
     <Elements
       stripe={stripePromise}
-      options={{ clientSecret, appearance, loader }}
+      options={{
+        clientSecret,
+        appearance,
+        loader,
+      }}
     >
       <StripeCheckOutPage data={data} clientSecret={clientSecret} />
     </Elements>

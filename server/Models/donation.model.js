@@ -2,13 +2,26 @@ import mongoose from "mongoose";
 
 const donationSchema = new mongoose.Schema(
   {
-    donor: {
+    transactionId: {
+      type: String,
+      required: true,
+      unique: true, // Ensure no duplicate transactions
+    },
+    donorId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: false,
     },
     amount: {
       type: Number,
       required: true,
+    },
+    currency: {
+      type: String,
+      default: "USD",
+    },
+    name: {
+      type: String,
     },
     message: String, // Optional message
     keepPrivate: {

@@ -2,6 +2,9 @@
 import Stack from "@mui/material/Stack";
 import LinearProgress from "@mui/material/LinearProgress";
 
+// Lucide Icons
+import { LoaderCircle } from "lucide-react";
+
 export const LoadingLinear = ({ isVisible }) => {
   return (
     <>
@@ -11,6 +14,16 @@ export const LoadingLinear = ({ isVisible }) => {
             <LinearProgress color="secondary" />
           </Stack>
         )}
+      </div>
+    </>
+  );
+};
+
+export const LoadingCircle = ({ className }) => {
+  return (
+    <>
+      <div className={`w-full flex justify-center items-center ${className}`}>
+        <LoaderCircle className="animate-spin text-neutral" size={40} />
       </div>
     </>
   );

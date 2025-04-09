@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 // Components
 import {
@@ -6,15 +8,13 @@ import {
   TextAreaFloatingLabel,
   RadioInput,
 } from "../../Components/Input";
-import StripeElement from "../../Components/PaymentMethods/Stripe";
 
 // Store
 import { useAuthStore } from "../../Store/useAuthStore";
-import { useDonationStore } from "../../Store/useDonationStore";
 
 const Donate = () => {
   const { user, isAuthenticated } = useAuthStore();
-  const { createDonationIntent } = useDonationStore();
+  const navigate = useNavigate();
 
   const initialDonation = {
     name: "",
@@ -128,7 +128,25 @@ const Donate = () => {
           </label>
         </div>
 
-        <StripeElement data={donation} />
+        <motion.button
+          variants={{
+            initial: {
+              scale: 1,
+            },
+            final: {
+              scale: 0.97,
+            },
+          }}
+          whileTap="final"
+          disabled={!donation.amount}
+          onClick={() => navigate("/stripe", { state: donation })}
+          className="w-full text-lg text-neutral/80 font-medium bg-main/80 rounded-md cursor-pointer py-2 hover:text-neutral hover:bg-main disabled:bg-gray disabled:cursor-not-allowed disabled:animate-pulse"
+        >
+          Donate{" "}
+          {donation.amount && (
+            <span className="font-bold">${donation.amount}</span>
+          )}
+        </motion.button>
       </section>
     </>
   );

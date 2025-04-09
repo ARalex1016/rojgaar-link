@@ -16,4 +16,18 @@ export const useDonationStore = create((set) => ({
       );
     }
   },
+
+  stripePaymentSuccess: async (paymentIntentId) => {
+    try {
+      const res = await axiosInstance.post("/donation/stripe-payment-success", {
+        paymentIntentId,
+      });
+
+      return res;
+    } catch (error) {
+      throw Error(
+        error?.response?.data?.message || "An unexpected error occurred"
+      );
+    }
+  },
 }));

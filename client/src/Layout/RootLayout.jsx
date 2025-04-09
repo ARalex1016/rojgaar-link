@@ -15,7 +15,7 @@ const RootLayout = () => {
   const { isLoading } = useAuthStore();
 
   const location = useLocation();
-  const hideFooter = ["/signup", "/login"];
+  const hideFooter = ["/signup", "/login", "/stripe"];
 
   const shouldHideFooter = hideFooter.includes(location.pathname);
 

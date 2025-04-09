@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
 
-// Lucide Icons
-import { LoaderCircle } from "lucide-react";
+// Components
+import { LoadingCircle } from "../../Components/Loading";
 
 // Stripe
 import {
@@ -61,7 +62,7 @@ const StripeCheckOutPage = ({ data, clientSecret }) => {
         elements,
         clientSecret,
         confirmParams: {
-          return_url: `${window.location.origin}/support-us/thanks?amount=${data.amount}&name=${data.name}`,
+          return_url: `${window.location.origin}/stripe/thanks`,
         },
       });
 
@@ -76,45 +77,56 @@ const StripeCheckOutPage = ({ data, clientSecret }) => {
   };
 
   if (!stripe || !elements) {
-    return (
-      <div className="w-full flex justify-center items-center">
-        <LoaderCircle className="animate-spin text-neutral" size={40} />
-      </div>
-    );
+    return <LoadingCircle className="h-96" />;
   }
 
   return (
     <>
-      <PaymentElement
-        id="payment-element"
-        options={paymentElementOptions}
-        className="w-full"
-      />
+      <section className="w-full text-center bg-neutral/80 rounded-md px-4 py-2 my-2">
+        <h2 className="font-bold">Almost There!</h2>
 
-      {errorMessage && <p>{errorMessage}</p>}
+        <p className="text-sm">
+          Please enter your payment details to complete your donation securely.
+        </p>
+      </section>
 
-      {/* Button (Donate Now) */}
-      <motion.button
-        variants={{
-          initial: {
-            scale: 1,
-          },
-          final: {
-            scale: 0.97,
-          },
-        }}
-        whileTap="final"
-        disabled={donating}
-        onClick={!stripe || handleDonte}
-        className="w-full text-lg text-black font-medium bg-neutral rounded-md cursor-pointer py-2 disabled:bg-gray disabled:cursor-not-allowed disabled:animate-pulse"
-      >
-        {donating ? "Processing..." : `Donate $${data.amount}`}
-      </motion.button>
+      {stripe && elements && (
+        <section className="w-full bg-white rounded-md flex flex-col justify-center items-center gap-y-2 px-2 py-4 ">
+          <PaymentElement
+            id="payment-element"
+            options={paymentElementOptions}
+            className="w-full"
+          />
+
+          {errorMessage && <p>{errorMessage}</p>}
+
+          {/* Button (Donate Now) */}
+          <motion.button
+            variants={{
+              initial: {
+                scale: 1,
+              },
+              final: {
+                scale: 0.97,
+              },
+            }}
+            whileTap="final"
+            disabled={donating}
+            onClick={!stripe || handleDonte}
+            className="w-full text-lg text-neutral font-medium bg-black rounded-md cursor-pointer py-2 disabled:bg-gray disabled:cursor-not-allowed disabled:animate-pulse"
+          >
+            {donating ? "Processing..." : `Donate $${data.amount}`}
+          </motion.button>
+        </section>
+      )}
     </>
   );
 };
 
-const StripeElement = ({ data }) => {
+const StripeElement = () => {
+  const location = useLocation();
+  const data = location.state;
+
   const { createDonationIntent } = useDonationStore();
   const { user } = useUserStore();
 
@@ -126,11 +138,11 @@ const StripeElement = ({ data }) => {
       setLoading(true);
       try {
         const res = await createDonationIntent({
-          amount: data.amount,
-          name: data.name,
-          message: data.message,
-          keepPrivate: data.keepPrivate,
           donorId: user ? user?._id : null,
+          amount: data?.amount,
+          name: data?.name,
+          message: data?.message,
+          keepPrivate: data?.keepPrivate,
         });
 
         setClientSecret(res.data.clientSecret);
@@ -149,25 +161,13 @@ const StripeElement = ({ data }) => {
   }, [data]);
 
   const appearance = {
-    theme: "night",
+    theme: "stripe",
   };
 
   const loader = "auto";
 
-  if (!data.amount) {
-    return (
-      <div className="w-full flex justify-center items-center">
-        <p className="text-red text-lg font-medium">No Amount Provided</p>
-      </div>
-    );
-  }
-
   if (loading || !clientSecret) {
-    return (
-      <div className="w-full flex justify-center items-center">
-        <LoaderCircle className="animate-spin text-neutral" size={40} />
-      </div>
-    );
+    return <LoadingCircle className="h-96" />;
   }
 
   return (

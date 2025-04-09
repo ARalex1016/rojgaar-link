@@ -30,7 +30,7 @@ const StripeCheckOutPage = ({ data, clientSecret }) => {
   const [errorMessage, setErrorMessage] = useState(null);
 
   const paymentElementOptions = {
-    layout: "accordion",
+    layout: "tabs",
   };
 
   const validateAmount = () => {

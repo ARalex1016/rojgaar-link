@@ -178,6 +178,14 @@ const StripeElement = () => {
         clientSecret,
         appearance,
         loader,
+        fields: {
+          billingDetails: {
+            email: "never", // Hide email field
+            phone: "never", // Hide phone field
+            address: "never", // Hide address field
+            postalCode: "never", // Hide postal code field
+          },
+        },
       }}
     >
       <StripeCheckOutPage data={data} clientSecret={clientSecret} />

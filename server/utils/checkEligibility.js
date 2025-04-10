@@ -6,4 +6,12 @@ export const checkEligibility = (user, profile) => {
       return false;
     }
   }
+
+  if (user.role === "creator") {
+    if (profile.contact?.phoneNumber) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 };

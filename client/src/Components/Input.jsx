@@ -30,6 +30,9 @@ const customSelectStyles = {
     borderWidth: "2px", // Set the border width explicitly
     borderRadius: "6px",
     boxShadow: "none", // Ensure no extra shadow appears on focus
+    display: "flex",
+    flexWrap: "nowrap",
+    overflowX: "auto",
     "&:hover": {
       borderColor: state.isFocused ? "rgb(var(--neutral))" : "rgb(var(--main))", // Keep hover consistent with focus
     },
@@ -87,6 +90,7 @@ const customSelectStyles = {
     backgroundColor: "rgba(var(--main), 0.3)",
     borderRadius: "6px",
     padding: "0 2px",
+    whiteSpace: "nowrap",
     "&:hover": {
       backgroundColor: "rgba(var(--main), 0.5)",
     },
@@ -290,7 +294,7 @@ export const RadioInput = ({
 
         <label
           htmlFor={id}
-          className="min-w-[8ch] text-white/60 text-sm text-center border-2 border-main/60 rounded-md py-1 cursor-pointer peer-checked:text-white peer-checked:bg-main px-2"
+          className="min-w-[8ch] text-white/60 mobilesm:text-xs md:text-sm text-center border-2 border-main/60 rounded-md py-1 cursor-pointer peer-checked:text-white peer-checked:bg-main px-2"
         >
           {label}
         </label>

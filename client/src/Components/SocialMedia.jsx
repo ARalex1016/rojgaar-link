@@ -9,7 +9,51 @@ import { capitalize } from "../Utils/StringManager";
 import { isValidURL } from "../Utils/StringManager";
 
 // Icons
-import { X } from "lucide-react";
+import { X, Facebook, Instagram, Youtube } from "lucide-react";
+
+export const SocialMediaLinks = ({ socialMedia }) => {
+  const socialMediaMap = {
+    facebook: {
+      icon: <Facebook />,
+      color: "#1877F2",
+    },
+    instagram: {
+      icon: <Instagram />,
+      color: "#E4405F",
+    },
+    youtube: {
+      icon: <Youtube />,
+      color: "#FF0000",
+    },
+  };
+
+  return (
+    <>
+      <section className="w-full flex flex-row gap-x-2">
+        {Object.entries(socialMedia).map(([platform, url]) => {
+          // Only render if URL is not empty
+          if (url) {
+            const { icon, color } = socialMediaMap[platform] || {};
+            if (!icon) return null; // Skip if platform is not mapped
+            return (
+              <a
+                key={platform}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={platform.charAt(0).toUpperCase() + platform.slice(1)} // Capitalize platform name
+                className={`text-2xl decoration-none text-main transition-all duration-300 hover:text-${platform} hover:scale-110`}
+              >
+                {icon}
+              </a>
+            );
+          }
+          return null;
+        })}
+      </section>
+    </>
+  );
+};
 
 export const SocialLinkAddOrDelete = ({ socialMediaObj, setProfileInfo }) => {
   const [options, setOptions] = useState(null);

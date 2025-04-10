@@ -9,7 +9,10 @@ import {
   CountryStateSelect,
   PhoneNumberInput,
 } from "../../Components/Input";
-import { SocialLinkAddOrDelete } from "../../Components/SocialMedia";
+import {
+  SocialLinkAddOrDelete,
+  SocialMediaLinks,
+} from "../../Components/SocialMedia";
 
 // Icons
 import { Loader } from "lucide-react";
@@ -122,6 +125,28 @@ const CandidateProfile = () => {
     fetchProfile();
   }, []);
 
+  useEffect(() => {
+    if (profile) {
+      setProfileInfo((pre) => ({
+        ...pre,
+        contact: {
+          ...pre.contact,
+          phoneNumber: profile?.contact?.phoneNumber || "",
+          socialMedia: {
+            ...pre.contact.socialMedia,
+            facebook: profile?.contact?.socialMedia?.facebook || "",
+            instagram: profile?.contact?.socialMedia?.instagram || "",
+          },
+        },
+        location: {
+          ...pre.location,
+          country: profile?.location?.country || "",
+          state: profile?.location?.state || "",
+        },
+      }));
+    }
+  }, [profile]);
+
   return (
     <>
       <section className="w-full py-2">
@@ -173,6 +198,8 @@ const CandidateProfile = () => {
             handlePhoneNumberChange={handlePhoneNumberChange}
           />
 
+          <SocialMediaLinks socialMedia={profileInfo.contact.socialMedia} />
+
           <SocialLinkAddOrDelete
             socialMediaObj={profileInfo.contact.socialMedia}
             setProfileInfo={setProfileInfo}
@@ -182,10 +209,8 @@ const CandidateProfile = () => {
         {/* Location */}
         <div className="my-4">
           <CountryStateSelect
-            country={
-              profile?.location?.country || profileInfo?.location?.country
-            }
-            state={profile?.location?.state || profileInfo?.location?.state}
+            country={profileInfo?.location?.country}
+            state={profileInfo?.location?.state}
             onLocationChange={handleLocationChange}
           />
         </div>

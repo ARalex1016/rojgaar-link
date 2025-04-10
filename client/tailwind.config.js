@@ -19,6 +19,9 @@ export default {
         customBlue: "rgba(var(--customBlue))",
         customGreen: "rgb(40, 167, 69)",
         orange: "rgb(255, 165, 0)",
+        facebook: "#1877F2",
+        instagram: "#E4405F",
+        youtube: "#FF0000",
       },
       boxShadow: {
         "inner-lg": "inset 0 4px 6px",

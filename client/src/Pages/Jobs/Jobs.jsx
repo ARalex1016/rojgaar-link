@@ -76,7 +76,9 @@ const Filters = ({ isOpen, toggleSection, currentPage }) => {
     }));
   };
 
-  const handleExperienceLevelChange = (value) => {
+  const handleExperienceLevelChange = (e) => {
+    const value = e.target.value;
+
     setQuery((pre) => ({
       ...pre,
       experienceLevel: value,
@@ -173,7 +175,7 @@ const Filters = ({ isOpen, toggleSection, currentPage }) => {
           />
 
           {/* Experienced Level Options */}
-          <section className="col-span-2 flex flex-row justify-between pr-2">
+          <section className="col-span-2 flex flex-row justify-between">
             <RadioInput
               label="Beginer"
               name="experienceLevel"

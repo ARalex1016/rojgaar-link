@@ -68,6 +68,7 @@ const Job = () => {
     const getjob = async (jobId) => {
       try {
         const res = await getJobById(jobId);
+        console.log(res);
 
         setJob(res);
       } catch (error) {

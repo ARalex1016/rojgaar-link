@@ -1,6 +1,7 @@
 // Models
 import User from "../Models/user.model.js";
 import CandidateProfile from "../Models/candidateProfile.model.js";
+import CreatorProfile from "../Models/creator-profile.model.js";
 
 // Utils
 import { checkEligibility } from "../utils/checkEligibility.js";
@@ -194,7 +195,20 @@ export const updatedProfileDetails = async (req, res) => {
   const { user } = req;
 
   try {
-    const updatedProfileDetails = await CandidateProfile.findOneAndUpdate(
+    let Profile;
+
+    if (user.role === "candidate") {
+      Profile = CandidateProfile;
+    } else if (user.role === "creator") {
+      Profile = CreatorProfile;
+    } else {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid user role",
+      });
+    }
+
+    const updatedProfileDetails = await Profile.findOneAndUpdate(
       {
         userId: user._id,
       },

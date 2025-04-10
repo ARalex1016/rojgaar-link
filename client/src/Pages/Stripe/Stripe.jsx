@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 
 // Components
 import { LoadingCircle } from "../../Components/Loading";
+import BackButton from "../../Components/BackButton";
 
 // Stripe
 import {
@@ -27,7 +28,6 @@ const StripeCheckOutPage = ({ data, clientSecret }) => {
   const elements = useElements();
 
   const [donating, setDonating] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
 
   const paymentElementOptions = {
     layout: "tabs",
@@ -55,7 +55,6 @@ const StripeCheckOutPage = ({ data, clientSecret }) => {
     try {
       const { error: submitError } = await elements.submit();
       if (submitError) {
-        setErrorMessage(submitError.message);
         return;
       }
 
@@ -83,6 +82,8 @@ const StripeCheckOutPage = ({ data, clientSecret }) => {
 
   return (
     <>
+      <BackButton className="mt-2" />
+
       <section className="w-full text-center bg-neutral/80 rounded-md px-4 py-2 my-2">
         <h2 className="font-bold">Almost There!</h2>
 
@@ -98,8 +99,6 @@ const StripeCheckOutPage = ({ data, clientSecret }) => {
             options={paymentElementOptions}
             className="w-full"
           />
-
-          {errorMessage && <p>{errorMessage}</p>}
 
           {/* Button (Donate Now) */}
           <motion.button

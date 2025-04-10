@@ -4,6 +4,69 @@ import Donation from "../Models/donation.model.js";
 // Lib
 import stripe from "./../lib/stripe.js";
 
+export const getTopDonorsOfTheMonth = async (req, res) => {
+  const { isAuthenticated, user } = req;
+
+  try {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+    const topDonors = await Donation.aggregate([
+      // Filter donations within the current month
+      {
+        $match: {
+          createdAt: {
+            $gte: startOfMonth,
+            $lte: endOfMonth,
+          },
+        },
+      },
+      // Sort by donation amount in descending order
+      { $sort: { amount: -1 } },
+      // Limit to top 10 donations
+      { $limit: 10 },
+      // Optionally populate donor details if needed
+      {
+        $lookup: {
+          from: "users", // Collection name for User model
+          localField: "donorId",
+          foreignField: "_id",
+          as: "donorDetails",
+        },
+      },
+      // Project required fields
+      {
+        $project: {
+          transactionId: isAuthenticated && user?.role === "admin" ? 1 : 0, // Show transactionId only to admin
+          donorId: 1,
+          donorDetails: {
+            name: 1,
+            email: 1, // Include donor's email if required
+          },
+          amount: 1,
+          currency: 1,
+          name: 1,
+          message: 1,
+          keepPrivate: 1,
+        },
+      },
+    ]);
+
+    // Success
+    res.status(200).json({
+      status: "success",
+      message: "",
+    });
+  } catch (error) {
+    // Error
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
+
 export const createDonationIntent = async (req, res) => {
   const { amount } = req.body;
 
@@ -61,8 +124,13 @@ export const stripePaymentSuccess = async (req, res) => {
         message: metadata.message,
         keepPrivate: metadata.keepPrivate,
         paymentMethod: "Stripe",
+        paymentType: "Automated",
+        status: "Verified",
+        verifiedAt: new Date(),
       });
+
       await donation.save();
+
       // Success
       return res.status(201).json({
         status: "success",

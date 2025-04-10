@@ -18,7 +18,7 @@ const donationSchema = new mongoose.Schema(
     },
     currency: {
       type: String,
-      default: "USD",
+      default: "usd",
     },
     name: {
       type: String,
@@ -30,9 +30,30 @@ const donationSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["Stripe", "Visa", "Mastercard", "GooglePay"],
+      enum: ["Stripe", "NepaleseBankTransfer"],
       required: true,
     },
+    paymentType: {
+      type: String,
+      enum: ["Manual", "Automated"],
+      required: true,
+    },
+    manualDetails: {
+      bankName: { type: String }, // Optional, for manual payments
+      referenceNumber: { type: String }, // User-provided transaction reference
+      proofUrl: { type: String }, // URL to uploaded proof (e.g., screenshot)
+    },
+    status: {
+      type: String,
+      enum: ["Pending", "Verified", "Rejected"], // Tracks admin verification status
+      default: "Pending", // Start as pending for manual payments
+    },
+    verifiedAt: { type: Date }, // Timestamp of manual verification
+    verifiedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    adminNote: { type: String }, // Notes from admin for rejected transactions
   },
   { strict: true, timestamps: true }
 );

@@ -23,6 +23,7 @@ const RootLayout = () => {
     <>
       <Background>
         <Header />
+
         <LoadingLinear isVisible={isLoading} />
         <SideSpacing className="flex-1">
           <Outlet />

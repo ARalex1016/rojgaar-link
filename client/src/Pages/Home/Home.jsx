@@ -3,9 +3,23 @@ import { useNavigate } from "react-router-dom";
 // Store
 import { useAuthStore } from "../../Store/useAuthStore";
 
+// Components
+import AdComponent from "../../Components/Ads/Ads";
+
 const Home = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
+
+  const adCode = `<script type="text/javascript">
+    atOptions = {
+      'key' : '35056e4e30387b34fa86a750ecf89d87',
+      'format' : 'iframe',
+      'height' : 60,
+      'width' : 468,
+      'params' : {}
+    };
+  </script>
+  <script type="text/javascript" src="//www.highperformanceformat.com/35056e4e30387b34fa86a750ecf89d87/invoke.js"></script>`;
 
   const handleSignup = (role) => {
     navigate("/signup", { state: { role } });
@@ -15,6 +29,8 @@ const Home = () => {
     <>
       {!isAuthenticated && (
         <section className="w-full aspect-video bg-white">
+          <AdComponent adCode={adCode} />
+
           <p className="text-center text-lg">Click Here</p>
 
           <div>

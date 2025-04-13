@@ -1,3 +1,5 @@
+import cron from "node-cron";
+
 // Model
 import User from "../Models/user.model.js";
 import Jobs from "../Models/job.model.js";
@@ -15,6 +17,31 @@ import {
 
 // Utils
 import { canViewJobDetails } from "../utils/canViewJobDetails.js";
+
+// Cron schedule to run every day at midnight (12:00 AM)
+cron.schedule("0 0 * * *", async () => {
+  console.log("Running scheduled cleanup for expired jobs...");
+
+  try {
+    // Find all expired jobs
+    const expiredJobs = await Jobs.find({
+      lastSubmissionDate: { $lte: new Date() }, // Jobs with expiration <= now
+    });
+
+    const jobIds = expiredJobs.map((job) => job._id);
+
+    if (jobIds.length > 0) {
+      // Update the status of all expired jobs to "expired"
+      await Jobs.updateMany({ _id: { $in: jobIds } }, { status: "expired" });
+
+      console.log(`Updated ${jobIds.length} expired jobs to "expired".`);
+    } else {
+      console.log("No expired jobs found.");
+    }
+  } catch (error) {
+    console.error("Error during cleanup of expired jobs:", error);
+  }
+});
 
 export const saveJob = async (req, res) => {
   const { user, job } = req;

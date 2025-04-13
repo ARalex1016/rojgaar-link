@@ -4,8 +4,8 @@ import cron from "node-cron";
 import ChatSession from "../Models/chatSession.model.js";
 import Chat from "../Models/chat.model.js";
 
-// Cron schedule
-cron.schedule("0 * * * *", async () => {
+// Cron schedule to run every day at midnight (12:00 AM)
+cron.schedule("0 0 * * *", async () => {
   console.log("Running scheduled cleanup for expired chat sessions...");
 
   try {

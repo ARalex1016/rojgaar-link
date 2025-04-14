@@ -7,6 +7,7 @@ import Footer from "../Components/Footer/Footer";
 import Background from "../Components/Background";
 import SideSpacing from "../Components/SideSpacing";
 import { LoadingLinear } from "../Components/Loading";
+import { ShareSocial } from "../Components/ShareSocial/ShareSocial";
 
 // Store
 import { useAuthStore } from "../Store/useAuthStore";
@@ -19,12 +20,22 @@ const RootLayout = () => {
 
   const shouldHideFooter = hideFooter.includes(location.pathname);
 
+  const metadata = {
+    title: "My Website",
+    text: "Here’s something interesting for you!",
+    image: "https://example.com/image.png",
+    url: window.location.href,
+  };
+
   return (
     <>
       <Background>
         <Header />
 
         <LoadingLinear isVisible={isLoading} />
+
+        <ShareSocial metadata={metadata} />
+
         <SideSpacing className="flex-1">
           <Outlet />
         </SideSpacing>

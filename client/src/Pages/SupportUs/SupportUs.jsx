@@ -5,7 +5,7 @@ const SupportUs = () => {
     <>
       <div>
         {/* Tab */}
-        <section className="w-full flex flex-row  justify-around flex-nowrap gap-x-4 overflow-auto scrollbar-hide my-2">
+        {/* <section className="w-full flex flex-row  justify-around flex-nowrap gap-x-4 overflow-auto scrollbar-hide my-2">
           <NavLink
             to="."
             end // Ensure exact matching to the index route
@@ -32,7 +32,7 @@ const SupportUs = () => {
           >
             <button>Top Donors</button>
           </NavLink>
-        </section>
+        </section> */}
 
         <section className="w-full flex flex-col items-center justify-center gap-y-1 py-4">
           <Outlet />

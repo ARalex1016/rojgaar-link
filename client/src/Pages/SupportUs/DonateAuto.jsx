@@ -12,7 +12,7 @@ import {
 // Store
 import { useAuthStore } from "../../Store/useAuthStore";
 
-const Donate = () => {
+const DonateAuto = () => {
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
@@ -152,4 +152,4 @@ const Donate = () => {
   );
 };
 
-export default Donate;
+export default DonateAuto;

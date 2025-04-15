@@ -134,32 +134,38 @@ export const CopyableText = ({ text, className }) => {
 
   return (
     <>
-      <div
-        className={`w-full text-lg bg-neutral rounded-md relative overflow-hidden mt-2 ${className}`}
-      >
-        <div className="text-black/80 text-nowrap p-2">{text}</div>
-
-        <motion.button
-          variants={{
-            initial: { boxShadow: "0px 0px 0px rgba(0, 0, 0, 0)" },
-            final: { boxShadow: "inset 4px 4px 10px rgba(99, 99, 99, 1)" },
-          }}
-          whileTap="final"
-          transition={{
-            duration: 0.1,
-          }}
-          onClick={handleCopy}
-          className={`h-full aspect-square bg-neutral rounded-md flex justify-center items-center absolute right-0 top-0 ${
-            copied && "bg-green-500"
-          }`}
+      {text && (
+        <div
+          title="Click to copy"
+          className={`w-full text-lg bg-neutral rounded-md relative overflow-hidden ${className}`}
         >
-          {copied ? (
-            <CircleCheckBig size={20} className="text-neutral font-extrabold" />
-          ) : (
-            <Copy size={20} />
-          )}
-        </motion.button>
-      </div>
+          <div className="text-black/80 text-nowrap p-2">{text}</div>
+
+          <motion.button
+            variants={{
+              initial: { boxShadow: "0px 0px 0px rgba(0, 0, 0, 0)" },
+              final: { boxShadow: "inset 4px 4px 10px rgba(99, 99, 99, 1)" },
+            }}
+            whileTap="final"
+            transition={{
+              duration: 0.1,
+            }}
+            onClick={handleCopy}
+            className={`h-full aspect-square rounded-md flex justify-center items-center absolute right-0 top-0 ${
+              copied && "bg-green-500"
+            }`}
+          >
+            {copied ? (
+              <CircleCheckBig
+                size={20}
+                className="text-neutral font-extrabold"
+              />
+            ) : (
+              <Copy size={20} />
+            )}
+          </motion.button>
+        </div>
+      )}
     </>
   );
 };

@@ -21,6 +21,11 @@
 * {
   @apply transition-colors duration-200;
   scroll-behavior: smooth;
+
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 html {

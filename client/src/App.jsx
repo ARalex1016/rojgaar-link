@@ -17,9 +17,9 @@ import Jobs from "./Pages/Jobs/Jobs";
 import JobDetails from "./Pages/Jobs/JobDetails";
 import MyJobs from "./Pages/MyJobs/MyJobs";
 import Applications from "./Pages/MyJobs/Application/Applications";
-import SupportUs from "./Pages/SupportUs/SupportUs";
 import User from "./Pages/User/User";
-import Donate from "./Pages/SupportUs/Donate";
+import SupportUs from "./Pages/SupportUs/SupportUs";
+import DonateManual from "./Pages/SupportUs/DonateManual";
 import TopDonors from "./Pages/SupportUs/TopDonors";
 import StripeElement from "./Pages/Stripe/Stripe";
 import ThanksPageStripe from "./Pages/Stripe/ThanksPageStripe";
@@ -183,7 +183,7 @@ function App() {
           children: [
             {
               index: true,
-              element: <Donate />,
+              element: <DonateManual />,
             },
             {
               path: "top-donors",

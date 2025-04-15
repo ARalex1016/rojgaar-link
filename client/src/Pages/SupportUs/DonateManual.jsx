@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 // Components
-import { EsewaIcon, KhaltiIcon, XIcon } from "../../Components/Icons";
+import {
+  EsewaIcon,
+  KhaltiIcon,
+  XIcon,
+  DownloadIcon,
+  ArrowRightIcon,
+} from "../../Components/Icons";
 import { CopyableText } from "../../Components/Input";
 
 // Utils
@@ -10,6 +16,7 @@ import { capitalize } from "../../Utils/StringManager";
 
 const DonateManual = () => {
   const [selectedMethod, setSelectedMethod] = useState(null);
+  const [selectedMethodObj, setSelectedMethodObj] = useState(null);
 
   const paymentMethods = [
     {
@@ -18,6 +25,7 @@ const DonateManual = () => {
       icon: EsewaIcon,
       details: {
         id: "esewa id",
+        qrSrc: "/Icons/esewa.png",
       },
     },
     {
@@ -26,17 +34,26 @@ const DonateManual = () => {
       icon: KhaltiIcon,
       details: {
         id: "khalti id",
+        qrSrc: "/Icons/khalti.png",
       },
     },
   ];
 
-  const SelectedIcon = selectedMethod
-    ? paymentMethods.find((method) => method.id === selectedMethod)?.icon
-    : null;
+  const SelectedIcon = selectedMethodObj ? selectedMethodObj?.icon : null;
 
   const handleIconClick = (method) => {
     setSelectedMethod(method);
   };
+
+  useEffect(() => {
+    if (selectedMethod) {
+      setSelectedMethodObj(
+        paymentMethods.find((method) => method.id === selectedMethod)
+      );
+    } else {
+      setSelectedMethodObj(null);
+    }
+  }, [selectedMethod]);
 
   return (
     <>
@@ -46,44 +63,102 @@ const DonateManual = () => {
         </p>
 
         <p className="text-neutral/70 text-sm text-center font-medium">
-          Your Contribution Makes a Difference
+          {/* Your Contribution Makes a Difference */}
+          Let’s help build a stronger, self-reliant Nepali community
         </p>
 
+        {/* Payment Icons as Tabs */}
         <div className="flex flex-row items-center justify-center gap-x-4 my-4">
-          <EsewaIcon
-            selectedMethod={selectedMethod}
-            handleClick={handleIconClick}
-            className=""
-          />
+          {paymentMethods.map((method) => {
+            const Icon = method.icon;
 
-          <KhaltiIcon
-            selectedMethod={selectedMethod}
-            handleClick={handleIconClick}
-            className=""
-          />
+            return (
+              <Icon
+                key={method.id}
+                selectedMethod={selectedMethod}
+                handleClick={handleIconClick}
+                className={`hover:bg-accent cursor-pointer ${
+                  selectedMethod === method.id ? "bg-customBlue" : "bg-neutral"
+                }`}
+              />
+            );
+          })}
         </div>
 
-        {selectedMethod && (
-          <motion.div className="w-full h-[80vh] bg-neutral rounded-md shadow-md shadow-gray flex flex-col items-center absolute top-0 z-40 p-2">
+        <p className="text-sm text-neutral/80 font-medium italic text-center flex">
+          <ArrowRightIcon />
+          Click on your preferred donation method to proceed, and make your
+          contribution.
+        </p>
+
+        <p className="text-neutral mobilesm:text-sm mobile:text-base text-left bg-black/80 rounded-lg px-4 py-2 mt-10">
+          For every Nepali working hard far from home,
+          <br /> For every family dreaming of a better future, <br /> Let’s
+          unite and make opportunities accessible for all. <br />
+          Your support can turn these dreams into reality
+        </p>
+
+        {/* Pop Up */}
+        {selectedMethod && selectedMethodObj && (
+          <motion.div className="w-full bg-neutral rounded-md shadow-md shadow-gray flex flex-col items-center absolute top-0 z-40 px-4 pt-2 pb-4">
             <XIcon
               handleClick={() => setSelectedMethod(null)}
               className="absolute right-0 mr-2"
             />
 
-            <SelectedIcon className="w-[100px]" />
+            <SelectedIcon className="w-[100px] mb-2" />
 
-            <div className="w-full grid grid-cols-3">
-              <p className="text-left flex items-center px-2 col-span-1">
+            <div className="w-full grid grid-cols-3 gap-y-4">
+              <p className="text-left font-medium flex items-center px-2 col-span-1">
                 {capitalize(selectedMethod)} Id
               </p>
 
               <CopyableText
-                text={
-                  paymentMethods.find((method) => method.id === selectedMethod)
-                    .details.id
-                }
-                className="border-2 border-black col-span-2"
+                text={selectedMethodObj?.details?.id}
+                className="border-[1px] border-black col-span-2"
               />
+
+              <img
+                src={selectedMethodObj?.details?.qrSrc}
+                alt={`${capitalize(selectedMethod)}-QR`}
+                className="w-10/12 aspect-square object-contain col-span-3 m-auto"
+              />
+
+              <motion.button
+                variants={{
+                  initial: {
+                    scale: 1,
+                  },
+                  hover: {
+                    scale: 1.05,
+                  },
+                  tap: {
+                    scale: 0.95,
+                  },
+                }}
+                whileHover="hover"
+                whileTap="tap"
+                title="Download QR"
+                className="text-neutral bg-customBlue rounded-md shadow-md shadow-gray px-4 py-2 cursor-pointer col-span-3 m-auto"
+              >
+                <a
+                  href={
+                    paymentMethods.find(
+                      (method) => method.id === selectedMethod
+                    ).details.qrSrc
+                  }
+                  download={`${
+                    paymentMethods.find(
+                      (method) => method.id === selectedMethod
+                    ).id
+                  }-qr.png`}
+                  className="flex gap-x-2"
+                >
+                  <p>Download QR</p>
+
+                  <DownloadIcon className="text-neutral" />
+                </a>
+              </motion.button>
             </div>
           </motion.div>
         )}

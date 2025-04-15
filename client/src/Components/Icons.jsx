@@ -1,7 +1,5 @@
 // Icons
-import esewaicon from "./../../public/Icons/esewa.png";
-import khaltiicon from "./../../public/Icons/khalti.png";
-import { X } from "lucide-react";
+import { X, Download, ArrowRight } from "lucide-react";
 
 export const EsewaIcon = ({ handleClick, className }) => {
   const id = "esewa";
@@ -12,7 +10,7 @@ export const EsewaIcon = ({ handleClick, className }) => {
         onClick={() => handleClick(id)}
         className={`w-16 bg-neutral rounded-md p-2 ${className}`}
       >
-        <img src={esewaicon} alt="esewa-icon" />
+        <img src="/Icons/esewa.png" alt="esewa-icon" />
       </div>
     </>
   );
@@ -27,7 +25,7 @@ export const KhaltiIcon = ({ handleClick, className }) => {
         onClick={() => handleClick(id)}
         className={`w-16 bg-neutral rounded-md p-2 ${className}`}
       >
-        <img src={khaltiicon} alt="khalti-icon" />
+        <img src="/Icons/khalti.png" alt="khalti-icon" />
       </div>
     </>
   );
@@ -41,6 +39,22 @@ export const XIcon = ({ handleClick, className }) => {
         size={30}
         className={`text-red bg-transparent rounded-full p-1 hover:text-neutral hover:bg-red ${className}`}
       />
+    </>
+  );
+};
+
+export const DownloadIcon = ({ className }) => {
+  return (
+    <>
+      <Download size={24} className={`${className}`} />
+    </>
+  );
+};
+
+export const ArrowRightIcon = ({ className }) => {
+  return (
+    <>
+      <ArrowRight size={24} className={`${className}`} />
     </>
   );
 };

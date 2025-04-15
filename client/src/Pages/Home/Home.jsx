@@ -56,6 +56,7 @@ const Home = () => {
           </div>
         </section>
       )}
+      {/* "Nepali for Nepali: It’s not just a slogan; it’s a promise. */}
     </>
   );
 };

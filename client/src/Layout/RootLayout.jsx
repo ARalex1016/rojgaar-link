@@ -24,7 +24,7 @@ const RootLayout = () => {
     title: "My Website",
     text: "Here’s something interesting for you!",
     image: "https://example.com/image.png",
-    url: window.location.href,
+    url: window.location.origin,
   };
 
   return (

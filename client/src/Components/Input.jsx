@@ -5,9 +5,11 @@ import { Country, State } from "country-state-city";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 
 // React Icons
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { Copy, CircleCheckBig } from "lucide-react";
 
 // Mui
 import Box from "@mui/material/Box";
@@ -117,6 +119,49 @@ const customSelectStyles = {
       backgroundColor: "rgb(var(--red), 0.2)",
     },
   }),
+};
+
+export const CopyableText = ({ text, className }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      toast.success("Copied to clipboard!");
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <>
+      <div
+        className={`w-full text-lg bg-neutral rounded-md relative overflow-hidden mt-2 ${className}`}
+      >
+        <div className="text-black/80 text-nowrap p-2">{text}</div>
+
+        <motion.button
+          variants={{
+            initial: { boxShadow: "0px 0px 0px rgba(0, 0, 0, 0)" },
+            final: { boxShadow: "inset 4px 4px 10px rgba(99, 99, 99, 1)" },
+          }}
+          whileTap="final"
+          transition={{
+            duration: 0.1,
+          }}
+          onClick={handleCopy}
+          className={`h-full aspect-square bg-neutral rounded-md flex justify-center items-center absolute right-0 top-0 ${
+            copied && "bg-green-500"
+          }`}
+        >
+          {copied ? (
+            <CircleCheckBig size={20} className="text-neutral font-extrabold" />
+          ) : (
+            <Copy size={20} />
+          )}
+        </motion.button>
+      </div>
+    </>
+  );
 };
 
 export const FloatingLabelInput = ({

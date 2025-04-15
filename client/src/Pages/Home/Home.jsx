@@ -5,6 +5,7 @@ import { useAuthStore } from "../../Store/useAuthStore";
 
 // Components
 import AdComponent from "../../Components/Ads/Ads";
+import { CopyableText } from "../../Components/Input";
 
 const Home = () => {
   const navigate = useNavigate();

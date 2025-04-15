@@ -8,10 +8,10 @@ export const ShareSocial = ({ metadata }) => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: metadata.title,
-          text: metadata.text,
-          image: metadata.image,
-          url: metadata.url,
+          title: metadata?.title,
+          text: metadata?.text,
+          image: metadata?.image,
+          url: metadata?.url,
         });
         console.log("Content shared successfully!");
       } catch (error) {

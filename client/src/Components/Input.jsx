@@ -7,6 +7,9 @@ import "react-phone-input-2/lib/style.css";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 
+// Components
+import { LoaderCircleIcon } from "./Icons";
+
 // React Icons
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { Copy, CircleCheckBig } from "lucide-react";
@@ -430,6 +433,70 @@ export const FileUpload = ({
           onChange={handleFileUpload}
           className="hidden"
         />
+      </div>
+    </>
+  );
+};
+
+export const PDFUpload = ({ handlePdfUpload }) => {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [isUploadingFile, setIsUploadingFile] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const handleChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file);
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      toast.error("Please select a file first");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    setIsUploadingFile(true);
+
+    try {
+      const res = await handlePdfUpload(formData);
+      toast.success(res.message);
+
+      setSelectedFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""; // Clear the input field
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsUploadingFile(false);
+    }
+  };
+
+  return (
+    <>
+      <div className="w-full flex flex-row gap-x-2">
+        <input
+          ref={fileInputRef} // Attach the ref to the input
+          type="file"
+          accept="application/pdf"
+          disabled={isUploadingFile}
+          onChange={handleChange}
+          className="w-full text-neutral border-[1px] border-neutral/60 rounded-md px-2 py-1"
+        />
+
+        <button
+          disabled={isUploadingFile}
+          onClick={handleUpload}
+          className="w-24 text-neutral bg-customBlue rounded-md cursor-pointer disabled:bg-gray disabled:cursor-not-allowed"
+        >
+          {isUploadingFile ? (
+            <LoaderCircleIcon className="animate-spin m-auto" />
+          ) : (
+            "Upload"
+          )}
+        </button>
       </div>
     </>
   );

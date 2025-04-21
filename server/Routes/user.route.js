@@ -17,6 +17,12 @@ import { protect, authorize } from "../Controllers/auth.controller.js";
 // Middleware
 import { userIdParamHandler } from "../Middleware/param.middleware.js";
 
+// Lib
+import multer from "multer";
+
+// Configure Multer for file handling
+const upload = multer({ dest: "uploads/" });
+
 const router = express.Router();
 
 // Param Middleware
@@ -47,7 +53,13 @@ router.patch(
   uploadProfilePic
 );
 
-router.patch("/resume", protect, authorize("candidate"), uploadResume);
+router.patch(
+  "/resume",
+  protect,
+  authorize("candidate"),
+  upload.single("file"),
+  uploadResume
+);
 
 router.delete("/:userId", protect, authorize("admin"), deleteUserById);
 

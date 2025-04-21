@@ -1,5 +1,5 @@
 // Icons
-import { X, Download, ArrowRight } from "lucide-react";
+import { X, Download, ArrowRight, LoaderCircle } from "lucide-react";
 
 export const EsewaIcon = ({ handleClick, className }) => {
   const id = "esewa";
@@ -55,6 +55,14 @@ export const ArrowRightIcon = ({ className }) => {
   return (
     <>
       <ArrowRight size={24} className={`${className}`} />
+    </>
+  );
+};
+
+export const LoaderCircleIcon = ({ className }) => {
+  return (
+    <>
+      <LoaderCircle size={24} className={`${className}`} />
     </>
   );
 };

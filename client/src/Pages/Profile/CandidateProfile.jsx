@@ -5,14 +5,15 @@ import toast from "react-hot-toast";
 import ProfilePic from "./ProfilePic";
 import {
   FloatingLabelInput,
-  FileUpload,
   CountryStateSelect,
   PhoneNumberInput,
+  PDFUpload,
 } from "../../Components/Input";
 import {
   SocialLinkAddOrDelete,
   SocialMediaLinks,
 } from "../../Components/SocialMedia";
+import { PDFViewer } from "../../Components/PDFViewer";
 
 // Icons
 import { Loader } from "lucide-react";
@@ -95,7 +96,7 @@ const CandidateProfile = () => {
 
   const handleResumeUpload = async (file) => {
     try {
-      let res = await uploadResume({ resume: file });
+      let res = await uploadResume(file);
 
       return res;
     } catch (error) {
@@ -236,14 +237,9 @@ const CandidateProfile = () => {
         <div>
           <SubTitle>Resume</SubTitle>
 
-          <FileUpload
-            label="Resume"
-            id="resume"
-            name="resume"
-            img={profile?.resume}
-            accept=".pdf,.doc,.docx,.jpg,.png"
-            handleUpload={handleResumeUpload}
-          />
+          <PDFViewer pdf={profile?.resume} label="View Resume" />
+
+          <PDFUpload handlePdfUpload={handleResumeUpload} />
         </div>
 
         {/* Account Information */}

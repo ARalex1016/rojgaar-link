@@ -57,7 +57,9 @@ export const useUserStore = create((set) => ({
 
   uploadResume: async (resume) => {
     try {
-      const res = await axiosInstance.patch("/user/resume", resume);
+      const res = await axiosInstance.patch("/user/resume", resume, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       set({ profile: res.data.data });
 

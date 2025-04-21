@@ -287,22 +287,23 @@ export const uploadProfilePic = async (req, res) => {
 };
 
 export const uploadResume = async (req, res) => {
-  const { resume } = req.body;
   const { user } = req;
 
   try {
-    if (!resume) {
+    if (!req.file || req.file.mimetype !== "application/pdf") {
       return res.status(400).json({
         status: "fail",
-        message: "Resume is required",
+        message: "Uploaded file must be a PDF",
       });
     }
+
+    const filePath = req.file.path;
 
     const previousResume = await CandidateProfile.findOne({
       userId: user._id,
     }).select("_id resume");
 
-    const uploadResponse = await cloudinary.uploader.upload(resume, {
+    const uploadResponse = await cloudinary.uploader.upload(filePath, {
       folder: "Resume",
     });
 
@@ -313,9 +314,8 @@ export const uploadResume = async (req, res) => {
     );
 
     if (previousResume && previousResume.resume) {
-      const parts = previousResume.resume.split("/");
+      const parts = previousResume?.resume?.split("/");
       const previousPublicId = parts[parts.length - 1].split(".")[0];
-
       await cloudinary.uploader.destroy(`Resume/${previousPublicId}`);
     }
 

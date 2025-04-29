@@ -97,7 +97,7 @@ const Signup = () => {
           </p>
 
           {/* Forms */}
-          <div className="w-4/5 max-w-72 flex flex-col items-center justify-center gap-y-6">
+          <div className="w-4/5 max-w-72 flex flex-col items-center justify-center gap-y-4">
             <FloatingLabelInput
               label="Name"
               name="name"

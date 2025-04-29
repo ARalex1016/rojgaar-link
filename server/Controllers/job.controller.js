@@ -5,6 +5,7 @@ import User from "../Models/user.model.js";
 import Jobs from "../Models/job.model.js";
 import Application from "../Models/application.model.js";
 import SaveJob from "../Models/save-job.models.js";
+import CreatorProfile from "../Models/creator-profile.model.js";
 import CandidateProfile from "../Models/candidateProfile.model.js";
 
 // Controller
@@ -722,6 +723,17 @@ export const getJobById = async (req, res) => {
       });
     }
 
+    const creatorProfile = await CreatorProfile.findOne({
+      userId: job.creatorId,
+    }).select("contact");
+
+    // if (!creatorProfile) {
+    //   return res.status(404).json({
+    //     status: "fail",
+    //     message: "Creator Profile can't be found",
+    //   });
+    // }
+
     let approver = null;
     if (isAdmin && job.approvedBy) {
       approver = await User.findById(job.approvedBy).select("name email role");
@@ -746,6 +758,7 @@ export const getJobById = async (req, res) => {
               creatorEmail: creator?.email || "N/A",
               creatorId: job.creatorId || "N/A",
               createdAt: job.createdAt,
+              contact: creatorProfile?.contact || "N/A",
             }
           : undefined,
       approvedBy: undefined,

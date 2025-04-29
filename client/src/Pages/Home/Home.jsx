@@ -3,9 +3,6 @@ import { useNavigate } from "react-router-dom";
 // Store
 import { useAuthStore } from "../../Store/useAuthStore";
 
-// Components
-import AdComponent from "../../Components/Ads/Ads";
-
 const Home = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
@@ -28,32 +25,26 @@ const Home = () => {
   return (
     <>
       {!isAuthenticated && (
-        <section className="w-full aspect-video bg-white">
-          <AdComponent adCode={adCode} />
+        <section className="w-full aspect-video bg-black rounded-md flex flex-col justify-end items-center px-4 py-4">
+          <p className="text-neutral text-sm text-center">To Apply for Jobs</p>
 
-          <p className="text-center text-lg">Click Here</p>
+          <button
+            onClick={() => handleSignup("")}
+            className="w-full text-neutral font-medium bg-customBlue rounded-md px-2 py-1 mb-4"
+          >
+            Sign Up as Candidate
+          </button>
 
-          <div>
-            <p className="col-span-1">To Search and Apply for Jobs</p>
+          <p className="text-neutral text-sm text-center">
+            To Hire Employee or Create Jobs
+          </p>
 
-            <button
-              onClick={() => handleSignup("")}
-              className="text-neutral font-medium bg-customBlue rounded-md px-2 py-1"
-            >
-              Sign Up as Candidate
-            </button>
-          </div>
-
-          <div>
-            <p className="col-span-1">To Create New Jobs</p>
-
-            <button
-              onClick={() => handleSignup("creator")}
-              className="text-neutral font-medium bg-customBlue rounded-md px-2 py-1"
-            >
-              Sign Up as Creator
-            </button>
-          </div>
+          <button
+            onClick={() => handleSignup("creator")}
+            className="w-full text-neutral font-medium bg-customBlue rounded-md px-2 py-1"
+          >
+            Sign Up as Creator
+          </button>
         </section>
       )}
       {/* "Nepali for Nepali: It’s not just a slogan; it’s a promise. */}

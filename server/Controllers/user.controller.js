@@ -99,11 +99,14 @@ export const getProfile = async (req, res) => {
 
     if (user.role === "candidate") {
       userProfile = await CandidateProfile.findOne({ userId: user._id });
+    } else if (user.role === "creator") {
+      userProfile = await CreatorProfile.findOne({ userId: user._id });
+    } else {
+      return res.status(404).json({
+        data: "fail",
+        message: "User role isn't valid",
+      });
     }
-
-    // if (user.role === "creator") {
-    //   userProfile = await CandidateProfile.findOne({ userId: user._id });
-    // }
 
     // Success
     res.status(200).json({
@@ -305,16 +308,22 @@ export const uploadResume = async (req, res) => {
 
     const uploadResponse = await cloudinary.uploader.upload(filePath, {
       folder: "Resume",
+      resource_type: "auto",
     });
 
     const updatedCandidateProfile = await CandidateProfile.findByIdAndUpdate(
       previousResume._id,
-      { resume: uploadResponse.secure_url },
-      { new: true }
+      {
+        resume: {
+          title: req.file?.originalname,
+          url: uploadResponse.secure_url,
+        },
+      },
+      { new: true, runValidators: true }
     );
 
     if (previousResume && previousResume.resume) {
-      const parts = previousResume?.resume?.split("/");
+      const parts = previousResume?.resume?.url?.split("/");
       const previousPublicId = parts[parts.length - 1].split(".")[0];
       await cloudinary.uploader.destroy(`Resume/${previousPublicId}`);
     }

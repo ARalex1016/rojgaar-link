@@ -1,6 +1,10 @@
 export const checkEligibility = (user, profile) => {
   if (user.role === "candidate") {
-    if (profile.contact?.phoneNumber && profile?.resume) {
+    if (
+      profile.contact?.phoneNumber &&
+      profile?.resume &&
+      Object.keys(profile.resume).length > 0
+    ) {
       return true;
     } else {
       return false;

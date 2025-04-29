@@ -10,6 +10,7 @@ import RootLayout from "./Layout/RootLayout";
 import Home from "./Pages/Home/Home";
 import CandidateProfile from "./Pages/Profile/CandidateProfile";
 import CreatorProfile from "./Pages/Profile/CreatorProfile";
+import Profile from "./Pages/Profile/Profile";
 import Signup from "./Pages/Signup/Signup";
 import Login from "./Pages/Login/Login";
 import NotFound from "./Pages/NotFound";
@@ -99,9 +100,9 @@ function App() {
           path: "profile",
           element: isAuthenticated ? (
             user?.role === "creator" ? (
-              <CreatorProfile />
+              <Profile />
             ) : user?.role === "candidate" ? (
-              <CandidateProfile />
+              <Profile />
             ) : user?.role === "admin" ? (
               <NotFound />
             ) : (
@@ -126,10 +127,6 @@ function App() {
               <Login />
             </RedirectAuthenticateUser>
           ),
-        },
-        {
-          path: "*",
-          element: <NotFound />,
         },
         {
           path: "admin/jobs",
@@ -158,7 +155,7 @@ function App() {
         },
         {
           path: "myjobs",
-          element: isAuthenticated && !isAdmin ? <MyJobs /> : <NotFound />,
+          element: isAuthenticated ? <MyJobs /> : <NotFound />,
         },
         {
           path: "myjobs/:jobId",
@@ -198,6 +195,10 @@ function App() {
         {
           path: "stripe/thanks",
           element: <ThanksPageStripe />,
+        },
+        {
+          path: "*",
+          element: <NotFound />,
         },
       ],
     },

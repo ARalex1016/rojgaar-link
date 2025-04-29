@@ -1,19 +1,40 @@
+import { motion } from "framer-motion";
+
+// Components
+import { ViewIcon } from "./Icons";
+
 export const PDFViewer = ({ pdf, label }) => {
-  const showPdf = () => {
-    window.open(`${pdf}`, "_blank", "noopener,noreferrer");
+  const handleViewPdf = () => {
+    window.open(pdf?.url, "_blank", "noreferrer");
   };
 
   return (
     <>
-      {pdf && (
-        <div className="w-full flex flex-col items-center my-2">
-          <button
+      {pdf?.title && pdf?.url && (
+        <div className="w-full flex flex-row justify-center items-center gap-x-2">
+          <p className="text-neutral">{pdf?.title}</p>
+
+          <motion.button
+            variants={{
+              initial: {
+                scale: 1,
+              },
+              hover: {
+                scale: 1.1,
+              },
+              tap: {
+                scale: 0.95,
+              },
+            }}
+            whileHover="hover"
+            whileTap="tap"
             title={label}
-            onClick={showPdf}
-            className="text-neutral bg-customBlue rounded-md px-4 py-1"
+            onClick={handleViewPdf}
+            className="text-neutral bg-customBlue rounded-full p-1"
           >
-            {label}
-          </button>
+            <ViewIcon />
+            {/* {label} */}
+          </motion.button>
         </div>
       )}
     </>

@@ -199,7 +199,7 @@ const CandidateProfile = () => {
             handlePhoneNumberChange={handlePhoneNumberChange}
           />
 
-          <SocialMediaLinks socialMedia={profileInfo.contact.socialMedia} />
+          <SocialMediaLinks socialMedia={profileInfo?.contact?.socialMedia} />
 
           <SocialLinkAddOrDelete
             socialMediaObj={profileInfo.contact.socialMedia}
@@ -237,7 +237,7 @@ const CandidateProfile = () => {
         <div>
           <SubTitle>Resume</SubTitle>
 
-          <PDFViewer pdf={profile?.resume} label="View Resume" />
+          {/* <PDFViewer pdf={profile?.resume} label="View Resume" /> */}
 
           <PDFUpload handlePdfUpload={handleResumeUpload} />
         </div>

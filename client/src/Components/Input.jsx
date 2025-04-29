@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 
 // Components
-import { LoaderCircleIcon } from "./Icons";
+import { LoaderCircleIcon, PlusIcon, UploadIcon } from "./Icons";
 
 // React Icons
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
@@ -438,7 +438,7 @@ export const FileUpload = ({
   );
 };
 
-export const PDFUpload = ({ handlePdfUpload }) => {
+export const PDFUpload = ({ handlePdfUpload, className }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
   const fileInputRef = useRef(null);
@@ -476,27 +476,31 @@ export const PDFUpload = ({ handlePdfUpload }) => {
 
   return (
     <>
-      <div className="w-full flex flex-row gap-x-2">
+      <div
+        className={`w-full border-2 border-neutral/50 rounded-md flex flex-row p-1 ${className}`}
+      >
         <input
           ref={fileInputRef} // Attach the ref to the input
           type="file"
           accept="application/pdf"
           disabled={isUploadingFile}
           onChange={handleChange}
-          className="w-full text-neutral border-[1px] border-neutral/60 rounded-md px-2 py-1"
+          className="w-full h-full text-neutral px-2 py-1"
         />
 
-        <button
-          disabled={isUploadingFile}
-          onClick={handleUpload}
-          className="w-24 text-neutral bg-customBlue rounded-md cursor-pointer disabled:bg-gray disabled:cursor-not-allowed"
-        >
-          {isUploadingFile ? (
-            <LoaderCircleIcon className="animate-spin m-auto" />
-          ) : (
-            "Upload"
-          )}
-        </button>
+        {selectedFile && (
+          <button
+            disabled={isUploadingFile}
+            onClick={handleUpload}
+            className="w-14 text-neutral bg-customBlue rounded-md cursor-pointer disabled:bg-gray disabled:cursor-not-allowed"
+          >
+            {isUploadingFile ? (
+              <LoaderCircleIcon className="animate-spin m-auto" />
+            ) : (
+              <UploadIcon className="m-auto" />
+            )}
+          </button>
+        )}
       </div>
     </>
   );
@@ -682,7 +686,7 @@ export const SocialMediaSelect = ({
           onClick={handleAddSocial}
           className="w-3/12 text-neutral text-sm font-medium bg-customBlue border-none outline-none rounded-r-md cursor-pointer px-1"
         >
-          Add Link
+          <PlusIcon className="m-auto" />
         </button>
       </div>
     </>

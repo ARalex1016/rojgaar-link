@@ -107,7 +107,7 @@ const MyJobs = () => {
           {isCreator && (
             <button
               onClick={() => setIsOpenNewJob((pre) => !pre)}
-              className="text-neutral/80 text-xs font-normal bg-customBlue rounded-md flex flex-row justify-center items-center gap-x-1 px-2 py-2 transition-all duration-200 float-right fixed bottom-sideSpacing right-sideSpacing z-30 group md:relative md:bottom-0 md:right-0 md:py-0 md:px-3 hover:text-neutral hover:px-3"
+              className="text-neutral/80 text-xs font-normal bg-customBlue rounded-md flex flex-row justify-center items-center gap-x-1 px-2 py-2 transition-all duration-200 float-right fixed bottom-menuHeight right-sideSpacing z-30 shadow-sm shadow-neutral group md:relative md:bottom-0 md:right-0 md:py-0 md:px-3 hover:text-neutral hover:px-3"
             >
               <IoMdAdd style={{ fontSize: "24px" }} /> Add New
             </button>

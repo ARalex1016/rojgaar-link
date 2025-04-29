@@ -11,7 +11,7 @@ export const LoadingLinear = ({ isVisible }) => {
       <div className="w-full mt-menuHeight absolute">
         {isVisible && (
           <Stack sx={{ width: "100%", color: "grey.500" }} spacing={2}>
-            <LinearProgress color="secondary" />
+            <LinearProgress color="primary" />
           </Stack>
         )}
       </div>

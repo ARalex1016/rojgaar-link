@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
-import { toast } from "react-hot-toast";
+import toast from "react-hot-toast";
 
-// Component
+// Components
 import ProfilePic from "./ProfilePic";
 import {
   FloatingLabelInput,
-  PhoneNumberInput,
   CountryStateSelect,
+  PhoneNumberInput,
+  PDFUpload,
 } from "../../Components/Input";
 import {
-  SocialMediaLinks,
   SocialLinkAddOrDelete,
+  SocialMediaLinks,
 } from "../../Components/SocialMedia";
+import { PDFViewer } from "../../Components/PDFViewer";
 
 // Icons
 import { Loader } from "lucide-react";
@@ -50,9 +52,10 @@ const Para = ({ className, children }) => {
   );
 };
 
-const CreatorProfile = () => {
+const Profile = () => {
   const { user } = useAuthStore();
-  const { profile, getProfile, updatedProfileDetails } = useUserStore();
+  const { profile, getProfile, updatedProfileDetails, uploadResume } =
+    useUserStore();
 
   const initialProfileInfo = {
     contact: {
@@ -89,6 +92,16 @@ const CreatorProfile = () => {
         ...newLocation,
       },
     }));
+  };
+
+  const handleResumeUpload = async (file) => {
+    try {
+      let res = await uploadResume(file);
+
+      return res;
+    } catch (error) {
+      throw error;
+    }
   };
 
   const handleUpdate = async () => {
@@ -197,10 +210,8 @@ const CreatorProfile = () => {
         {/* Location */}
         <div className="my-4">
           <CountryStateSelect
-            country={
-              profile?.location?.country || profileInfo?.location?.country
-            }
-            state={profile?.location?.state || profileInfo?.location?.state}
+            country={profileInfo?.location?.country}
+            state={profileInfo?.location?.state}
             onLocationChange={handleLocationChange}
           />
         </div>
@@ -209,7 +220,7 @@ const CreatorProfile = () => {
         <button
           disabled={isUpdatingProfile}
           onClick={handleUpdate}
-          className={`w-full h-8 text-neutral text-lg rounded-md shadow-sm shadow-neutral/50 flex flex-row justify-center items-center py-1 mb-2 ${
+          className={`w-full h-8 text-neutral text-lg rounded-md shadow-sm shadow-neutral/50 flex flex-row justify-center items-center py-1 mb-6 ${
             isUpdatingProfile
               ? "bg-gray cursor-not-allowed"
               : "bg-red cursor-pointer"
@@ -221,6 +232,15 @@ const CreatorProfile = () => {
             "Update"
           )}
         </button>
+
+        {/* Resume */}
+        <div className="border-2 border-neutral/60 rounded-md flex flex-col justify-center items-center gap-y-2 p-2">
+          <SubTitle>Resume</SubTitle>
+
+          <PDFViewer pdf={profile?.resume} label="View Resume" />
+
+          <PDFUpload handlePdfUpload={handleResumeUpload} className="" />
+        </div>
 
         {/* Account Information */}
         <div className="my-4">
@@ -251,4 +271,4 @@ const CreatorProfile = () => {
   );
 };
 
-export default CreatorProfile;
+export default Profile;

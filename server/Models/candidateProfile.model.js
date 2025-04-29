@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 
+// Utils
+import { checkEligibility } from "../utils/checkEligibility.js";
+
 const candidateProfileSchema = new mongoose.Schema(
   {
     userId: {
@@ -34,7 +37,10 @@ const candidateProfileSchema = new mongoose.Schema(
       },
     ],
     skills: [String],
-    resume: { type: String },
+    resume: {
+      title: String,
+      url: String,
+    },
     eligible: {
       type: Boolean,
       default: false,

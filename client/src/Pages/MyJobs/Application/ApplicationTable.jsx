@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { ProfilePicSM } from "../../../Components/Image";
 import { ButtonWithLoader } from "../../../Components/Button";
 import Pagination from "../../../Components/Pagination";
+import { PDFViewer } from "../../../Components/PDFViewer";
 
 // Icons
 import { ChevronDown } from "lucide-react";
@@ -188,20 +189,13 @@ const ExpandedRowData = ({ rowData, filterOutRowId, className }) => {
             {getDateDetails(rowData?.createdAt, false)}
           </p>
 
-          <img
-            src={rowData?.profileSnapshot?.resume}
-            alt="Resume Image"
-            className="col-span-2 border-2 border-main/50 hover:border-main hover:shadow-md hover:shadow-main/40 rounded-md mt-2"
-          />
+          <div className="col-span-2 border-2 border-neutral/60 hover:border-neutral/80 rounded-md flex flex-col gap-y-1 py-1 mt-2">
+            <p className="text-neutral text-base text-center font-medium underline">
+              View Resume
+            </p>
 
-          <button className="col-span-2 w-full text-lg text-neutral font-medium bg-customBlue rounded-md py-1 mt-1">
-            <a
-              href={rowData?.profileSnapshot?.resume}
-              download={`${rowData?.candidateId?.name}-resume`}
-            >
-              Download Resume
-            </a>
-          </button>
+            <PDFViewer pdf={rowData?.profileSnapshot?.resume} label="Resume" />
+          </div>
         </ContainerGrid>
 
         {/* Action */}

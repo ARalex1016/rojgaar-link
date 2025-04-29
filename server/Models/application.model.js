@@ -41,7 +41,10 @@ const applicationSchema = new mongoose.Schema(
         },
       ],
       skills: [String],
-      resume: { type: String },
+      resume: {
+        title: String,
+        url: String,
+      },
     },
     status: {
       type: String,

@@ -50,6 +50,7 @@ export const applyJob = async (req, res) => {
     });
   } catch (error) {
     // Error
+
     res.status(500).json({
       status: "error",
       message: "Internal server error",

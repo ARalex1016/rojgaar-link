@@ -53,7 +53,7 @@ const Para = ({ className, children }) => {
 };
 
 const Profile = () => {
-  const { user } = useAuthStore();
+  const { user, isCandidate } = useAuthStore();
   const { profile, getProfile, updatedProfileDetails, uploadResume } =
     useUserStore();
 
@@ -234,13 +234,15 @@ const Profile = () => {
         </button>
 
         {/* Resume */}
-        <div className="border-2 border-neutral/60 rounded-md flex flex-col justify-center items-center gap-y-2 p-2">
-          <SubTitle>Resume</SubTitle>
+        {isCandidate && (
+          <div className="border-2 border-neutral/60 rounded-md flex flex-col justify-center items-center gap-y-2 p-2">
+            <SubTitle>Resume</SubTitle>
 
-          <PDFViewer pdf={profile?.resume} label="View Resume" />
+            <PDFViewer pdf={profile?.resume} label="View Resume" />
 
-          <PDFUpload handlePdfUpload={handleResumeUpload} className="" />
-        </div>
+            <PDFUpload handlePdfUpload={handleResumeUpload} className="" />
+          </div>
+        )}
 
         {/* Account Information */}
         <div className="my-4">

@@ -32,7 +32,7 @@ export default {
       },
       screens: {
         mobilesm: "0px",
-        mobile: "480px",
+        mobile: "450px",
       },
     },
   },

@@ -137,4 +137,32 @@ export const useAuthStore = create((set) => ({
       set({ isLoggingOut: false, isLoading: false });
     }
   },
+
+  sendEmailWithOTP: async () => {
+    try {
+      const res = await axiosInstance.post("/auth/send-email-with-otp");
+
+      return res.data;
+    } catch (error) {
+      throw new Error(
+        error?.response?.data?.message || "An unexpected error occurred"
+      );
+    }
+  },
+
+  verifyEmail: async (code) => {
+    try {
+      const res = await axiosInstance.post("/auth/verify-email", { code });
+
+      set({
+        user: res.data.data,
+      });
+
+      return res.data;
+    } catch (error) {
+      throw new Error(
+        error?.response?.data?.message || "An unexpected error occurred"
+      );
+    }
+  },
 }));

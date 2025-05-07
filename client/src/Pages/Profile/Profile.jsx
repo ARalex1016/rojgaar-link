@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 // Components
 import ProfilePic from "./ProfilePic";
@@ -14,6 +16,7 @@ import {
   SocialMediaLinks,
 } from "../../Components/SocialMedia";
 import { PDFViewer } from "../../Components/PDFViewer";
+import { BadgeCheckIcon } from "../../Components/Icons";
 
 // Icons
 import { Loader } from "lucide-react";
@@ -53,9 +56,11 @@ const Para = ({ className, children }) => {
 };
 
 const Profile = () => {
-  const { user, isCandidate } = useAuthStore();
+  const { user, isCandidate, sendEmailWithOTP } = useAuthStore();
   const { profile, getProfile, updatedProfileDetails, uploadResume } =
     useUserStore();
+
+  const navigate = useNavigate();
 
   const initialProfileInfo = {
     contact: {
@@ -73,6 +78,7 @@ const Profile = () => {
 
   const [profileInfo, setProfileInfo] = useState(initialProfileInfo);
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   const handlePhoneNumberChange = (phone) => {
     setProfileInfo((pre) => ({
@@ -116,10 +122,27 @@ const Profile = () => {
     }
   };
 
+  const handleVerifyEmail = async () => {
+    setSendingEmail(true);
+
+    try {
+      let res = await sendEmailWithOTP();
+
+      toast.success(res.message);
+
+      navigate("/email-verify", { state: { email: user?.email } });
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
   useEffect(() => {
     let fetchProfile = async () => {
       try {
         await getProfile();
+        console.log(1);
       } catch (error) {}
     };
 
@@ -171,13 +194,38 @@ const Profile = () => {
             readOnly={true}
           />
 
-          <FloatingLabelInput
-            label="Email"
-            name="email"
-            id="email"
-            value={user?.email}
-            readOnly={true}
-          />
+          <div className="w-full flex flex-row">
+            <FloatingLabelInput
+              label="Email"
+              name="email"
+              id="email"
+              value={user?.email}
+              readOnly={true}
+            />
+
+            {user?.isEmailVerified ? (
+              <div className="w-20 bg-green-500 flex justify-center items-center rounded">
+                <BadgeCheckIcon size={30} className="text-primary" />
+              </div>
+            ) : (
+              <motion.button
+                variants={{
+                  initial: {
+                    scale: 1,
+                  },
+                  tap: {
+                    scale: 0.95,
+                  },
+                }}
+                whileTap="tap"
+                disabled={sendingEmail}
+                onClick={handleVerifyEmail}
+                className="text-neutral font-medium bg-red rounded-md px-3 cursor-pointer disabled:bg-gray disabled:cursor-not-allowed"
+              >
+                Verify
+              </motion.button>
+            )}
+          </div>
 
           <FloatingLabelInput
             label="Gender"

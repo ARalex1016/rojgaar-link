@@ -8,12 +8,11 @@ import {
 // Pages
 import RootLayout from "./Layout/RootLayout";
 import Home from "./Pages/Home/Home";
-import CandidateProfile from "./Pages/Profile/CandidateProfile";
-import CreatorProfile from "./Pages/Profile/CreatorProfile";
-import Profile from "./Pages/Profile/Profile";
 import Signup from "./Pages/Signup/Signup";
 import Login from "./Pages/Login/Login";
 import NotFound from "./Pages/NotFound";
+import Profile from "./Pages/Profile/Profile";
+import EmailVerificationPage from "./Pages/Verification/EmailVerificationPage";
 import Jobs from "./Pages/Jobs/Jobs";
 import JobDetails from "./Pages/Jobs/JobDetails";
 import MyJobs from "./Pages/MyJobs/MyJobs";
@@ -97,6 +96,22 @@ function App() {
           element: <Home />,
         },
         {
+          path: "signup",
+          element: (
+            <RedirectAuthenticateUser>
+              <Signup />
+            </RedirectAuthenticateUser>
+          ),
+        },
+        {
+          path: "login",
+          element: (
+            <RedirectAuthenticateUser>
+              <Login />
+            </RedirectAuthenticateUser>
+          ),
+        },
+        {
           path: "profile",
           element: isAuthenticated ? (
             user?.role === "creator" ? (
@@ -113,19 +128,9 @@ function App() {
           ),
         },
         {
-          path: "signup",
-          element: (
-            <RedirectAuthenticateUser>
-              <Signup />
-            </RedirectAuthenticateUser>
-          ),
-        },
-        {
-          path: "login",
-          element: (
-            <RedirectAuthenticateUser>
-              <Login />
-            </RedirectAuthenticateUser>
+          path: "email-verify",
+          element: isAuthenticated && !user.isEmailVerified && (
+            <EmailVerificationPage />
           ),
         },
         {

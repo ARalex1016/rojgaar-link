@@ -7,6 +7,7 @@ import {
   LoaderCircle,
   Upload,
   Eye,
+  BadgeCheck,
 } from "lucide-react";
 
 export const EsewaIcon = ({ handleClick, className }) => {
@@ -99,6 +100,14 @@ export const ViewIcon = ({ className }) => {
   return (
     <>
       <Eye size={24} className={`${className}`} />
+    </>
+  );
+};
+
+export const BadgeCheckIcon = ({ className, size = 24 }) => {
+  return (
+    <>
+      <BadgeCheck size={size} className={`${className}`} />
     </>
   );
 };

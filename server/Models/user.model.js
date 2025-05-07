@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["male", "female", "other"],
     },
-    emailVerified: {
+    isEmailVerified: {
       type: Boolean,
       default: false,
     },
@@ -38,6 +38,10 @@ const userSchema = new mongoose.Schema(
     profilePic: {
       type: String,
     },
+    verificationToken: String,
+    verificationTokenExpiresAt: Date,
+    resetPasswordToken: String,
+    resetPasswordTokenExpiresAt: Date,
   },
   { strict: true, timestamps: true }
 );

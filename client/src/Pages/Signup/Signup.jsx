@@ -26,7 +26,7 @@ const Signup = () => {
   const location = useLocation();
   const roleFromState = location.state?.role || "";
 
-  const { isSigningIn, signup } = useAuthStore();
+  const { isSigningIn, signup, sendEmailWithOTP } = useAuthStore();
 
   const initialData = {
     name: "",
@@ -59,6 +59,7 @@ const Signup = () => {
     }
     if (!validPassword) return;
 
+    // Sign Up
     try {
       const res = await signup(userData);
 
@@ -66,7 +67,16 @@ const Signup = () => {
       setUserData(initialData);
       setMessage("");
 
-      navigate("/jobs");
+      // Send Email With OTP
+      try {
+        let res = await sendEmailWithOTP();
+
+        toast.success(res.message);
+
+        navigate("/email-verify", { state: { email: userData?.email } });
+      } catch (error) {
+        toast.error(error.message);
+      }
     } catch (error) {
       toast.error(error.message);
     }

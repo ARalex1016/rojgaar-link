@@ -19,11 +19,11 @@ export const LoadingLinear = ({ isVisible }) => {
   );
 };
 
-export const LoadingCircle = ({ className }) => {
+export const LoadingCircle = ({ className, size = 40 }) => {
   return (
     <>
       <div className={`w-full flex justify-center items-center ${className}`}>
-        <LoaderCircle className="animate-spin text-neutral" size={40} />
+        <LoaderCircle size={size} className="animate-spin text-neutral" />
       </div>
     </>
   );

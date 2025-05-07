@@ -12,6 +12,7 @@ import { updateNewUser } from "./admin-metrics.controller.js";
 // Utils
 import { passwordValidator } from "../utils/stringManager.js";
 import { generateJwtToken } from "../utils/generateJwtToken.js";
+import { generateOTPandSendVerificationEmail } from "../utils/generateOTPandSendVerificationEmail.js";
 
 export const signup = async (req, res) => {
   const { name, email, gender, password, confirmPassword, role } = req.body;
@@ -173,6 +174,70 @@ export const logout = async (req, res) => {
     res.status(500).json({
       status: "error",
       message: "Error logging out",
+    });
+  }
+};
+
+export const sendEmailWithOTP = async (req, res) => {
+  const { user } = req;
+
+  try {
+    await generateOTPandSendVerificationEmail(user);
+
+    // Success
+    res.status(200).json({
+      status: "success",
+      message: "Email with OTP sent successfully",
+    });
+  } catch (error) {
+    // Error
+    res.status(500).json({
+      status: "error",
+      message: "Error sending email",
+    });
+  }
+};
+
+export const verifyEmail = async (req, res) => {
+  const { code } = req.body;
+  const { user } = req;
+
+  try {
+    // Verify OTP
+    const isMatch = String(user.verificationToken) === String(code);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid OTP",
+      });
+    }
+
+    // Check OTP expiration
+    if (new Date() > user.verificationTokenExpiresAt) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Expired Verification Code",
+      });
+    }
+
+    // Mark user as verified
+    user.isEmailVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpiresAt = undefined;
+    await user.save();
+
+    // Success
+    res.status(200).json({
+      status: "success",
+      message: "OTP verified successfully",
+      data: user,
+    });
+  } catch (error) {
+    // Error
+    res.status(500).json({
+      status: "error",
+      message: "Error verifying OTP",
     });
   }
 };

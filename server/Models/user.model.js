@@ -27,16 +27,20 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["male", "female", "other"],
     },
+    profilePic: {
+      type: String,
+    },
     isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    eligible: {
       type: Boolean,
       default: false,
     },
     isSuspended: {
       type: Boolean,
       default: false,
-    },
-    profilePic: {
-      type: String,
     },
     verificationToken: String,
     verificationTokenExpiresAt: Date,

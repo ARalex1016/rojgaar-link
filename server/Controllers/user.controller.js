@@ -219,14 +219,7 @@ export const updatedProfileDetails = async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    let previousEligibility = updatedProfileDetails.eligible;
-
-    let eligibility = checkEligibility(user, updatedProfileDetails);
-
-    if (eligibility !== previousEligibility) {
-      updatedProfileDetails.eligible = eligibility;
-      await updatedProfileDetails.save();
-    }
+    await checkEligibility(user, updatedProfileDetails);
 
     // Success
     res.status(200).json({
@@ -328,14 +321,7 @@ export const uploadResume = async (req, res) => {
       await cloudinary.uploader.destroy(`Resume/${previousPublicId}`);
     }
 
-    let previousEligibility = updatedCandidateProfile.eligible;
-
-    let eligibility = checkEligibility(user, updatedCandidateProfile);
-
-    if (eligibility !== previousEligibility) {
-      updatedCandidateProfile.eligible = eligibility;
-      await updatedCandidateProfile.save();
-    }
+    await checkEligibility(user, updatedCandidateProfile);
 
     // Success
     res.status(200).json({

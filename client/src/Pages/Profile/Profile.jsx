@@ -62,21 +62,7 @@ const Profile = () => {
 
   const navigate = useNavigate();
 
-  const initialProfileInfo = {
-    contact: {
-      phoneNumber: "",
-      socialMedia: {
-        facebook: "",
-        instagram: "",
-      },
-    },
-    location: {
-      country: "",
-      state: "",
-    },
-  };
-
-  const [profileInfo, setProfileInfo] = useState(initialProfileInfo);
+  const [profileInfo, setProfileInfo] = useState({});
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [sendingEmail, setSendingEmail] = useState(false);
 
@@ -123,14 +109,14 @@ const Profile = () => {
   };
 
   const handleVerifyEmail = async () => {
+    navigate("/email-verify", { state: { email: user?.email } });
+
     setSendingEmail(true);
 
     try {
       let res = await sendEmailWithOTP();
 
       toast.success(res.message);
-
-      navigate("/email-verify", { state: { email: user?.email } });
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -139,184 +125,167 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    let fetchProfile = async () => {
-      try {
-        await getProfile();
-        console.log(1);
-      } catch (error) {}
-    };
-
-    fetchProfile();
-  }, []);
-
-  useEffect(() => {
     if (profile) {
-      setProfileInfo((pre) => ({
-        ...pre,
-        contact: {
-          ...pre.contact,
-          phoneNumber: profile?.contact?.phoneNumber || "",
-          socialMedia: {
-            ...pre.contact.socialMedia,
-            facebook: profile?.contact?.socialMedia?.facebook || "",
-            instagram: profile?.contact?.socialMedia?.instagram || "",
-          },
-        },
-        location: {
-          ...pre.location,
-          country: profile?.location?.country || "",
-          state: profile?.location?.state || "",
-        },
-      }));
+      setProfileInfo(profile);
+    } else {
+      let fetchProfile = async () => {
+        try {
+          await getProfile();
+        } catch (error) {
+          toast.error("Failed to fetch profile.");
+        }
+      };
+      fetchProfile();
     }
   }, [profile]);
 
   return (
     <>
-      <section className="w-full py-2">
-        {/* Profile */}
-        <div className="w-full flex flex-col justify-center items-center">
-          <h1 className="text-neutral text-xl font-medium">Profile</h1>
-          <p className="text-neutral/80 text-sm mb-2">
-            Your Profile Information
-          </p>
+      {Object.keys(profileInfo).length > 0 && (
+        <section className="w-full py-2">
+          {/* Profile */}
+          <div className="w-full flex flex-col justify-center items-center">
+            <h1 className="text-neutral text-xl font-medium">Profile</h1>
+            <p className="text-neutral/80 text-sm mb-2">
+              Your Profile Information
+            </p>
 
-          {/* Profile Pic */}
-          <ProfilePic />
-        </div>
+            {/* Profile Pic */}
+            <ProfilePic />
+          </div>
 
-        <div className="w-full flex flex-col gap-y-4 my-4">
-          <FloatingLabelInput
-            label="Name"
-            name="name"
-            id="name"
-            value={capitalize(user?.name)}
-            readOnly={true}
-          />
-
-          <div className="w-full flex flex-row">
+          <div className="w-full flex flex-col gap-y-4 my-4">
             <FloatingLabelInput
-              label="Email"
-              name="email"
-              id="email"
-              value={user?.email}
+              label="Name"
+              name="name"
+              id="name"
+              value={capitalize(user?.name)}
               readOnly={true}
             />
 
-            {user?.isEmailVerified ? (
-              <div className="w-20 bg-green-500 flex justify-center items-center rounded">
-                <BadgeCheckIcon size={30} className="text-primary" />
-              </div>
+            <div className="w-full flex flex-row">
+              <FloatingLabelInput
+                label="Email"
+                name="email"
+                id="email"
+                value={user?.email}
+                readOnly={true}
+              />
+
+              {user?.isEmailVerified ? (
+                <div className="w-16 bg-green-500 flex justify-center items-center rounded">
+                  <BadgeCheckIcon size={30} className="text-primary" />
+                </div>
+              ) : (
+                <motion.button
+                  variants={{
+                    initial: {
+                      scale: 1,
+                    },
+                    tap: {
+                      scale: 0.95,
+                    },
+                  }}
+                  whileTap="tap"
+                  disabled={sendingEmail}
+                  onClick={handleVerifyEmail}
+                  className="text-neutral font-medium bg-red rounded-md px-3 cursor-pointer disabled:bg-gray disabled:cursor-not-allowed"
+                >
+                  Verify
+                </motion.button>
+              )}
+            </div>
+
+            <FloatingLabelInput
+              label="Gender"
+              name="gender"
+              id="gender"
+              value={capitalize(user?.gender)}
+              readOnly={true}
+            />
+          </div>
+
+          {/* Contact Information */}
+          <div className="my-4 flex flex-col gap-y-2">
+            <SubTitle>Contact Information</SubTitle>
+
+            <PhoneNumberInput
+              value={profileInfo?.contact?.phoneNumber}
+              handlePhoneNumberChange={handlePhoneNumberChange}
+            />
+
+            {/* <SocialMediaLinks socialMedia={profileInfo?.contact?.socialMedia} /> */}
+
+            <SocialLinkAddOrDelete
+              socialMediaObj={profileInfo?.contact?.socialMedia}
+              setProfileInfo={setProfileInfo}
+            />
+          </div>
+
+          {/* Location */}
+          <div className="my-4">
+            <CountryStateSelect
+              country={profileInfo?.location?.country}
+              state={profileInfo?.location?.state}
+              onLocationChange={handleLocationChange}
+            />
+          </div>
+
+          {/* Update Button */}
+          <button
+            title="Update Profile"
+            disabled={isUpdatingProfile}
+            onClick={handleUpdate}
+            className={`w-full h-8 text-neutral text-lg rounded-md shadow-sm shadow-neutral/50 flex flex-row justify-center items-center py-1 mb-6 ${
+              isUpdatingProfile
+                ? "bg-gray cursor-not-allowed"
+                : "bg-red cursor-pointer"
+            }`}
+          >
+            {isUpdatingProfile ? (
+              <Loader className="size-6 animate-spin" />
             ) : (
-              <motion.button
-                variants={{
-                  initial: {
-                    scale: 1,
-                  },
-                  tap: {
-                    scale: 0.95,
-                  },
-                }}
-                whileTap="tap"
-                disabled={sendingEmail}
-                onClick={handleVerifyEmail}
-                className="text-neutral font-medium bg-red rounded-md px-3 cursor-pointer disabled:bg-gray disabled:cursor-not-allowed"
-              >
-                Verify
-              </motion.button>
+              "Update"
+            )}
+          </button>
+
+          {/* Resume (For Candidate)*/}
+          {isCandidate && (
+            <div className="rounded-md shadow-inner shadow-neutral flex flex-col justify-center items-center gap-y-2 px-2 py-4">
+              <SubTitle>Resume</SubTitle>
+
+              <PDFViewer pdf={profile?.resume} label="View Resume" />
+
+              <PDFUpload handlePdfUpload={handleResumeUpload} className="" />
+            </div>
+          )}
+
+          {/* Account Information */}
+          <div className="my-4">
+            <SubTitle>Account Information</SubTitle>
+
+            {user && (
+              <Row>
+                <Para>Member Since</Para>
+                <Para>{getDateDetails(user?.createdAt, false)}</Para>
+              </Row>
+            )}
+
+            {profile && (
+              <Row>
+                <Para>Eligible Status</Para>
+                <Para
+                  className={`font-medium ${
+                    user?.eligible ? "text-green-500" : "text-red"
+                  }`}
+                >
+                  {user?.eligible ? "True" : "False"}
+                </Para>
+              </Row>
             )}
           </div>
-
-          <FloatingLabelInput
-            label="Gender"
-            name="gender"
-            id="gender"
-            value={capitalize(user?.gender)}
-            readOnly={true}
-          />
-        </div>
-
-        {/* Contact Information */}
-        <div className="my-4 flex flex-col gap-y-2">
-          <SubTitle>Contact Information</SubTitle>
-
-          <PhoneNumberInput
-            value={
-              profile?.contact?.phoneNumber || profileInfo.contact.phoneNumber
-            }
-            handlePhoneNumberChange={handlePhoneNumberChange}
-          />
-
-          <SocialMediaLinks socialMedia={profileInfo?.contact?.socialMedia} />
-
-          <SocialLinkAddOrDelete
-            socialMediaObj={profileInfo.contact.socialMedia}
-            setProfileInfo={setProfileInfo}
-          />
-        </div>
-
-        {/* Location */}
-        <div className="my-4">
-          <CountryStateSelect
-            country={profileInfo?.location?.country}
-            state={profileInfo?.location?.state}
-            onLocationChange={handleLocationChange}
-          />
-        </div>
-
-        {/* Update Button */}
-        <button
-          disabled={isUpdatingProfile}
-          onClick={handleUpdate}
-          className={`w-full h-8 text-neutral text-lg rounded-md shadow-sm shadow-neutral/50 flex flex-row justify-center items-center py-1 mb-6 ${
-            isUpdatingProfile
-              ? "bg-gray cursor-not-allowed"
-              : "bg-red cursor-pointer"
-          }`}
-        >
-          {isUpdatingProfile ? (
-            <Loader className="size-6 animate-spin" />
-          ) : (
-            "Update"
-          )}
-        </button>
-
-        {/* Resume */}
-        {isCandidate && (
-          <div className="border-2 border-neutral/60 rounded-md flex flex-col justify-center items-center gap-y-2 p-2">
-            <SubTitle>Resume</SubTitle>
-
-            <PDFViewer pdf={profile?.resume} label="View Resume" />
-
-            <PDFUpload handlePdfUpload={handleResumeUpload} className="" />
-          </div>
-        )}
-
-        {/* Account Information */}
-        <div className="my-4">
-          <SubTitle>Account Information</SubTitle>
-
-          {user && (
-            <Row>
-              <Para>Member Since</Para>
-              <Para>{getDateDetails(user?.createdAt, false)}</Para>
-            </Row>
-          )}
-
-          {profile && (
-            <Row>
-              <Para>Eligible Status</Para>
-              <Para
-                className={`font-medium ${
-                  profile?.eligible ? "text-green-400" : "text-red"
-                }`}
-              >
-                {profile?.eligible ? "True" : "False"}
-              </Para>
-            </Row>
-          )}
-        </div>
-      </section>
+        </section>
+      )}
     </>
   );
 };

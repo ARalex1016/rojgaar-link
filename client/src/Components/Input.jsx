@@ -358,11 +358,25 @@ export const RadioInput = ({
 };
 
 export const PhoneNumberInput = ({ value, handlePhoneNumberChange }) => {
+  const handleInputChange = (phone, countryData) => {
+    const { dialCode } = countryData;
+
+    // Extract raw number (remove country code)
+    const rawNumber = phone.startsWith(dialCode)
+      ? phone.slice(dialCode.length)
+      : phone;
+
+    // Validate phone number length
+    if (rawNumber.length <= 10) {
+      handlePhoneNumberChange(phone);
+    }
+  };
+
   return (
     <PhoneInput
       country={"us"}
       value={value}
-      onChange={handlePhoneNumberChange}
+      onChange={(phone, countryData) => handleInputChange(phone, countryData)}
     />
   );
 };
@@ -543,6 +557,20 @@ export const CountryStateSelect = ({
     const newState = { state: selectedState.label };
     onLocationChange(newState);
   };
+
+  useEffect(() => {
+    if (country) {
+      // Update states dropdown
+      const updatedStates = State.getStatesOfCountry(
+        countries.find((c) => c.label === country)?.value || ""
+      ).map((s) => ({
+        key: s.isoCode,
+        value: s.isoCode,
+        label: s.name,
+      }));
+      setStates(updatedStates);
+    }
+  }, [country, countries]);
 
   return (
     <>

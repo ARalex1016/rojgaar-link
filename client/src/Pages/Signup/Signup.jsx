@@ -67,13 +67,13 @@ const Signup = () => {
       setUserData(initialData);
       setMessage("");
 
+      navigate("/email-verify", { state: { email: userData?.email } });
+
       // Send Email With OTP
       try {
         let res = await sendEmailWithOTP();
 
         toast.success(res.message);
-
-        navigate("/email-verify", { state: { email: userData?.email } });
       } catch (error) {
         toast.error(error.message);
       }

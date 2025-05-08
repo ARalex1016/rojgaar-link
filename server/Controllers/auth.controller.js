@@ -13,6 +13,7 @@ import { updateNewUser } from "./admin-metrics.controller.js";
 import { passwordValidator } from "../utils/stringManager.js";
 import { generateJwtToken } from "../utils/generateJwtToken.js";
 import { generateOTPandSendVerificationEmail } from "../utils/generateOTPandSendVerificationEmail.js";
+import { checkEligibility } from "../utils/checkEligibility.js";
 
 export const signup = async (req, res) => {
   const { name, email, gender, password, confirmPassword, role } = req.body;
@@ -226,6 +227,8 @@ export const verifyEmail = async (req, res) => {
     user.verificationToken = undefined;
     user.verificationTokenExpiresAt = undefined;
     await user.save();
+
+    await checkEligibility(user);
 
     // Success
     res.status(200).json({

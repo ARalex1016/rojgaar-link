@@ -58,7 +58,7 @@ export const PlusIcon = ({ handleClick, className }) => {
       <Plus
         onClick={handleClick}
         size={30}
-        className={`bg-transparent rounded-full p-1 hover:text-neutral hover:bg-red ${className}`}
+        className={`bg-transparent rounded-full p-1 hover:text-neutral ${className}`}
       />
     </>
   );

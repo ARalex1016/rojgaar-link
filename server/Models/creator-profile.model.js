@@ -21,10 +21,6 @@ const creatorProfileSchema = new mongoose.Schema(
     card: {
       type: String,
     },
-    eligible: {
-      type: Boolean,
-      default: false,
-    },
   },
   { strict: true, timestamps: true }
 );

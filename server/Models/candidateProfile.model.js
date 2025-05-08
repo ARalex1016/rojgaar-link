@@ -41,10 +41,6 @@ const candidateProfileSchema = new mongoose.Schema(
       title: String,
       url: String,
     },
-    eligible: {
-      type: Boolean,
-      default: false,
-    },
   },
   { strict: true, timestamps: true }
 );

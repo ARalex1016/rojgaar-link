@@ -91,12 +91,31 @@ const DonateManual = () => {
           contribution.
         </p>
 
-        <p className="text-neutral mobilesm:text-sm mobile:text-base text-left bg-black/80 rounded-lg px-4 py-2 mt-10">
-          For every Nepali working hard far from home,
-          <br /> For every family dreaming of a better future, <br /> Let’s
-          unite and make opportunities accessible for all. <br />
-          Your support can turn these dreams into reality
+        <p className="text-neutral text-xl font-medium text-center italic py-2">
+          OR
         </p>
+
+        {/* Ko-fi */}
+        <div className="bg-white rounded-t-2xl">
+          <h2 className="text-primary font-medium text-center text-lg py-2">
+            Pay With Card
+          </h2>
+
+          <iframe
+            id="kofiframe"
+            title="rojgaarlink"
+            src="https://ko-fi.com/rojgaarlink/?hidefeed=true&widget=true&embed=true&preview=true"
+            style={{
+              border: "none",
+              width: "100%",
+              maxWidth: "400px",
+              height: "712px",
+              padding: "4px",
+              background: "#f9f9f9",
+            }}
+            // className="rounded-b-md"
+          ></iframe>
+        </div>
 
         {/* Pop Up */}
         {selectedMethod && selectedMethodObj && (

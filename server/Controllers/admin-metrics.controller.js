@@ -3,7 +3,6 @@ import AdminMetrics from "../Models/admin-metric.model.js";
 
 export const initializeAdminMetrics = async () => {
   const metrics = await AdminMetrics.findOne();
-  console.log(metrics);
 
   // If no document exists, create it with default values
   if (!metrics) {
@@ -18,6 +17,8 @@ export const initializeAdminMetrics = async () => {
 };
 
 export const getAdminMetrics = async (req, res) => {
+  const { isAuthenticated, user } = req;
+
   try {
     const adminMetrics = await AdminMetrics.findOne();
 
@@ -28,11 +29,23 @@ export const getAdminMetrics = async (req, res) => {
       });
     }
 
+    let responseMetrics = adminMetrics.toObject();
+
+    responseMetrics.totalUsers =
+      responseMetrics.users.candidate + responseMetrics.users.creator;
+
+    responseMetrics.totalActiveJobs = responseMetrics.jobListings.active;
+
+    if (!isAuthenticated) {
+      delete responseMetrics.users;
+      delete responseMetrics.jobListings;
+    }
+
     // Success
     res.status(200).json({
       status: "success",
       messgae: "Admin Metrics retrieved succcessfully!",
-      data: adminMetrics,
+      data: responseMetrics,
     });
   } catch (error) {
     // Error

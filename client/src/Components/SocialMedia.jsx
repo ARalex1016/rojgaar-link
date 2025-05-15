@@ -55,7 +55,10 @@ export const SocialMediaLinks = ({ socialMedia }) => {
   );
 };
 
-export const SocialLinkAddOrDelete = ({ socialMediaObj, setProfileInfo }) => {
+export const SocialLinkAddOrDelete = ({
+  socialMediaObj = {},
+  setProfileInfo,
+}) => {
   const [options, setOptions] = useState(null);
 
   const socialMediaArray = Object.entries(socialMediaObj).filter(
@@ -63,14 +66,16 @@ export const SocialLinkAddOrDelete = ({ socialMediaObj, setProfileInfo }) => {
   );
 
   useEffect(() => {
-    const socialArray = Object.entries(socialMediaObj)
-      .filter(([platform, value]) => value === "")
-      .map(([platform, value]) => ({
-        value: platform,
-        label: capitalize(platform),
-      }));
+    if (Object.keys(socialMediaObj) >= 1) {
+      const socialArray = Object.entries(socialMediaObj)
+        .filter(([platform, value]) => value === "")
+        .map(([platform, value]) => ({
+          value: platform,
+          label: capitalize(platform),
+        }));
 
-    setOptions(socialArray);
+      setOptions(socialArray);
+    }
   }, [socialMediaObj]);
 
   const handleAddSocialLink = (link, platform) => {
@@ -109,7 +114,7 @@ export const SocialLinkAddOrDelete = ({ socialMediaObj, setProfileInfo }) => {
   return (
     <>
       <div className="flex flex-col gap-y-2">
-        {socialMediaArray.length >= 1 &&
+        {socialMediaArray?.length >= 1 &&
           socialMediaArray.map(([platform, link], index) => {
             return (
               <div key={index} className="w-full flex flex-row">

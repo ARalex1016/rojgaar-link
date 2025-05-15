@@ -273,7 +273,7 @@ const Job = () => {
             </p>
 
             {/* Description */}
-            <div className="col-span-7 min-h-24 text-center bg-gray/60 shadow-inner-lg shadow-neutral/40  rounded-md px-4 py-2 my-2">
+            <div className="col-span-7 min-h-24 text-center bg-gray/20 shadow-inner shadow-neutral/40  rounded-md px-4 py-2 my-2">
               <h2 className="text-orange/70 text-lg font-medium mb-1">
                 Description
               </h2>

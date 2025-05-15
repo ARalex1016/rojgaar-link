@@ -21,7 +21,7 @@ const RootLayout = () => {
   const shouldHideFooter = hideFooter.includes(location.pathname);
 
   const metadata = {
-    title: "My Website",
+    title: "Rojgaar Link",
     text: "Here’s something interesting for you!",
     image: "https://example.com/image.png",
     url: window.location.origin,

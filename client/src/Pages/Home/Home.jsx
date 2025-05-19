@@ -89,16 +89,20 @@ const Home = () => {
 
       {/* Metrics & Statistics */}
       {adminMetrics && Object.keys(adminMetrics).length >= 1 && (
-        <section className="bg-neutral rounded-md shadow-inner shadow-gray flex flex-row justify-around py-2 my-4">
-          <ScoreBoard
-            title="Total Active Jobs"
-            score={adminMetrics?.totalActiveJobs || 0}
-          />
+        <section className="bg-neutral rounded-md shadow-inner shadow-gray py-2 my-4">
+          {/* <p className="text-center text-lg text-main font-bold">ScoreBoard</p> */}
 
-          <ScoreBoard
-            title="Total Users"
-            score={adminMetrics?.totalUsers || 0}
-          />
+          <div className="flex flex-row justify-around">
+            <ScoreBoard
+              title="Total Active Jobs"
+              score={adminMetrics?.totalActiveJobs || 0}
+            />
+
+            <ScoreBoard
+              title="Total Users"
+              score={adminMetrics?.totalUsers || 0}
+            />
+          </div>
         </section>
       )}
 

@@ -23,6 +23,7 @@ import DonateManual from "./Pages/SupportUs/DonateManual";
 import TopDonors from "./Pages/SupportUs/TopDonors";
 import StripeElement from "./Pages/Stripe/Stripe";
 import ThanksPageStripe from "./Pages/Stripe/ThanksPageStripe";
+import AboutUs from "./Pages/AboutUs";
 
 // Admin
 import AdminJobs from "./Pages/Jobs/AdminJobs";
@@ -200,6 +201,10 @@ function App() {
         {
           path: "stripe/thanks",
           element: <ThanksPageStripe />,
+        },
+        {
+          path: "about-us",
+          element: <AboutUs />,
         },
         {
           path: "*",

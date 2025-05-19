@@ -27,7 +27,10 @@ const Footer = () => {
           className="font-medium"
         />
 
-        <FooterElements label="About Us" />
+        <FooterElements
+          label="About Us"
+          onClick={() => navigate("/about-us")}
+        />
 
         <FooterElements label="Social Links" />
 

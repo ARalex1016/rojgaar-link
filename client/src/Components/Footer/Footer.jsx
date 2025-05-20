@@ -34,7 +34,10 @@ const Footer = () => {
 
         <FooterElements label="Social Links" />
 
-        <FooterElements label="Contact Us" />
+        <FooterElements
+          label="Contact Us"
+          onClick={() => navigate("/contact-us")}
+        />
 
         <FooterElements label="FAQs" />
 

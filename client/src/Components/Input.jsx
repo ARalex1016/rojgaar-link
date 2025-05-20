@@ -520,6 +520,29 @@ export const PDFUpload = ({ handlePdfUpload, className }) => {
   );
 };
 
+export const SelectSimple = ({
+  options,
+  value,
+  name,
+  placeholder,
+  handleSelect,
+  className,
+}) => {
+  return (
+    <>
+      <Select
+        name={name}
+        options={options}
+        value={value ? options.find((o) => o.label === value) : null}
+        onChange={(selectedValue) => handleSelect(selectedValue)}
+        placeholder={placeholder}
+        styles={customSelectStyles}
+        className={`w-full ${className}`}
+      />
+    </>
+  );
+};
+
 export const CountryStateSelect = ({
   country,
   state,
@@ -841,8 +864,15 @@ export const TextAreaFloatingLabel = ({
   id,
   value,
   handleInputChange,
+  className,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+
+  useEffect(() => {
+    if (!value) {
+      setIsFocused(false);
+    }
+  }, [value]);
 
   return (
     <div className="w-full relative">
@@ -865,7 +895,7 @@ export const TextAreaFloatingLabel = ({
         onChange={(e) => handleInputChange(e)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(value ? true : false)}
-        className={`min-h-20 max-h-36 overflow-y-auto customScrollbarStyle ${customStyles}`}
+        className={`min-h-20 max-h-36 overflow-y-auto customScrollbarStyle ${customStyles} ${className}`}
       ></textarea>
     </div>
   );

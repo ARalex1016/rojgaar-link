@@ -10,6 +10,7 @@ import applicationRouter from "./Routes/application.route.js";
 import adminMetricsRouter from "./Routes/admin-metrics.route.js";
 import chatRouter from "./Routes/chat.route.js";
 import donationRouter from "./Routes/donation.route.js";
+import contactRouter from "./Routes/contact.route.js";
 
 const app = express();
 app.use(express.json({ limit: "10mb" }));
@@ -29,5 +30,6 @@ app.use("/api/v1/application/", applicationRouter);
 app.use("/api/v1/admin-metrics/", adminMetricsRouter);
 app.use("/api/v1/chat/", chatRouter);
 app.use("/api/v1/donation/", donationRouter);
+app.use("/api/v1/", contactRouter);
 
 export default app;

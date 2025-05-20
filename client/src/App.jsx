@@ -24,6 +24,8 @@ import TopDonors from "./Pages/SupportUs/TopDonors";
 import StripeElement from "./Pages/Stripe/Stripe";
 import ThanksPageStripe from "./Pages/Stripe/ThanksPageStripe";
 import AboutUs from "./Pages/AboutUs";
+import PrivacyPolicy from "./Pages/PrivacyPolicy";
+import ContactUs from "./Pages/ContactUs";
 
 // Admin
 import AdminJobs from "./Pages/Jobs/AdminJobs";
@@ -130,9 +132,12 @@ function App() {
         },
         {
           path: "email-verify",
-          element: isAuthenticated && !user.isEmailVerified && (
-            <EmailVerificationPage />
-          ),
+          element:
+            isAuthenticated && !user.isEmailVerified ? (
+              <EmailVerificationPage />
+            ) : (
+              <NotFound />
+            ),
         },
         {
           path: "admin/jobs",
@@ -205,6 +210,14 @@ function App() {
         {
           path: "about-us",
           element: <AboutUs />,
+        },
+        {
+          path: "privacy-policy",
+          element: <PrivacyPolicy />,
+        },
+        {
+          path: "contact-us",
+          element: <ContactUs />,
         },
         {
           path: "*",

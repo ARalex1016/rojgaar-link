@@ -14,7 +14,7 @@ const CounterUp = ({ number }) => {
         <CountUp
           start={0}
           end={number}
-          duration={2}
+          duration={1}
           delay={0}
           formattingFn={(value) =>
             value >= number ? number : Math.floor(value / step) * step

@@ -1,10 +1,15 @@
 import { useNavigate } from "react-router-dom";
 
+// Store
+import { useAuthStore } from "../Store/useAuthStore";
+
 const AboutUs = () => {
   const navigate = useNavigate();
 
+  const { isAuthenticated } = useAuthStore();
+
   return (
-    <div className="bg-gray-50 text-gray-800">
+    <div className="text-gray-800">
       {/* Header Section */}
       <section className="text-white text-center py-5">
         <h1 className="text-4xl font-bold">About Us</h1>
@@ -27,17 +32,15 @@ const AboutUs = () => {
               we are dedicated to helping Nepalese workers find better-paid jobs
               and work environments abroad. We connect the skills and hard work
               of Nepalese people with job opportunities that reflect their
-              value. We believe Nepalese are among the most hardworking, honest,
-              and loyal people in the world—and our mission is to showcase that
-              to global employers.
+              value.
             </p>
 
             <p className="text-neutral/80 text-lg mt-4">
               By providing a platform where Nepalese can connect with job
               creators, we aim to build a community where{" "}
-              <span className="font-semibold">Nepali help Nepali</span>. This
-              not only benefits individuals but also indirectly contributes to
-              the progress of our beloved country, Nepal.
+              <span className="font-semibold">Nepali can help Nepali</span>.
+              This not only benefits individuals but also indirectly contributes
+              to the progress of our beloved country, Nepal.
             </p>
           </div>
 
@@ -50,12 +53,12 @@ const AboutUs = () => {
         </div>
 
         {/* Call to Action */}
-        <div className="mt-12 bg-neutral p-6 rounded-lg">
+        <div className="mt-12 bg-neutral/90 rounded-lg hover:bg-neutral px-4 py-6">
           <h3 className="text-xl font-bold text-blue-600 text-center">
             Explore Opportunities or Join Us Today!
           </h3>
 
-          <p className="mt-2 text-center text-lg">
+          <p className="mt-2 text-center">
             Whether you're looking for your dream job or have opportunities to
             share, Rojgaar Link is here to bridge the gap. Let’s connect!
           </p>
@@ -63,17 +66,19 @@ const AboutUs = () => {
           <div className="flex justify-center mt-6">
             <button
               onClick={() => navigate("/jobs")}
-              className="bg-blue-600 text-white py-2 px-6 rounded-lg font-semibold hover:bg-blue-700 transition"
+              className="bg-blue-600 mobilesm:text-sm mobile:text-base text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 transition"
             >
               Explore Jobs
             </button>
 
-            <button
-              onClick={() => navigate("/signup")}
-              className="bg-main/90 text-white py-2 px-6 ml-4 rounded-lg font-semibold hover:bg-main transition"
-            >
-              Register Now
-            </button>
+            {!isAuthenticated && (
+              <button
+                onClick={() => navigate("/signup")}
+                className="bg-main/90 text-white py-2 px-4 ml-4 rounded-lg font-semibold hover:bg-main transition"
+              >
+                Register Now
+              </button>
+            )}
           </div>
         </div>
       </section>

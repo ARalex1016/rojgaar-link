@@ -38,7 +38,10 @@ const Footer = () => {
 
         <FooterElements label="FAQs" />
 
-        <FooterElements label="Privacy Policy" />
+        <FooterElements
+          label="Privacy Policy"
+          onClick={() => navigate("/privacy-policy")}
+        />
 
         <FooterElements label="Terms & Conditions" />
       </footer>

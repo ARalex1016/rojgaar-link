@@ -154,7 +154,10 @@ const Profile = () => {
             <ProfilePic />
           </div>
 
+          {/* User Information */}
           <div className="w-full flex flex-col gap-y-4 my-4">
+            <SubTitle>User Information</SubTitle>
+
             <FloatingLabelInput
               label="Name"
               name="name"
@@ -239,7 +242,7 @@ const Profile = () => {
             className={`w-full h-8 text-neutral text-lg rounded-md shadow-sm shadow-neutral/50 flex flex-row justify-center items-center py-1 mb-6 ${
               isUpdatingProfile
                 ? "bg-gray cursor-not-allowed"
-                : "bg-red cursor-pointer"
+                : "bg-blue-600 cursor-pointer"
             }`}
           >
             {isUpdatingProfile ? (

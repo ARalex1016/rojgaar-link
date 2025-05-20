@@ -8,6 +8,7 @@ import {
   PasswordInput,
   RadioInput,
 } from "../../Components/Input";
+import TermsAndConditions from "../TermsAndConditions";
 
 // React Icons
 import { BiLoaderAlt } from "react-icons/bi";
@@ -34,10 +35,12 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
     gender: "",
+    termsAccepted: false,
   };
 
   const [userData, setUserData] = useState(initialData);
   const [message, setMessage] = useState("");
+  const [openTermsAndCondition, setOpenTermsAndCondition] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -168,12 +171,50 @@ const Signup = () => {
               />
             </div>
 
+            {/* Terms And Conditions */}
+            <div className="w-full flex flex-row gap-x-1">
+              <input
+                type="checkbox"
+                name="termsAccepted"
+                id="terms&conditions"
+                checked={userData.termsAccepted}
+                onChange={() =>
+                  setUserData((pre) => ({
+                    ...pre,
+                    termsAccepted: !pre.termsAccepted,
+                  }))
+                }
+              />
+
+              <label
+                htmlFor="terms&conditions"
+                className="text-neutral/90 text-xs"
+              >
+                Accept{" "}
+                <span
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpenTermsAndCondition(true);
+                  }}
+                  className="text-neutral font-bold underline"
+                >
+                  Terms & Conditions
+                </span>{" "}
+                to Continue
+              </label>
+            </div>
+
+            {openTermsAndCondition && (
+              <TermsAndConditions
+                onClose={() => setOpenTermsAndCondition(false)}
+              />
+            )}
+
             <button
-              disabled={isSigningIn}
+              disabled={isSigningIn || !userData?.termsAccepted}
               onClick={handleButtonCLick}
-              className={`w-full max-w-72 h-10 text-white text-lg font-medium rounded-md disabled:bg-gray-600 ${
-                isSigningIn ? "bg-gray" : "bg-main/60"
-              }`}
+              className={`w-full max-w-72 h-10 text-white text-lg font-medium bg-main/60 rounded-md disabled:bg-gray disabled:cursor-not-allowed`}
             >
               {isSigningIn ? (
                 <BiLoaderAlt className="text-2xl animate-spin mx-auto" />

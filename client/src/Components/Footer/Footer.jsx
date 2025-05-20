@@ -43,7 +43,10 @@ const Footer = () => {
           onClick={() => navigate("/privacy-policy")}
         />
 
-        <FooterElements label="Terms & Conditions" />
+        <FooterElements
+          onClick={() => navigate("/terms-and-conditions")}
+          label="Terms & Conditions"
+        />
       </footer>
     </>
   );

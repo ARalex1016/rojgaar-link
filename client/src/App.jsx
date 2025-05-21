@@ -68,7 +68,7 @@ function App() {
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+  }, []);
 
   useEffect(() => {
     getCategories();
@@ -76,9 +76,16 @@ function App() {
 
   useEffect(() => {
     const fetchCounters = async () => {
+      const controller = new AbortController();
       try {
-        await getCounters();
-      } catch (error) {}
+        await getCounters({ signal: controller.signal });
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.error("Failed to fetch counters:", error);
+        }
+      }
+
+      return () => controller.abort(); // Cleanup
     };
 
     if (isAuthenticated && (isAdmin || isCreator)) {
@@ -118,12 +125,8 @@ function App() {
         {
           path: "profile",
           element: isAuthenticated ? (
-            user?.role === "creator" ? (
+            ["creator", "candidate"].includes(user?.role) ? (
               <Profile />
-            ) : user?.role === "candidate" ? (
-              <Profile />
-            ) : user?.role === "admin" ? (
-              <NotFound />
             ) : (
               <NotFound />
             )

@@ -18,6 +18,7 @@ const ContactUs = () => {
     name: "",
     email: user?.email ?? "",
     subject: "",
+    otherSubject: "",
     message: "",
   };
 
@@ -45,6 +46,7 @@ const ContactUs = () => {
     setMailData((pre) => ({
       ...pre,
       subject: selectedSubject.label,
+      otherSubject: selectedSubject === "Others" ? pre.otherSubject : "",
     }));
   };
 
@@ -116,6 +118,16 @@ const ContactUs = () => {
             value={mailData.subject}
             handleSelect={handleSubjectSelect}
           />
+
+          {mailData.subject === "Others" && (
+            <FloatingLabelInput
+              label="Other Subject"
+              name="otherSubject"
+              id="otherSubject"
+              value={mailData?.otherSubject}
+              handleInputChange={handleInputChange}
+            />
+          )}
 
           <TextAreaFloatingLabel
             label="message"

@@ -9,6 +9,7 @@ import {
   RadioInput,
 } from "../../Components/Input";
 import TermsAndConditions from "../TermsAndConditions";
+import { AlertBox } from "../../Components/AlertBox";
 
 // React Icons
 import { BiLoaderAlt } from "react-icons/bi";
@@ -51,7 +52,7 @@ const Signup = () => {
     });
   };
 
-  const handleButtonCLick = async () => {
+  const handleSignUp = async () => {
     const validEmail = emailValidator(userData.email);
 
     const validPassword = handlePasswordValidation(userData, setMessage);
@@ -69,17 +70,17 @@ const Signup = () => {
       toast.success(res);
       setUserData(initialData);
       setMessage("");
-
-      navigate("/email-verify", { state: { email: userData?.email } });
+      navigate("/jobs");
 
       // Send Email With OTP
-      try {
-        let res = await sendEmailWithOTP();
+      // try {
+      //   let res = await sendEmailWithOTP();
 
-        toast.success(res.message);
-      } catch (error) {
-        toast.error(error.message);
-      }
+      //   AlertBox({ title: res.message, icon: "success" });
+
+      // } catch (error) {
+      //   AlertBox({ title: error.message, icon: "error" });
+      // }
     } catch (error) {
       toast.error(error.message);
     }
@@ -213,7 +214,7 @@ const Signup = () => {
 
             <button
               disabled={isSigningIn || !userData?.termsAccepted}
-              onClick={handleButtonCLick}
+              onClick={handleSignUp}
               className={`w-full max-w-72 h-10 text-white text-lg font-medium bg-main/60 rounded-md disabled:bg-gray disabled:cursor-not-allowed`}
             >
               {isSigningIn ? (

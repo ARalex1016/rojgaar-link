@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 
@@ -10,7 +10,7 @@ import { useAuthStore } from "../../Store/useAuthStore";
 import { LoadingCircle } from "../../Components/Loading";
 
 const EmailVerificationPage = () => {
-  const { verifyEmail } = useAuthStore();
+  const { user, verifyEmail } = useAuthStore();
 
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
@@ -18,9 +18,6 @@ const EmailVerificationPage = () => {
   const inputRefs = useRef([]);
 
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const email = location.state?.email;
 
   const handleChange = (value, index) => {
     // Ensure input is a number
@@ -91,7 +88,7 @@ const EmailVerificationPage = () => {
     }
   };
 
-  if (!email) return;
+  if (!user?.email) return;
 
   return (
     <div className="w-full max-w-[450px] bg-neutral/75 rounded-md flex flex-col gap-y-2 p-5 mt-24 mx-auto">
@@ -101,7 +98,7 @@ const EmailVerificationPage = () => {
 
       <p className="text-center text-base">
         We've sent an email with OTP to{" "}
-        <span className="text-main font-medium">{email}</span>
+        <span className="text-main font-medium">{user?.email}</span>
       </p>
 
       <p className="text-center text-xs">Enter the 6-digit code here</p>

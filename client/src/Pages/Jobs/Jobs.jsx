@@ -13,6 +13,7 @@ import {
 } from "../../Components/Input";
 import Pagination from "../../Components/Pagination";
 import NoData from "../../Components/NoData";
+import VerifyEmailButton from "../Profile/VerifyEmailButton";
 
 // React Icons
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
@@ -263,7 +264,7 @@ const Filters = ({ isOpen, toggleSection, currentPage }) => {
 
 const Jobs = () => {
   const { jobs } = useJobStore();
-  const { isAuthenticated, isAdmin } = useAuthStore();
+  const { user, isAuthenticated, isAdmin } = useAuthStore();
 
   const navigate = useNavigate();
 
@@ -276,7 +277,14 @@ const Jobs = () => {
 
   return (
     <>
+      {/* Email Verify Message */}
       <div>
+        {!user?.isEmailVerified && (
+          <div className="w-full bg-neutral flex flow-row justify-center gap-x-2 p-2">
+            You need to verify your email <VerifyEmailButton />
+          </div>
+        )}
+
         {/* Filter */}
         <Filters
           isOpen={isOpen}

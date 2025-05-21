@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 
 // Components
 import ProfilePic from "./ProfilePic";
@@ -17,6 +15,7 @@ import {
 } from "../../Components/SocialMedia";
 import { PDFViewer } from "../../Components/PDFViewer";
 import { BadgeCheckIcon } from "../../Components/Icons";
+import VerifyEmailButton from "./VerifyEmailButton";
 
 // Icons
 import { Loader } from "lucide-react";
@@ -56,15 +55,12 @@ const Para = ({ className, children }) => {
 };
 
 const Profile = () => {
-  const { user, isCandidate, sendEmailWithOTP } = useAuthStore();
+  const { user, isCandidate } = useAuthStore();
   const { profile, getProfile, updatedProfileDetails, uploadResume } =
     useUserStore();
 
-  const navigate = useNavigate();
-
   const [profileInfo, setProfileInfo] = useState({});
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
-  const [sendingEmail, setSendingEmail] = useState(false);
 
   const handlePhoneNumberChange = (phone) => {
     setProfileInfo((pre) => ({
@@ -105,22 +101,6 @@ const Profile = () => {
     } catch (error) {
     } finally {
       setIsUpdatingProfile(false);
-    }
-  };
-
-  const handleVerifyEmail = async () => {
-    navigate("/email-verify", { state: { email: user?.email } });
-
-    setSendingEmail(true);
-
-    try {
-      let res = await sendEmailWithOTP();
-
-      toast.success(res.message);
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
-      setSendingEmail(false);
     }
   };
 
@@ -180,22 +160,7 @@ const Profile = () => {
                   <BadgeCheckIcon size={30} className="text-primary" />
                 </div>
               ) : (
-                <motion.button
-                  variants={{
-                    initial: {
-                      scale: 1,
-                    },
-                    tap: {
-                      scale: 0.95,
-                    },
-                  }}
-                  whileTap="tap"
-                  disabled={sendingEmail}
-                  onClick={handleVerifyEmail}
-                  className="text-neutral font-medium bg-red rounded-md px-3 cursor-pointer disabled:bg-gray disabled:cursor-not-allowed"
-                >
-                  Verify
-                </motion.button>
+                <VerifyEmailButton />
               )}
             </div>
 

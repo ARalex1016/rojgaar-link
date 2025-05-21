@@ -10,3 +10,29 @@ export const nodemailerTransporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+
+export const sendNodeMailerMail = async ({
+  from,
+  to,
+  subject,
+  text,
+  html,
+  category,
+}) => {
+  const mailOptions = {
+    from,
+    to,
+    subject,
+    text,
+    html,
+    category,
+  };
+
+  try {
+    let res = await nodemailerTransporter.sendMail(mailOptions);
+
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};

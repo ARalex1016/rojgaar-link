@@ -1,7 +1,7 @@
-import { nodemailerTransporter } from "../lib/email.config.js";
+import { sendNodeMailerMail } from "../lib/email.config.js";
 
 export const sendEmailToAdmin = async (req, res) => {
-  const { name, email, subject, message } = req.body;
+  const { name, email, subject, otherSubject, message } = req.body;
 
   if (!name || !email || !subject || !message) {
     return res.status(400).json({
@@ -10,15 +10,15 @@ export const sendEmailToAdmin = async (req, res) => {
     });
   }
 
-  const mailOptions = {
-    from: email,
-    to: process.env.EMAIL_USER,
-    subject: `Contact Form: ${subject}`,
-    text: `From: ${name} (${email})\n\n${message}`,
-  };
-
   try {
-    await nodemailerTransporter.sendMail(mailOptions);
+    await sendNodeMailerMail({
+      from: email,
+      to: process.env.EMAIL_USER,
+      subject: `Contact Form: ${
+        otherSubject ? `${otherSubject} (Other)` : subject
+      }`,
+      text: `From: ${name} (${email})\n\n${message}`,
+    });
 
     // Success
     res.status(200).json({

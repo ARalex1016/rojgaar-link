@@ -8,12 +8,13 @@ import Background from "../Components/Background";
 import SideSpacing from "../Components/SideSpacing";
 import { LoadingLinear } from "../Components/Loading";
 import { ShareSocial } from "../Components/ShareSocial/ShareSocial";
+import VerifyEmailButton from "../Pages/Profile/VerifyEmailButton";
 
 // Store
 import { useAuthStore } from "../Store/useAuthStore";
 
 const RootLayout = () => {
-  const { isLoading } = useAuthStore();
+  const { user, isCheckingAuth, isLoading } = useAuthStore();
 
   const location = useLocation();
   const hideFooter = ["/signup", "/login", "/stripe"];
@@ -32,7 +33,7 @@ const RootLayout = () => {
       <Background>
         <Header />
 
-        <LoadingLinear isVisible={isLoading} />
+        <LoadingLinear isVisible={isCheckingAuth || isLoading} />
 
         <ShareSocial metadata={metadata} />
 

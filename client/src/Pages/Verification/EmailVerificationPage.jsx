@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
@@ -80,13 +80,21 @@ const EmailVerificationPage = () => {
       let res = await verifyEmail(otp);
 
       toast.success(res.message);
-      navigate("/profile");
+      navigate(-1);
     } catch (error) {
       toast.error(error.message);
     } finally {
       setVerifyingOtp(false);
     }
   };
+
+  useEffect(() => {
+    let otp = code.join("");
+
+    if (otp && otp.length === 6) {
+      handleVerifyEmail();
+    }
+  }, [code]);
 
   if (!user?.email) return;
 

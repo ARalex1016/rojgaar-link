@@ -25,12 +25,12 @@ export const signup = async (req, res) => {
     });
   }
 
-  if (role === "admin") {
-    return res.status(400).json({
-      status: "fail",
-      message: "You do not have permission to perform this action!",
-    });
-  }
+  // if (role === "admin") {
+  //   return res.status(400).json({
+  //     status: "fail",
+  //     message: "You do not have permission to perform this action!",
+  //   });
+  // }
 
   try {
     const isEmailExists = await User.findOne({ email });

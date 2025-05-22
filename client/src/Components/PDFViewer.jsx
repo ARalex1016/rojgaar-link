@@ -10,7 +10,7 @@ const PdfDisplay = ({ url, title, close }) => {
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
         <div className="bg-darkGray shadow-sm shadow-gray rounded-lg w-[90%] h-[90%] flex flex-col gap-2 relative p-4 pt-4">
           <button className="absolute top-2 right-2" onClick={close}>
-            <XIcon className="border-2 border-red !bg-red !text-neutral hover:!bg-transparent hover:!text-red shadow-sm shadow-gray" />
+            <XIcon className="border-2 border-red !bg-red !text-neutral hover:border-neutral shadow-sm shadow-gray" />
           </button>
 
           <iframe

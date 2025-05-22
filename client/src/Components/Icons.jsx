@@ -40,12 +40,12 @@ export const KhaltiIcon = ({ handleClick, className }) => {
   );
 };
 
-export const XIcon = ({ handleClick, className }) => {
+export const XIcon = ({ handleClick, size = 30, className }) => {
   return (
     <>
       <X
         onClick={handleClick}
-        size={30}
+        size={size}
         className={`text-red bg-transparent rounded-full p-1 hover:text-neutral hover:bg-red ${className}`}
       />
     </>

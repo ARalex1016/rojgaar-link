@@ -861,8 +861,12 @@ export const getAllAppliedCandidates = async (req, res) => {
 
     // Fetch applications and candidates in parallel
     const applications = await Application.find({ jobId, ...query })
-      .select("candidateId jobId profileSnapshot createdAt status")
-      .populate("candidateId", "name email profilePic") // Populate candidate details
+      .select("candidateId jobId profile createdAt status")
+      .populate("candidateId", "name email profilePic")
+      .populate(
+        "profile",
+        "contact location education experience skills resume"
+      )
       .skip((pageNumber - 1) * limitNumber)
       .limit(limitNumber);
 

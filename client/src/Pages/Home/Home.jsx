@@ -29,8 +29,8 @@ const Home = () => {
   return (
     <>
       {/* Hero Section */}
-      <section className="w-full bg-black rounded-md shadow-md shadow-gray/80 px-4 pt-4 pb-6 mt-2">
-        <div className="bg-[url('https://example.com/your-image.jpg')] rounded-md aspect-video bg-cover border-[1px] border-neutral/20 flex flex-col justify-end px-2 mb-2">
+      <section className="w-full bg-black rounded-md shadow-md shadow-gray/80 p-4 mt-2">
+        <div className="bg-[url('https://example.com/your-image.jpg')] rounded-md aspect-video bg-cover border-[1px] border-neutral/20 flex flex-col justify-end px-2">
           <h2 className="text-neutral/70 text-lg font-medium">
             Connecting Nepali Talent with Global Opportunities
           </h2>
@@ -41,11 +41,12 @@ const Home = () => {
           </p>
         </div>
 
+        {/* Call to Action Buttons */}
         {!isAuthenticated && (
-          <>
+          <div className="flex flex-col gap-y-4 py-2">
             <button
               onClick={() => handleSignup("")}
-              className="w-full text-neutral font-medium bg-customBlue rounded-md py-1 mb-2"
+              className="w-full text-neutral font-medium bg-customBlue rounded-md py-1"
             >
               Search Jobs
             </button>
@@ -54,9 +55,9 @@ const Home = () => {
               onClick={() => handleSignup("creator")}
               className="w-full text-neutral font-medium bg-customBlue rounded-md py-1"
             >
-              Post a Job
+              Post Jobs
             </button>
-          </>
+          </div>
         )}
 
         {isAuthenticated && isAdmin && (
@@ -73,7 +74,7 @@ const Home = () => {
             onClick={() => navigate("/myjobs")}
             className="w-full text-neutral font-medium bg-customBlue rounded-md py-1"
           >
-            Post a Job
+            Post New Job
           </button>
         )}
 
@@ -105,8 +106,6 @@ const Home = () => {
           </div>
         </section>
       )}
-
-      {/* "Nepali for Nepali: It’s not just a slogan; it’s a promise. */}
     </>
   );
 };

@@ -1,8 +1,5 @@
 import mongoose from "mongoose";
 
-// Utils
-import { checkEligibility } from "../utils/checkEligibility.js";
-
 const candidateProfileSchema = new mongoose.Schema(
   {
     userId: {

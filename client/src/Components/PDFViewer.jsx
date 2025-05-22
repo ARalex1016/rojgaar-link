@@ -1,11 +1,34 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 
 // Components
-import { ViewIcon, DownloadIcon } from "./Icons";
+import { ViewIcon, DownloadIcon, XIcon } from "./Icons";
+
+const PdfDisplay = ({ url, title, close }) => {
+  return (
+    <>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+        <div className="bg-darkGray shadow-sm shadow-gray rounded-lg w-[90%] h-[90%] flex flex-col gap-2 relative p-4 pt-4">
+          <button className="absolute top-2 right-2" onClick={close}>
+            <XIcon className="border-2 border-red !bg-red !text-neutral hover:!bg-transparent hover:!text-red shadow-sm shadow-gray" />
+          </button>
+
+          <iframe
+            src={url}
+            className="w-full h-full border-2 border-neutral rounded"
+            title={title}
+          />
+        </div>
+      </div>
+    </>
+  );
+};
 
 export const PDFViewer = ({ pdf, label, className }) => {
-  const handleViewPdf = () => {
-    window.open(pdf?.url, "_blank", "noreferrer");
+  const [isPdfDisplayOpen, setIsPdfDisplayOpen] = useState(false);
+
+  const closePdfDisplay = () => {
+    setIsPdfDisplayOpen(false);
   };
 
   const handleDownloadPdf = async () => {
@@ -39,6 +62,7 @@ export const PDFViewer = ({ pdf, label, className }) => {
         >
           <p className="text-neutral">{pdf?.title}</p>
 
+          {/* View Button */}
           <motion.button
             variants={{
               initial: {
@@ -54,12 +78,13 @@ export const PDFViewer = ({ pdf, label, className }) => {
             whileHover="hover"
             whileTap="tap"
             title={`View ${label || "PDF"}`}
-            onClick={handleViewPdf}
+            onClick={() => setIsPdfDisplayOpen(true)}
             className="text-neutral bg-customBlue rounded-full p-1"
           >
             <ViewIcon />
           </motion.button>
 
+          {/* Download Button */}
           <motion.button
             variants={{
               initial: {
@@ -80,6 +105,15 @@ export const PDFViewer = ({ pdf, label, className }) => {
           >
             <DownloadIcon />
           </motion.button>
+
+          {/* Modal */}
+          {isPdfDisplayOpen && (
+            <PdfDisplay
+              url={pdf.url}
+              title={pdf.title}
+              close={closePdfDisplay}
+            />
+          )}
         </div>
       )}
     </>

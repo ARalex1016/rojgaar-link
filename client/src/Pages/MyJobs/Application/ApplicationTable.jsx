@@ -154,87 +154,78 @@ const ExpandedRowData = ({ rowData, filterOutRowId, className }) => {
 
   return (
     <>
-      <td
-        colSpan="4"
-        className={`text-sm border-b-[1px] border-neutral/40 px-4 py-4 ${className}`}
-      >
-        <ContainerGrid>
-          <p className="text-neutral/80">Name</p>
-          <p className="text-neutral font-medium">
-            {rowData?.candidateId?.name}
+      <ContainerGrid>
+        <p className="text-neutral/80">Name</p>
+        <p className="text-neutral font-medium">{rowData?.candidateId?.name}</p>
+
+        <p className="text-neutral/80">Email</p>
+        <p className="text-neutral font-medium">
+          {rowData?.candidateId?.email}
+        </p>
+
+        <p className="text-neutral/80">Contact</p>
+        <p className="text-neutral font-medium">
+          {rowData?.profile?.contact?.phoneNumber}
+        </p>
+
+        <p className="text-neutral/80">Location</p>
+        <p className="text-neutral font-medium">
+          {[
+            rowData?.profile?.location?.country,
+            rowData?.profile?.location?.state,
+          ]
+            .filter(Boolean)
+            .join(", ")}
+        </p>
+
+        <p className="text-neutral/80">Applied At</p>
+        <p className="text-neutral font-medium">
+          {getDateDetails(rowData?.createdAt, false)}
+        </p>
+
+        <div className="col-span-2 border-2 border-neutral/60 hover:border-neutral/80 rounded-md flex flex-col gap-y-1 py-1 mt-2">
+          <p className="text-neutral text-base text-center font-medium underline">
+            View Resume
           </p>
 
-          <p className="text-neutral/80">Email</p>
-          <p className="text-neutral font-medium">
-            {rowData?.candidateId?.email}
-          </p>
+          <PDFViewer pdf={rowData?.profile?.resume} label="Resume" />
+        </div>
+      </ContainerGrid>
 
-          <p className="text-neutral/80">Contact</p>
-          <p className="text-neutral font-medium">
-            {rowData?.profileSnapshot?.contact?.phoneNumber}
-          </p>
+      {/* Action */}
+      <section className="w-full flex flex-row justify-around mt-4">
+        {rowData?.status === "pending" && (
+          <ButtonWithLoader
+            label="Shortlist"
+            isLoading={shortListing}
+            onClick={() =>
+              handleShortListApplication(rowData?.jobId, rowData?._id)
+            }
+            className="w-1/5 h-8 bg-customBlue/80 hover:bg-customBlue"
+          />
+        )}
 
-          <p className="text-neutral/80">Location</p>
-          <p className="text-neutral font-medium">
-            {[
-              rowData?.profileSnapshot?.location?.country,
-              rowData?.profileSnapshot?.location?.state,
-            ]
-              .filter(Boolean)
-              .join(", ")}
-          </p>
+        {rowData?.status === "shortlisted" && (
+          <ButtonWithLoader
+            label="Hire"
+            isLoading={hiring}
+            onClick={() => handleHireApplication(rowData?.jobId, rowData?._id)}
+            className="w-1/5 h-8 bg-customGreen/80 hover:bg-customGreen"
+          />
+        )}
 
-          <p className="text-neutral/80">Applied At</p>
-          <p className="text-neutral font-medium">
-            {getDateDetails(rowData?.createdAt, false)}
-          </p>
-
-          <div className="col-span-2 border-2 border-neutral/60 hover:border-neutral/80 rounded-md flex flex-col gap-y-1 py-1 mt-2">
-            <p className="text-neutral text-base text-center font-medium underline">
-              View Resume
-            </p>
-
-            <PDFViewer pdf={rowData?.profileSnapshot?.resume} label="Resume" />
-          </div>
-        </ContainerGrid>
-
-        {/* Action */}
-        <section className="w-full flex flex-row justify-around mt-4">
-          {rowData?.status === "pending" && (
-            <ButtonWithLoader
-              label="Shortlist"
-              isLoading={shortListing}
-              onClick={() =>
-                handleShortListApplication(rowData?.jobId, rowData?._id)
-              }
-              className="w-1/5 h-8 bg-customBlue/80 hover:bg-customBlue"
-            />
-          )}
-
-          {rowData?.status === "shortlisted" && (
-            <ButtonWithLoader
-              label="Hire"
-              isLoading={hiring}
-              onClick={() =>
-                handleHireApplication(rowData?.jobId, rowData?._id)
-              }
-              className="w-1/5 h-8 bg-customGreen/80 hover:bg-customGreen"
-            />
-          )}
-
-          {(rowData?.status === "shortlisted" ||
-            rowData?.status === "pending") && (
-            <ButtonWithLoader
-              label="Reject"
-              isLoading={rejecting}
-              onClick={() =>
-                handleRejectApplication(rowData?.jobId, rowData?._id)
-              }
-              className="w-1/5 bg-red/80 hover:bg-red"
-            />
-          )}
-        </section>
-      </td>
+        {(rowData?.status === "shortlisted" ||
+          rowData?.status === "pending") && (
+          <ButtonWithLoader
+            label="Reject"
+            isLoading={rejecting}
+            onClick={() =>
+              handleRejectApplication(rowData?.jobId, rowData?._id)
+            }
+            className="w-1/5 bg-red/80 hover:bg-red"
+          />
+        )}
+      </section>
     </>
   );
 };
@@ -303,33 +294,41 @@ const ApplicationTable = ({
                 {/* Expanded Row */}
                 <AnimatePresence>
                   {selectedRowId === row?.candidateId?._id && (
-                    <motion.tr
-                      variants={{
-                        initial: {
-                          maxHeight: 0,
-                          opacity: 0,
-                          overflow: "hidden",
-                        },
-                        final: {
-                          maxHeight: "80vh",
-                          opacity: 1,
-                          overflow: "hidden",
-                        },
-                      }}
-                      initial="initial"
-                      animate="final"
-                      exit="initial"
-                      transition={{
-                        duration: 0.3,
-                        ease: "easeInOut",
-                      }}
-                      className="overflow-hidden"
-                    >
-                      <ExpandedRowData
-                        rowData={row}
-                        filterOutRowId={filterOutRowId}
-                      />
-                    </motion.tr>
+                    <tr>
+                      <td
+                        colSpan={4}
+                        className="text-sm border-b-[1px] border-neutral/40"
+                      >
+                        <motion.div
+                          key={row?.candidateId?._id}
+                          variants={{
+                            initial: {
+                              height: 0,
+                              opacity: 0,
+                              paddingBlock: "0",
+                            },
+                            final: {
+                              height: "auto",
+                              opacity: 1,
+                              paddingBlock: "5px",
+                            },
+                          }}
+                          initial="initial"
+                          animate="final"
+                          exit="initial"
+                          transition={{
+                            duration: 0.3,
+                            ease: "easeInOut",
+                          }}
+                          className="px-4 overflow-hidden"
+                        >
+                          <ExpandedRowData
+                            rowData={row}
+                            filterOutRowId={filterOutRowId}
+                          />
+                        </motion.div>
+                      </td>
+                    </tr>
                   )}
                 </AnimatePresence>
               </React.Fragment>

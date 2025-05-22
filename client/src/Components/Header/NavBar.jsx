@@ -74,7 +74,7 @@ export const MobileNavBar = ({ showMobileNav, closeNavBar }) => {
   const mobileNavBar = useRef(null);
 
   useEffect(() => {
-    const handleOutsideClick = (event) => {
+    const handleOutsideInteraction = (event) => {
       if (
         mobileNavBar.current &&
         !mobileNavBar.current.contains(event.target)
@@ -83,14 +83,22 @@ export const MobileNavBar = ({ showMobileNav, closeNavBar }) => {
       }
     };
 
+    const handleScroll = () => {
+      closeNavBar();
+    };
+
     // Adding event listener on mount
     if (showMobileNav) {
-      document.addEventListener("mousedown", handleOutsideClick);
+      document.addEventListener("mousedown", handleOutsideInteraction);
+      document.addEventListener("keydown", handleOutsideInteraction);
+      window.addEventListener("scroll", handleScroll);
     }
 
     // Clean up event listener on unmount
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("mousedown", handleOutsideInteraction);
+      document.removeEventListener("keydown", handleOutsideInteraction);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, [showMobileNav, closeNavBar]);
 
@@ -114,7 +122,7 @@ export const MobileNavBar = ({ showMobileNav, closeNavBar }) => {
             exit="initial"
             transition={{
               duration: 0.3,
-              ease: "anticipate",
+              ease: "easeInOut",
             }}
             ref={mobileNavBar}
             className="w-1/2 text-white text-lg font-medium bg-primary/50 backdrop-blur-[6px] flex flex-col items-center gap-y-3 shadow-md shadow-main/80 rounded-md overflow-hidden absolute right-sideSpacing top-full sm:hidden z-50"

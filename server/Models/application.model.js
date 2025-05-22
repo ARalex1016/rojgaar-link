@@ -12,39 +12,10 @@ const applicationSchema = new mongoose.Schema(
       ref: "Job",
       required: true,
     },
-    profileSnapshot: {
-      contact: {
-        phoneNumber: String,
-        email: String,
-        socialMedia: {
-          facebook: { type: String },
-          instagram: { type: String },
-        },
-      },
-      location: {
-        country: { type: String },
-        state: { type: String },
-      },
-      education: [
-        {
-          degree: String,
-          institution: String,
-          yearOfGraduation: Number,
-        },
-      ],
-      experience: [
-        {
-          jobTitle: String,
-          company: String,
-          yearsOfExperience: Number,
-          description: String,
-        },
-      ],
-      skills: [String],
-      resume: {
-        title: String,
-        url: String,
-      },
+    profile: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CandidateProfile",
+      required: true,
     },
     status: {
       type: String,

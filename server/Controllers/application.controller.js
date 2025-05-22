@@ -17,28 +17,31 @@ export const applyJob = async (req, res) => {
       candidateId: user._id,
       jobId: job._id,
     });
+
     if (alreadyApplied) {
       return res.status(400).json({
         status: "fail",
         message: "You have already Applied in this job",
       });
     }
+
     // Get candidate profile
     const candidateProfile = await CandidateProfile.findOne({
       userId: user._id,
-    }).select("-userId -appliedJobs -createdAt -updatedAt");
+    }).select("_id");
 
-    if (!candidateProfile.eligible) {
+    if (!user.eligible) {
       return res.status(400).json({
         status: "fail",
         message: "You are not Eligible to apply for job yet!",
       });
     }
+
     // Apply for job
     const application = await Application.create({
       candidateId: user._id,
       jobId: job._id,
-      profileSnapshot: candidateProfile,
+      profile: candidateProfile,
     });
 
     // TODO: Add applicants to creator (in real-time)

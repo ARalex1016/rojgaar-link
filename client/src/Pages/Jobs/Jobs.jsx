@@ -279,7 +279,7 @@ const Jobs = () => {
     <>
       {/* Email Verify Message */}
       <div>
-        {!user?.isEmailVerified && (
+        {isAuthenticated && !user?.isEmailVerified && (
           <div className="w-full bg-neutral flex flow-row justify-center gap-x-2 p-2">
             You need to verify your email <VerifyEmailButton />
           </div>

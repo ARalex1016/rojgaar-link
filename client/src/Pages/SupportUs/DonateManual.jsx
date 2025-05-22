@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Components
 import {
@@ -15,8 +15,9 @@ import { CopyableText } from "../../Components/Input";
 import { capitalize } from "../../Utils/StringManager";
 
 const DonateManual = () => {
+  const popUpBox = useRef();
+
   const [selectedMethod, setSelectedMethod] = useState(null);
-  const [selectedMethodObj, setSelectedMethodObj] = useState(null);
 
   const paymentMethods = [
     {
@@ -39,20 +40,37 @@ const DonateManual = () => {
     },
   ];
 
-  const SelectedIcon = selectedMethodObj ? selectedMethodObj?.icon : null;
+  const SelectedIcon = selectedMethod ? selectedMethod?.icon : null;
 
   const handleIconClick = (method) => {
     setSelectedMethod(method);
   };
 
   useEffect(() => {
+    const handleOutsideInteraction = (event) => {
+      // Close if clicking outside the pop-up
+      if (popUpBox.current && !popUpBox.current.contains(event.target)) {
+        setSelectedMethod(null);
+      }
+    };
+
+    const handleScroll = () => {
+      setSelectedMethod(null); // Close on scroll
+    };
+
     if (selectedMethod) {
-      setSelectedMethodObj(
-        paymentMethods.find((method) => method.id === selectedMethod)
-      );
-    } else {
-      setSelectedMethodObj(null);
+      // Listen to mouse, key, and scroll events
+      document.addEventListener("mousedown", handleOutsideInteraction);
+      document.addEventListener("keydown", handleOutsideInteraction);
+      window.addEventListener("scroll", handleScroll);
     }
+
+    return () => {
+      // Cleanup listeners
+      document.removeEventListener("mousedown", handleOutsideInteraction);
+      document.removeEventListener("keydown", handleOutsideInteraction);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, [selectedMethod]);
 
   return (
@@ -75,8 +93,7 @@ const DonateManual = () => {
             return (
               <Icon
                 key={method.id}
-                selectedMethod={selectedMethod}
-                handleClick={handleIconClick}
+                handleClick={() => handleIconClick(method)}
                 className={`hover:bg-accent cursor-pointer ${
                   selectedMethod === method.id ? "bg-customBlue" : "bg-neutral"
                 }`}
@@ -84,6 +101,83 @@ const DonateManual = () => {
             );
           })}
         </div>
+
+        {/* Pop Up */}
+        <AnimatePresence>
+          {selectedMethod && selectedMethod && (
+            <motion.div
+              variants={{
+                initial: {
+                  scale: 0,
+                },
+                final: {
+                  scale: 1,
+                },
+              }}
+              initial="initial"
+              animate="final"
+              exit="initial"
+              transition={{
+                duration: 0.2,
+                ease: "easeInOut",
+              }}
+              ref={popUpBox}
+              className="w-full bg-neutral rounded-md shadow-md shadow-gray flex flex-col items-center absolute top-0 z-40 px-4 pt-2 pb-4"
+            >
+              <XIcon
+                handleClick={() => setSelectedMethod(null)}
+                className="absolute right-0 mr-2"
+              />
+
+              <SelectedIcon className="w-[100px] mb-2" />
+
+              <div className="w-full grid grid-cols-3 gap-y-4">
+                <p className="text-left font-medium flex items-center px-2 col-span-1">
+                  {capitalize(selectedMethod?.name)} Id
+                </p>
+
+                <CopyableText
+                  text={selectedMethod?.details?.id}
+                  className="border-[1px] border-black col-span-2"
+                />
+
+                <img
+                  src={selectedMethod?.details?.qrSrc}
+                  alt={`${capitalize(selectedMethod?.name)}-QR`}
+                  className="w-10/12 aspect-square object-contain col-span-3 m-auto"
+                />
+
+                <motion.button
+                  variants={{
+                    initial: {
+                      scale: 1,
+                    },
+                    hover: {
+                      scale: 1.05,
+                    },
+                    tap: {
+                      scale: 0.95,
+                    },
+                  }}
+                  whileHover="hover"
+                  whileTap="tap"
+                  title="Download QR"
+                  className="text-neutral bg-customBlue rounded-md shadow-md shadow-gray px-4 py-2 cursor-pointer col-span-3 m-auto"
+                >
+                  <a
+                    href={selectedMethod?.details?.qrSrc}
+                    download={`${selectedMethod?.id}-qr.png`}
+                    className="flex gap-x-2"
+                  >
+                    <p>Download QR</p>
+
+                    <DownloadIcon className="text-neutral" />
+                  </a>
+                </motion.button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <p className="text-sm text-neutral/80 font-medium italic text-center flex">
           <ArrowRightIcon />
@@ -109,78 +203,13 @@ const DonateManual = () => {
               border: "none",
               width: "100%",
               maxWidth: "400px",
-              height: "712px",
               padding: "4px",
               background: "#f9f9f9",
             }}
-            // className="rounded-b-md"
+            height="712"
+            allow="payment"
           ></iframe>
         </div>
-
-        {/* Pop Up */}
-        {selectedMethod && selectedMethodObj && (
-          <motion.div className="w-full bg-neutral rounded-md shadow-md shadow-gray flex flex-col items-center absolute top-0 z-40 px-4 pt-2 pb-4">
-            <XIcon
-              handleClick={() => setSelectedMethod(null)}
-              className="absolute right-0 mr-2"
-            />
-
-            <SelectedIcon className="w-[100px] mb-2" />
-
-            <div className="w-full grid grid-cols-3 gap-y-4">
-              <p className="text-left font-medium flex items-center px-2 col-span-1">
-                {capitalize(selectedMethod)} Id
-              </p>
-
-              <CopyableText
-                text={selectedMethodObj?.details?.id}
-                className="border-[1px] border-black col-span-2"
-              />
-
-              <img
-                src={selectedMethodObj?.details?.qrSrc}
-                alt={`${capitalize(selectedMethod)}-QR`}
-                className="w-10/12 aspect-square object-contain col-span-3 m-auto"
-              />
-
-              <motion.button
-                variants={{
-                  initial: {
-                    scale: 1,
-                  },
-                  hover: {
-                    scale: 1.05,
-                  },
-                  tap: {
-                    scale: 0.95,
-                  },
-                }}
-                whileHover="hover"
-                whileTap="tap"
-                title="Download QR"
-                className="text-neutral bg-customBlue rounded-md shadow-md shadow-gray px-4 py-2 cursor-pointer col-span-3 m-auto"
-              >
-                <a
-                  href={
-                    paymentMethods.find(
-                      (method) => method.id === selectedMethod
-                    ).details.qrSrc
-                  }
-                  download={`${
-                    paymentMethods.find(
-                      (method) => method.id === selectedMethod
-                    ).id
-                  }-qr.png`}
-                  className="flex gap-x-2"
-                >
-                  <p>Download QR</p>
-
-                  <DownloadIcon className="text-neutral" />
-                </a>
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
       </section>
     </>
   );

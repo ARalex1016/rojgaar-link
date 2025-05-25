@@ -1,5 +1,9 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+
+// Image
+import NepaliFlagImage from "./../../../public/Images/nepali-flag-bg.jpg";
 
 // Store
 import { useAuthStore } from "../../Store/useAuthStore";
@@ -29,63 +33,114 @@ const Home = () => {
   return (
     <>
       {/* Hero Section */}
-      <section className="w-full bg-black rounded-md shadow-md shadow-gray/80 p-4 mt-2">
-        <div className="bg-[url('https://example.com/your-image.jpg')] rounded-md aspect-video bg-cover border-[1px] border-neutral/20 flex flex-col justify-end px-2">
-          <h2 className="text-neutral/70 text-lg font-medium">
+      <section className="w-full mt-2 relative">
+        <img
+          src={NepaliFlagImage}
+          alt="Nepali flag background"
+          className="w-full h-auto object-cover rounded-md"
+        />
+
+        <div className="w-1/2 absolute top-1/2 right-0 z-10 -translate-y-1/2 p-2">
+          <h2 className="text-black mobilesm:text-xs text-sm font-medium">
             Connecting Nepali Talent with Global Opportunities
           </h2>
 
-          <p className="text-neutral/30 text-sm">
+          <p className="text-gray text-xs">
             Find jobs abroad or recruit skilled candidates transparently and
             securely
           </p>
+
+          {/* Call to Action Buttons */}
+          {!isAuthenticated && (
+            <div className="flex flex-col gap-y-2 pt-2">
+              <motion.button
+                variants={{
+                  initial: {
+                    scale: 1,
+                  },
+                  final: {
+                    scale: 1.05,
+                  },
+                }}
+                whileTap="final"
+                onClick={() => handleSignup("")}
+                className="w-full text-neutral mobilesm:text-sm mobile:text-base font-medium bg-red rounded-md py-1"
+              >
+                Search Jobs
+              </motion.button>
+
+              <motion.button
+                variants={{
+                  initial: {
+                    scale: 1,
+                  },
+                  final: {
+                    scale: 1.05,
+                  },
+                }}
+                whileTap="final"
+                onClick={() => handleSignup("creator")}
+                className="w-full text-neutral mobilesm:text-sm mobile:text-base font-medium bg-blue-700 rounded-md py-1"
+              >
+                Post Jobs
+              </motion.button>
+            </div>
+          )}
+
+          {isAuthenticated && isAdmin && (
+            <motion.button
+              variants={{
+                initial: {
+                  scale: 1,
+                },
+                final: {
+                  scale: 1.05,
+                },
+              }}
+              whileTap="final"
+              onClick={() => navigate("/")}
+              className="w-full text-neutral mobilesm:text-sm mobile:text-base font-medium bg-customBlue rounded-md py-1 mb-2"
+            >
+              Go to Dashboard
+            </motion.button>
+          )}
+
+          {isAuthenticated && isCreator && (
+            <motion.button
+              variants={{
+                initial: {
+                  scale: 1,
+                },
+                final: {
+                  scale: 1.05,
+                },
+              }}
+              whileTap="final"
+              onClick={() => navigate("/myjobs")}
+              className="w-full text-neutral mobilesm:text-sm mobile:text-base font-medium bg-customBlue rounded-md py-1"
+            >
+              Post New Job
+            </motion.button>
+          )}
+
+          {isAuthenticated && isCandidate && (
+            <motion.button
+              variants={{
+                initial: {
+                  scale: 1,
+                },
+                final: {
+                  scale: 1.05,
+                },
+              }}
+              whileTap="final"
+              onClick={() => navigate("/jobs")}
+              className="w-full text-neutral mobilesm:text-sm mobile:text-base font-medium bg-customBlue rounded-md py-1"
+            >
+              Search Job
+            </motion.button>
+          )}
         </div>
-
-        {/* Call to Action Buttons */}
-        {!isAuthenticated && (
-          <div className="flex flex-col gap-y-4 py-2">
-            <button
-              onClick={() => handleSignup("")}
-              className="w-full text-neutral font-medium bg-customBlue rounded-md py-1"
-            >
-              Search Jobs
-            </button>
-
-            <button
-              onClick={() => handleSignup("creator")}
-              className="w-full text-neutral font-medium bg-customBlue rounded-md py-1"
-            >
-              Post Jobs
-            </button>
-          </div>
-        )}
-
-        {isAuthenticated && isAdmin && (
-          <button
-            onClick={() => navigate("/")}
-            className="w-full text-neutral font-medium bg-customBlue rounded-md py-1 mb-2"
-          >
-            Go to Dashboard
-          </button>
-        )}
-
-        {isAuthenticated && isCreator && (
-          <button
-            onClick={() => navigate("/myjobs")}
-            className="w-full text-neutral font-medium bg-customBlue rounded-md py-1"
-          >
-            Post New Job
-          </button>
-        )}
-
-        {isAuthenticated && isCandidate && (
-          <button
-            onClick={() => navigate("/jobs")}
-            className="w-full text-neutral font-medium bg-customBlue rounded-md py-1"
-          >
-            Search Job
-          </button>
-        )}
       </section>
 
       {/* Metrics & Statistics */}

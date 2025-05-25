@@ -53,7 +53,7 @@ export const useAuthStore = create((set) => ({
 
       setTokenInDev(res.data.token);
 
-      return res.data.message;
+      return res.data;
     } catch (error) {
       set({
         isAuthenticated: false,

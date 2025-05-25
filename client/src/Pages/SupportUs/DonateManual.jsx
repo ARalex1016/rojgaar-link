@@ -82,7 +82,7 @@ const DonateManual = () => {
 
         <p className="text-neutral/70 text-sm text-center font-medium">
           {/* Your Contribution Makes a Difference */}
-          Let’s help build a stronger, self-reliant Nepali community
+          Let’s help build a stronger and self-reliant Nepali community
         </p>
 
         {/* Payment Icons as Tabs */}
@@ -192,7 +192,7 @@ const DonateManual = () => {
         {/* Ko-fi */}
         <div className="bg-white rounded-t-2xl">
           <h2 className="text-primary font-medium text-center text-lg py-2">
-            Pay With Card
+            Donate With Card
           </h2>
 
           <iframe

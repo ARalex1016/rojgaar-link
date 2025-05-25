@@ -67,10 +67,9 @@ const Signup = () => {
     try {
       const res = await signup(userData);
 
-      toast.success(res);
       setUserData(initialData);
       setMessage("");
-      navigate("/jobs");
+      AlertBox({ title: res.message, icon: "success" });
 
       // Send Email With OTP
       // try {
@@ -78,11 +77,12 @@ const Signup = () => {
 
       //   AlertBox({ title: res.message, icon: "success" });
 
+      //   navigate("/email-verify");
       // } catch (error) {
       //   AlertBox({ title: error.message, icon: "error" });
       // }
     } catch (error) {
-      toast.error(error.message);
+      AlertBox({ title: error.message, icon: "error" });
     }
   };
 
@@ -96,9 +96,12 @@ const Signup = () => {
     <>
       <div className="min-h-[80vh] flex justify-center items-center">
         {/* Sign up form Container */}
-        <section className="w-full max-w-[450px] border-t-2 border-t-main/60 shadow-md shadow-main rounded-xl flex flex-col items-center py-6">
+        <section className="w-full max-w-[450px] border-t-2 border-t-main/60 shadow-md shadow-main/60 rounded-xl flex flex-col items-center py-6">
           <h2 className="text-2xl text-main font-medium  text-center">
-            Sign Up
+            Sign Up{" "}
+            <span>
+              {roleFromState === "creator" ? "as Creator" : "Candidate"}
+            </span>
           </h2>
 
           {/* Message */}
@@ -226,7 +229,7 @@ const Signup = () => {
           </div>
 
           <p className="text-sm text-white/50 mt-1">
-            Already have accound?{" "}
+            Already have account?{" "}
             <span
               onClick={() => navigate("/login")}
               className="text-base text-white/75 font-bold"

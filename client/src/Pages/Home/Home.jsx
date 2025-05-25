@@ -33,7 +33,7 @@ const Home = () => {
   return (
     <>
       {/* Hero Section */}
-      <section className="w-full mt-2 relative">
+      <section className="w-full shadow-md shadow-gray mt-2 relative">
         <img
           src={NepaliFlagImage}
           alt="Nepali flag background"

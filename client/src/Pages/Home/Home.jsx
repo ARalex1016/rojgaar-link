@@ -34,13 +34,15 @@ const Home = () => {
     <>
       {/* Hero Section */}
       <section className="w-full shadow-md shadow-gray mt-2 relative">
-        <img
-          src={NepaliFlagImage}
-          alt="Nepali flag background"
-          className="w-full h-auto object-cover rounded-md"
-        />
+        <div className="w-full aspect-video rounded-md bg-neutral">
+          <img
+            src={NepaliFlagImage}
+            alt="Nepali flag background"
+            className="object-cover"
+          />
+        </div>
 
-        <div className="w-1/2 absolute top-1/2 right-0 z-10 -translate-y-1/2 p-2">
+        <div className="w-1/2 absolute top-1/2 right-0 z-10 -translate-y-1/2 pr-2">
           <h2 className="text-black mobilesm:text-xs text-sm font-medium">
             Connecting Nepali Talent with Global Opportunities
           </h2>
@@ -58,11 +60,15 @@ const Home = () => {
                   initial: {
                     scale: 1,
                   },
-                  final: {
+                  tap: {
+                    scale: 0.95,
+                  },
+                  hover: {
                     scale: 1.05,
                   },
                 }}
-                whileTap="final"
+                whileHover="hover"
+                whileTap="tap"
                 onClick={() => handleSignup("")}
                 className="w-full text-neutral mobilesm:text-sm mobile:text-base font-medium bg-red rounded-md py-1"
               >
@@ -74,11 +80,15 @@ const Home = () => {
                   initial: {
                     scale: 1,
                   },
-                  final: {
+                  tap: {
+                    scale: 0.95,
+                  },
+                  hover: {
                     scale: 1.05,
                   },
                 }}
-                whileTap="final"
+                whileHover="hover"
+                whileTap="tap"
                 onClick={() => handleSignup("creator")}
                 className="w-full text-neutral mobilesm:text-sm mobile:text-base font-medium bg-blue-700 rounded-md py-1"
               >
@@ -93,11 +103,15 @@ const Home = () => {
                 initial: {
                   scale: 1,
                 },
-                final: {
+                tap: {
+                  scale: 0.95,
+                },
+                hover: {
                   scale: 1.05,
                 },
               }}
-              whileTap="final"
+              whileHover="hover"
+              whileTap="tap"
               onClick={() => navigate("/")}
               className="w-full text-neutral mobilesm:text-sm mobile:text-base font-medium bg-customBlue rounded-md py-1 mb-2"
             >
@@ -111,11 +125,15 @@ const Home = () => {
                 initial: {
                   scale: 1,
                 },
-                final: {
+                tap: {
+                  scale: 0.95,
+                },
+                hover: {
                   scale: 1.05,
                 },
               }}
-              whileTap="final"
+              whileHover="hover"
+              whileTap="tap"
               onClick={() => navigate("/myjobs")}
               className="w-full text-neutral mobilesm:text-sm mobile:text-base font-medium bg-customBlue rounded-md py-1"
             >
@@ -129,11 +147,15 @@ const Home = () => {
                 initial: {
                   scale: 1,
                 },
-                final: {
+                tap: {
+                  scale: 0.95,
+                },
+                hover: {
                   scale: 1.05,
                 },
               }}
-              whileTap="final"
+              whileHover="hover"
+              whileTap="tap"
               onClick={() => navigate("/jobs")}
               className="w-full text-neutral mobilesm:text-sm mobile:text-base font-medium bg-customBlue rounded-md py-1"
             >
@@ -145,8 +167,10 @@ const Home = () => {
 
       {/* Metrics & Statistics */}
       {adminMetrics && Object.keys(adminMetrics).length >= 1 && (
-        <section className="bg-neutral rounded-md shadow-inner shadow-gray py-2 my-4">
-          {/* <p className="text-center text-lg text-main font-bold">ScoreBoard</p> */}
+        <section className="bg-black rounded-md shadow-inner shadow-gray py-4 my-4">
+          {/* <p className="text-center text-lg text-neutral font-bold">
+            ScoreBoard
+          </p> */}
 
           <div className="flex flex-row justify-around">
             <ScoreBoard

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
@@ -21,12 +22,28 @@ const RootLayout = () => {
 
   const shouldHideFooter = hideFooter.includes(location.pathname);
 
+  const baseUrl = window.location.origin;
+
   const metadata = {
-    title: "Rojgaar Link",
-    text: "Here’s something interesting for you!",
-    image: "https://example.com/image.png",
+    // title: "Rojgaar Link",
+    // text: "Here’s something interesting for you!",
+    // image: `${baseUrl}/Images/nepali-flag-bg.jpg`,
     url: window.location.origin,
   };
+
+  useEffect(() => {
+    const ogImageUrl = `${baseUrl}/Images/nepali-flag-bg.jpg`;
+
+    const metaTag = document.createElement("meta");
+    metaTag.setAttribute("property", "og:image");
+    metaTag.setAttribute("content", ogImageUrl);
+
+    document.head.appendChild(metaTag);
+
+    return () => {
+      document.head.removeChild(metaTag); // Cleanup on unmount
+    };
+  }, []);
 
   return (
     <>

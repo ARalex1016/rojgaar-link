@@ -9,7 +9,7 @@ const CounterUp = ({ number }) => {
   let step = Math.max(1, Math.floor(number / 50));
 
   return (
-    <p ref={counterRef} className="text-2xl font-bold text-main">
+    <p ref={counterRef} className="text-2xl font-bold text-accent">
       {isInView && (
         <CountUp
           start={0}
@@ -28,9 +28,10 @@ const CounterUp = ({ number }) => {
 const ScoreBoard = ({ title, score }) => {
   return (
     <div className="flex flex-col justify-center items-center">
-      <p className="text-sm font-medium text-black/90 border-b-2 border-gray/50 px-2">
+      <p className="text-sm font-medium text-neutral border-b-2 border-gray/50 px-2">
         {title}
       </p>
+
       <CounterUp number={score} />
     </div>
   );

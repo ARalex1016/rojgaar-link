@@ -27,7 +27,7 @@ const RootLayout = () => {
   const metadata = {
     // title: "Rojgaar Link",
     // text: "Here’s something interesting for you!",
-    // image: `${baseUrl}/Images/nepali-flag-bg.jpg`,
+    image: `${baseUrl}/Images/nepali-flag-bg.jpg`,
     url: window.location.origin,
   };
 

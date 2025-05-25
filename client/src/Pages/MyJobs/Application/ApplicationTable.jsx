@@ -188,7 +188,7 @@ const ExpandedRowData = ({ rowData, filterOutRowId, className }) => {
             View Resume
           </p>
 
-          {/* <PDFViewer pdf={rowData?.profile?.resume} label="Resume" /> */}
+          <PDFViewer pdf={rowData?.profile?.resume} label="Resume" />
         </div>
       </ContainerGrid>
 

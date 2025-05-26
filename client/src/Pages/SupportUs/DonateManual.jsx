@@ -75,7 +75,7 @@ const DonateManual = () => {
 
   return (
     <>
-      <section className="w-full relative">
+      <section className="w-full relative py-2">
         <p className="text-neutral text-xl text-center font-medium">
           Support Our Mission
         </p>
@@ -179,7 +179,7 @@ const DonateManual = () => {
           )}
         </AnimatePresence>
 
-        <p className="text-sm text-neutral/80 font-medium italic text-center flex">
+        <p className="text-sm text-neutral/80 font-medium italic text-center flex flex-row">
           <ArrowRightIcon />
           Click on your preferred donation method to proceed, and make your
           contribution.

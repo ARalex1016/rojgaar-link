@@ -72,10 +72,10 @@ export const DownloadIcon = ({ className }) => {
   );
 };
 
-export const ArrowRightIcon = ({ className }) => {
+export const ArrowRightIcon = ({ className, size = 24 }) => {
   return (
     <>
-      <ArrowRight size={24} className={`${className}`} />
+      <ArrowRight size={size} className={`${className}`} />
     </>
   );
 };

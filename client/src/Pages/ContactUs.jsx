@@ -88,10 +88,10 @@ const ContactUs = () => {
 
   return (
     <>
-      <section className="w-11/12 mt-5 mx-auto">
-        <h2 className="text-2xl text-neutral font-medium text-center mb-4">
+      <section className="w-11/12 mx-auto">
+        <h1 className="text-2xl text-neutral font-medium text-center my-4">
           Contact Us
-        </h2>
+        </h1>
 
         <div className="w-full flex flex-col gap-y-2">
           <FloatingLabelInput

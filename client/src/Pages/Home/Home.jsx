@@ -168,7 +168,7 @@ const Home = () => {
 
         {/* Metrics & Statistics */}
         {adminMetrics && Object.keys(adminMetrics).length >= 1 && (
-          <section className="bg-black rounded-md shadow-inner shadow-gray py-4">
+          <section className="border-2 border-neutral/60 rounded-md shadow-md shadow-gray py-4">
             {/* <p className="text-center text-lg text-neutral font-bold">
               ScoreBoard
             </p> */}
@@ -187,16 +187,86 @@ const Home = () => {
           </section>
         )}
 
-        {/* Supports Us */}
-        <section className="bg-neutral rounded-md shadow-md shadow-gray px-4 py-2">
-          <p className="text-center text-lg text-primary font-bold">
+        {/* Our Mission & Support Us */}
+        <section className="bg-black rounded-md shadow-md shadow-gray px-4 py-4 flex flex-col gap-y-1 justify-center items-center">
+          <p className="text-center text-lg text-neutral font-bold">
+            Our Mission
+          </p>
+
+          <p className="w-full text-neutral font-medium">
+            What is our Mission?
+          </p>
+
+          <p className="text-neutral/75">
+            Our mission is to connect Nepali job seekers with employers abroad,
+            providing a platform that is secure, transparent, and user-friendly.
+          </p>
+
+          <p className="text-center text-lg text-blue-700 font-bold pt-2">
             Support Our Mission
+          </p>
+
+          <p className="text-neutral/65 mb-2">
+            We can't do this without your support! Your contribution can make a
+            big difference.
+          </p>
+
+          <p className="w-full text-neutral/75">
+            You can support us financially by
+          </p>
+
+          <ul className="w-full list-disc list-inside text-neutral/75 text-sm flex flex-col gap-y-1">
+            <li>
+              <span className="text-blue-700 font-bold">Khalti:</span> Donate
+              with Khalti Id or Khalti QR pay
+            </li>
+
+            <li>
+              <span className="text-blue-700 font-bold">IME Pay:</span> Donate
+              with IME Pay or IME QR pay
+            </li>
+            <li>
+              <span className="text-blue-700 font-bold">
+                Credit/Debit Cards:
+              </span>{" "}
+              Donate with MasterCard and Visa payments.
+            </li>
+          </ul>
+
+          <motion.button
+            variants={{
+              initial: {
+                scale: 1,
+              },
+              hover: {
+                scale: 1.1,
+              },
+              tap: {
+                scale: 0.9,
+              },
+            }}
+            whileHover="hover"
+            whileTap="tap"
+            transition={{
+              duration: 0.2,
+              ease: "easeInOut",
+            }}
+            onClick={() => navigate("/support-us")}
+            className="text-neutral text-lg font-medium bg-blue-700 rounded-md px-5 py-1 mx-auto my-2"
+          >
+            Support Us
+          </motion.button>
+
+          <p className="text-neutral/75 text-xs">
+            <span className="font-medium">Remember:</span> You can aslo support
+            us by sharing this platform to your friends, family and relatives.{" "}
+            <span className="text-blue-700 font-bold underline">Share</span>
           </p>
         </section>
 
         {/* How it works */}
-        <section className="bg-main/80 rounded-md shadow-md shadow-gray flex flex-col gap-y-2 py-4">
-          <p className="text-center text-lg text-neutral font-bold">
+        <section className="border-[1px] border-t-0 border-neutral rounded-b-md shadow-md shadow-gray flex flex-col gap-y-2 pb-2 my-2">
+          <p className="text-center text-lg text-neutral font-bold border-2 border-neutral py-1">
             How It Works
           </p>
 
@@ -236,6 +306,29 @@ const Home = () => {
               <li>Wait for Admin to approve the job</li>
             </ol>
           </div>
+        </section>
+
+        {/* Contact Us */}
+        <section className="bg-black rounded-md shadow-md shadow-gray px-4 py-2">
+          <p className="text-center text-lg text-neutral font-bold">
+            Contact Us
+          </p>
+
+          <p className="text-neutral/80 text-sm text-center">
+            If you have any questions or feedback, feel free to reach out to us
+            through our{" "}
+            <span
+              onClick={() => navigate("/contact-us")}
+              className="text-blue-700 font-bold underline"
+            >
+              Contact Us
+            </span>{" "}
+            form
+          </p>
+
+          {/* <p className="text-black/80 text-sm font-medium text-center italic">
+            OR
+          </p> */}
         </section>
       </div>
     </>

@@ -75,10 +75,10 @@ const DonateManual = () => {
 
   return (
     <>
-      <section className="w-full relative py-2">
-        <p className="text-neutral text-xl text-center font-medium">
+      <section className="w-full relative pb-2">
+        <h1 className="text-2xl text-neutral font-medium text-center mt-4">
           Support Our Mission
-        </p>
+        </h1>
 
         <p className="text-neutral/70 text-sm text-center font-medium">
           {/* Your Contribution Makes a Difference */}

@@ -26,6 +26,7 @@ import ThanksPageStripe from "./Pages/Stripe/ThanksPageStripe";
 import AboutUs from "./Pages/AboutUs";
 import PrivacyPolicy from "./Pages/PrivacyPolicy";
 import ContactUs from "./Pages/ContactUs";
+import FAQ from "./Pages/FAQ/FAQ";
 import TermsAndConditions from "./Pages/TermsAndConditions";
 
 // Admin
@@ -222,6 +223,10 @@ function App() {
         {
           path: "contact-us",
           element: <ContactUs />,
+        },
+        {
+          path: "faqs",
+          element: <FAQ />,
         },
         {
           path: "terms-and-conditions",

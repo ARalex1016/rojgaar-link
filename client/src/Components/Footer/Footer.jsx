@@ -39,7 +39,7 @@ const Footer = () => {
           onClick={() => navigate("/contact-us")}
         />
 
-        <FooterElements label="FAQs" />
+        <FooterElements label="FAQs" onClick={() => navigate("/faqs")} />
 
         <FooterElements
           label="Privacy Policy"

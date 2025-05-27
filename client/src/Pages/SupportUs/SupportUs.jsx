@@ -34,7 +34,7 @@ const SupportUs = () => {
           </NavLink>
         </section> */}
 
-        <section className="w-full flex flex-col items-center justify-center gap-y-1 py-4">
+        <section className="w-full flex flex-col items-center justify-center gap-y-1">
           <Outlet />
         </section>
       </div>

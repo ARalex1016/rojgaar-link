@@ -27,13 +27,17 @@ export const ShareSocial = ({ metadata }) => {
       <motion.button
         variants={{
           initial: { scale: 0 },
-          hover: { scale: 1.05 },
+          hover: { scale: 1.1 },
           tap: { scale: 0.9 },
         }}
         whileHover="hover"
         whileTap="tap"
+        transition={{
+          duration: 0.1,
+          ease: "easeInOut",
+        }}
         onClick={handleShare}
-        className="text-red.80 bg-neutral/80 rounded-full fixed bottom-menuHeight right-2 z-30 p-2 hover:text-red hover:bg-neutral"
+        className="text-blue-700 bg-neutral/80 rounded-full border-2 border-transparent fixed bottom-menuHeight right-2 z-30 p-2 transition-all duration-300 hover:bg-neutral hover:border-blue-700"
       >
         <Share2 size={18} />
       </motion.button>

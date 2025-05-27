@@ -11,8 +11,11 @@ const AboutUs = () => {
   return (
     <div className="text-gray-800">
       {/* Header Section */}
-      <section className="text-white text-center py-5">
-        <h1 className="text-4xl font-bold">About Us</h1>
+      <section className="text-white text-center pb-5">
+        <h1 className="text-2xl text-neutral font-bold text-center my-4">
+          About Us
+        </h1>
+
         <p className="text-neutral/80 mt-2">
           Empowering Nepalese community to connect with better opportunities
           abroad.

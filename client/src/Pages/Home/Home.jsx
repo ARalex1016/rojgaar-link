@@ -34,7 +34,7 @@ const Home = () => {
     <>
       <div className="flex flex-col gap-y-4 py-4">
         {/* Hero Section */}
-        <section className="w-full shadow-md shadow-gray relative">
+        <section className="w-full rounded-md overflow-hidden shadow-md shadow-gray relative">
           <div className="w-full aspect-video rounded-md bg-neutral">
             <img
               src="/Images/nepali-flag-bg.jpg"
@@ -265,8 +265,8 @@ const Home = () => {
         </section>
 
         {/* How it works */}
-        <section className="border-[1px] border-t-0 border-neutral rounded-b-md shadow-md shadow-gray flex flex-col gap-y-2 pb-2 my-2">
-          <p className="text-center text-lg text-neutral font-bold border-2 border-neutral py-1">
+        <section className="border-[1px] border-neutral rounded-md shadow-md shadow-gray flex flex-col gap-y-2 pb-2 my-2">
+          <p className="text-center text-lg text-neutral font-bold border-b-[1px] border-neutral shadow-md shadow-gray py-1">
             How It Works
           </p>
 

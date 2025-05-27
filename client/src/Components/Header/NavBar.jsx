@@ -12,9 +12,7 @@ const Link = ({ to, children }) => {
         to={to}
         className={({ isActive }) =>
           `w-24 text-lg font-medium ${
-            isActive
-              ? "text-accent"
-              : "text-neutral opacity-60 hover:opacity-100"
+            isActive ? "text-accent" : "text-neutral/70 hover:text-neutral"
           }`
         }
       >
@@ -125,7 +123,7 @@ export const MobileNavBar = ({ showMobileNav, closeNavBar }) => {
               ease: "easeInOut",
             }}
             ref={mobileNavBar}
-            className="w-1/2 text-white text-lg font-medium bg-primary/50 backdrop-blur-[6px] flex flex-col items-center gap-y-3 shadow-md shadow-main/80 rounded-md overflow-hidden absolute right-sideSpacing top-full sm:hidden z-50"
+            className="w-1/2 text-white text-lg font-medium bg-primary/70 backdrop-blur-[6px] flex flex-col items-center gap-y-3 shadow-md shadow-main/80 rounded-md overflow-hidden absolute right-sideSpacing top-full sm:hidden z-50"
           >
             <NavBar closeNavBar={closeNavBar} />
           </motion.nav>

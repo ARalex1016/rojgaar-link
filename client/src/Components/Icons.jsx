@@ -10,31 +10,16 @@ import {
   BadgeCheck,
 } from "lucide-react";
 
-export const EsewaIcon = ({ handleClick, className }) => {
-  const id = "esewa";
+export const PNGIcon = ({ handleClick, png, className }) => {
+  const id = "ime-pay";
 
   return (
     <>
       <div
         onClick={() => handleClick(id)}
-        className={`w-16 bg-neutral rounded-md p-2 ${className}`}
+        className={`w-20 overflow-hidden bg-neutral rounded-md p-2 ${className}`}
       >
-        <img src="/Icons/esewa.png" alt="esewa-icon" />
-      </div>
-    </>
-  );
-};
-
-export const KhaltiIcon = ({ handleClick, className }) => {
-  const id = "khalti";
-
-  return (
-    <>
-      <div
-        onClick={() => handleClick(id)}
-        className={`w-16 bg-neutral rounded-md p-2 ${className}`}
-      >
-        <img src="/Icons/khalti.png" alt="khalti-icon" />
+        <img src={png} alt="khalti-icon" />
       </div>
     </>
   );

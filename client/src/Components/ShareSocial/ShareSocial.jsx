@@ -3,16 +3,20 @@ import { motion } from "framer-motion";
 // Lucide Icons
 import { Share2 } from "lucide-react";
 
-export const ShareSocial = ({ metadata }) => {
+export const ShareSocial = () => {
+  const baseUrl = window.location.origin;
+
+  const metadata = {
+    title: "Rojgaar Link",
+    image: `${baseUrl}/Images/nepali-flag-bg.jpg`,
+    description: "Find your next career move with ease...",
+    url: baseUrl,
+  };
+
   const handleShare = async () => {
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: metadata?.title,
-          text: metadata?.text,
-          image: metadata?.image,
-          url: metadata?.url,
-        });
+        await navigator.share(metadata);
         console.log("Content shared successfully!");
       } catch (error) {
         console.error("Error sharing:", error);

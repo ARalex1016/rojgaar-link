@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 // Components
 import {
-  EsewaIcon,
-  KhaltiIcon,
+  PNGIcon,
   XIcon,
   DownloadIcon,
   ArrowRightIcon,
@@ -21,18 +20,18 @@ const DonateManual = () => {
 
   const paymentMethods = [
     {
-      id: "esewa",
-      name: "Esewa",
-      icon: EsewaIcon,
+      id: "imepay",
+      name: "IME-Pay",
+      icon: "/Icons/ime-pay.png",
       details: {
-        id: "esewa id",
-        qrSrc: "/Icons/esewa.png",
+        id: "ime-pay id",
+        qrSrc: "/Icons/ime-pay.png",
       },
     },
     {
       id: "khalti",
       name: "Khalti",
-      icon: KhaltiIcon,
+      icon: "/Icons/khalti.png",
       details: {
         id: "khalti id",
         qrSrc: "/Icons/khalti.png",
@@ -88,15 +87,12 @@ const DonateManual = () => {
         {/* Payment Icons as Tabs */}
         <div className="flex flex-row items-center justify-center gap-x-4 my-4">
           {paymentMethods.map((method) => {
-            const Icon = method.icon;
-
             return (
-              <Icon
+              <PNGIcon
                 key={method.id}
+                png={method.icon}
                 handleClick={() => handleIconClick(method)}
-                className={`hover:bg-accent cursor-pointer ${
-                  selectedMethod === method.id ? "bg-customBlue" : "bg-neutral"
-                }`}
+                className={`bg-neutral/90 shadow-sm shadow-gray hover:bg-neutral cursor-pointer`}
               />
             );
           })}
@@ -104,7 +100,7 @@ const DonateManual = () => {
 
         {/* Pop Up */}
         <AnimatePresence>
-          {selectedMethod && selectedMethod && (
+          {selectedMethod && (
             <motion.div
               variants={{
                 initial: {
@@ -129,7 +125,7 @@ const DonateManual = () => {
                 className="absolute right-0 mr-2"
               />
 
-              <SelectedIcon className="w-[100px] mb-2" />
+              <PNGIcon png={selectedMethod.icon} />
 
               <div className="w-full grid grid-cols-3 gap-y-4">
                 <p className="text-left font-medium flex items-center px-2 col-span-1">

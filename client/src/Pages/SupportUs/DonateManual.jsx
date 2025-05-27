@@ -24,7 +24,7 @@ const DonateManual = () => {
       name: "IME-Pay",
       icon: "/Icons/ime-pay.png",
       details: {
-        id: "ime-pay id",
+        id: "9701425253",
         qrSrc: "/Images/ime-pay-qr.jpg",
       },
     },
@@ -33,7 +33,7 @@ const DonateManual = () => {
       name: "Khalti",
       icon: "/Icons/khalti.png",
       details: {
-        id: "khalti id",
+        id: "9701425253",
         qrSrc: "/Images/khalti-qr.jpg",
       },
     },
@@ -128,7 +128,7 @@ const DonateManual = () => {
               <PNGIcon png={selectedMethod.icon} />
 
               <div className="w-full grid grid-cols-3 gap-y-4">
-                <p className="text-left font-medium flex items-center px-2 col-span-1">
+                <p className="text-left flex items-center px-2 col-span-1">
                   {capitalize(selectedMethod?.name)} Id
                 </p>
 

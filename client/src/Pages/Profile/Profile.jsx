@@ -257,7 +257,7 @@ const Profile = () => {
 
           {/* Resume (For Candidate)*/}
           {isCandidate && (
-            <div className="rounded-md shadow-inner shadow-neutral flex flex-col justify-center items-center p-4">
+            <div className="rounded-md shadow-inner shadow-neutral flex flex-col justify-center items-center transition-all duration-200 ease-in-out p-4">
               <SubTitle>Your Resume</SubTitle>
 
               <PDFViewer pdf={profile?.resume} label="View Resume" />

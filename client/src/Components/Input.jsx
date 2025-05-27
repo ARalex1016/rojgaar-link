@@ -142,7 +142,9 @@ export const CopyableText = ({ text, className }) => {
           title="Click to copy"
           className={`w-full text-lg bg-neutral rounded-md relative overflow-hidden ${className}`}
         >
-          <div className="text-black/80 text-sm text-nowrap p-2">{text}</div>
+          <div className="text-black/80 font-medium text-sm text-nowrap p-2">
+            {text}
+          </div>
 
           <motion.button
             variants={{

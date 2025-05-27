@@ -25,7 +25,7 @@ const DonateManual = () => {
       icon: "/Icons/ime-pay.png",
       details: {
         id: "ime-pay id",
-        qrSrc: "/Icons/ime-pay.png",
+        qrSrc: "/Images/ime-pay-qr.jpg",
       },
     },
     {
@@ -34,7 +34,7 @@ const DonateManual = () => {
       icon: "/Icons/khalti.png",
       details: {
         id: "khalti id",
-        qrSrc: "/Icons/khalti.png",
+        qrSrc: "/Images/khalti-qr.jpg",
       },
     },
   ];

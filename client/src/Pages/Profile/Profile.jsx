@@ -16,6 +16,7 @@ import {
 import { PDFViewer } from "../../Components/PDFViewer";
 import { BadgeCheckIcon } from "../../Components/Icons";
 import VerifyEmailButton from "./VerifyEmailButton";
+import { AlertBox, ConfirmAlertBox } from "../../Components/AlertBox";
 
 // Icons
 import { Loader } from "lucide-react";
@@ -30,9 +31,11 @@ import { getDateDetails } from "../../Utils/DateManager";
 
 const SubTitle = ({ className, children }) => {
   return (
-    <h2 className={`text-neutral font-medium underline mb-2 ${className}`}>
-      {children}
-    </h2>
+    <>
+      <h2 className={`text-neutral font-medium underline mb-2 ${className}`}>
+        {children}
+      </h2>
+    </>
   );
 };
 
@@ -86,9 +89,44 @@ const Profile = () => {
     try {
       let res = await uploadResume(file);
 
+      await AlertBox({
+        title: "Uploaded!",
+        text: "Your resume has been uploaded successfully.",
+        icon: "success",
+      });
+
       return res;
     } catch (error) {
       throw error;
+    }
+  };
+
+  const handleUploadWithConfirmation = async (file) => {
+    try {
+      const result = await ConfirmAlertBox({
+        title: "Replace existing resume?",
+        text: "Uploading a new resume will replace your current one. Do you want to proceed?",
+        icon: "warning",
+        confirmButtonText: "Yes, replace it!",
+      });
+
+      if (result.isConfirmed) {
+        // User confirmed, proceed with upload
+        const response = await handleResumeUpload(file);
+
+        return response;
+      } else {
+        // User cancelled upload, just return or do nothing
+        return null;
+      }
+    } catch (error) {
+      // Handle error gracefully
+      await Swal.fire({
+        title: "Upload failed",
+        text: error.message || "Something went wrong during the upload.",
+        icon: "error",
+      });
+      throw error; // rethrow if you want to handle it higher up
     }
   };
 
@@ -219,12 +257,19 @@ const Profile = () => {
 
           {/* Resume (For Candidate)*/}
           {isCandidate && (
-            <div className="rounded-md shadow-inner shadow-neutral flex flex-col justify-center items-center gap-y-2 px-2 py-4">
-              <SubTitle>Resume</SubTitle>
+            <div className="rounded-md shadow-inner shadow-neutral flex flex-col justify-center items-center p-4">
+              <SubTitle>Your Resume</SubTitle>
 
               <PDFViewer pdf={profile?.resume} label="View Resume" />
 
-              <PDFUpload handlePdfUpload={handleResumeUpload} className="" />
+              <PDFUpload
+                handlePdfUpload={
+                  profile?.resume?.url
+                    ? handleUploadWithConfirmation
+                    : handleResumeUpload
+                }
+                className="mt-4"
+              />
             </div>
           )}
 

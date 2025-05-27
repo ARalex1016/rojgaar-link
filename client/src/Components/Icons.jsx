@@ -46,7 +46,7 @@ export const XIcon = ({ handleClick, size = 30, className }) => {
       <X
         onClick={handleClick}
         size={size}
-        className={`text-red bg-transparent rounded-full p-1 hover:text-neutral hover:bg-red ${className}`}
+        className={`text-red bg-transparent rounded-full p-1 hover:text-neutral hover:bg-red cursor-pointer ${className}`}
       />
     </>
   );
@@ -64,10 +64,10 @@ export const PlusIcon = ({ handleClick, className }) => {
   );
 };
 
-export const DownloadIcon = ({ className }) => {
+export const DownloadIcon = ({ className, size = 24 }) => {
   return (
     <>
-      <Download size={24} className={`${className}`} />
+      <Download size={size} className={`${className}`} />
     </>
   );
 };
@@ -96,10 +96,10 @@ export const UploadIcon = ({ className }) => {
   );
 };
 
-export const ViewIcon = ({ className }) => {
+export const ViewIcon = ({ className, size = 24 }) => {
   return (
     <>
-      <Eye size={24} className={`${className}`} />
+      <Eye size={size} className={`${className}`} />
     </>
   );
 };

@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 
 // Components
-import { LoaderCircleIcon, PlusIcon, UploadIcon } from "./Icons";
+import { LoaderCircleIcon, PlusIcon, UploadIcon, XIcon } from "./Icons";
 
 // React Icons
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
@@ -475,7 +475,6 @@ export const PDFUpload = ({ handlePdfUpload, className }) => {
 
     try {
       const res = await handlePdfUpload(formData);
-      toast.success(res.message);
 
       setSelectedFile(null);
       if (fileInputRef.current) {
@@ -491,29 +490,71 @@ export const PDFUpload = ({ handlePdfUpload, className }) => {
   return (
     <>
       <div
-        className={`w-full border-2 border-neutral/50 rounded-md flex flex-row p-1 ${className}`}
+        className={`w-full border-2 border-neutral/50 rounded-md shadow-md shadow-gray flex flex-row justify-center p-2 ${className}`}
       >
-        <input
-          ref={fileInputRef} // Attach the ref to the input
-          type="file"
-          accept="application/pdf"
-          disabled={isUploadingFile}
-          onChange={handleChange}
-          className="w-full h-full text-neutral px-2 py-1"
-        />
+        {!selectedFile && (
+          <>
+            <input
+              ref={fileInputRef} // Attach the ref to the input
+              id="pdfupload"
+              type="file"
+              accept="application/pdf"
+              disabled={isUploadingFile}
+              onChange={handleChange}
+              className="hidden"
+            />
+
+            <label
+              htmlFor="pdfupload"
+              className="text-neutral font-medium bg-blue-700 rounded-md px-2 py-1"
+            >
+              Upload New PDF
+            </label>
+          </>
+        )}
 
         {selectedFile && (
-          <button
-            disabled={isUploadingFile}
-            onClick={handleUpload}
-            className="w-14 text-neutral bg-customBlue rounded-md cursor-pointer disabled:bg-gray disabled:cursor-not-allowed"
-          >
-            {isUploadingFile ? (
-              <LoaderCircleIcon className="animate-spin m-auto" />
-            ) : (
-              <UploadIcon className="m-auto" />
-            )}
-          </button>
+          <div className="w-full h-full px-2 relative">
+            <p className="text-neutral text-sm font-medium text-center col-span-4">
+              Selected PDF
+            </p>
+
+            <XIcon
+              size={26}
+              handleClick={() => setSelectedFile(null)}
+              className="!bg-red !text-neutral absolute top-0 right-2"
+            />
+
+            <div className="flex flex-row justify-between items-center py-2">
+              <div className="flex flex-col">
+                <p className="text-neutral/80 col-span-3">
+                  Name:{" "}
+                  <span className="text-neutral font-medium">
+                    {selectedFile.name}
+                  </span>
+                </p>
+
+                <p className="text-neutral/80 col-span-3">
+                  Size:{" "}
+                  <span className="text-neutral font-medium">
+                    {Number(selectedFile.size / 1024).toFixed(2)} KB
+                  </span>{" "}
+                </p>
+              </div>
+
+              <button
+                disabled={isUploadingFile}
+                onClick={handleUpload}
+                className="text-neutral bg-customBlue rounded-md cursor-pointer hover:scale-110 px-2 py-1 disabled:bg-gray disabled:cursor-not-allowed"
+              >
+                {isUploadingFile ? (
+                  <LoaderCircleIcon className="animate-spin m-auto" />
+                ) : (
+                  <UploadIcon className="m-auto" />
+                )}
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </>

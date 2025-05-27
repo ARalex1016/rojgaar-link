@@ -94,6 +94,7 @@ export const PDFViewer = ({ pdf, label, className }) => {
     }
   };
 
+  // Disable Main Scroll when PdfDisplay is open
   useEffect(() => {
     if (isPdfDisplayOpen) {
       document.body.classList.add("no-scroll");
@@ -123,16 +124,20 @@ export const PDFViewer = ({ pdf, label, className }) => {
                 scale: 1.1,
               },
               tap: {
-                scale: 0.95,
+                scale: 0.9,
               },
             }}
             whileHover="hover"
             whileTap="tap"
+            transition={{
+              duration: 0.2,
+              ease: "easeInOut",
+            }}
             title={`View ${label || "PDF"}`}
             onClick={() => setIsPdfDisplayOpen(true)}
             className="text-neutral bg-customBlue rounded-full p-1"
           >
-            <ViewIcon />
+            <ViewIcon size={20} />
           </motion.button>
 
           {/* Download Button */}
@@ -145,16 +150,20 @@ export const PDFViewer = ({ pdf, label, className }) => {
                 scale: 1.1,
               },
               tap: {
-                scale: 0.95,
+                scale: 0.9,
               },
             }}
             whileHover="hover"
             whileTap="tap"
+            transition={{
+              duration: 0.2,
+              ease: "easeInOut",
+            }}
             title={`Download ${label || "PDF"}`}
             onClick={handleDownloadPdf}
             className="text-neutral bg-customBlue rounded-full p-1"
           >
-            <DownloadIcon />
+            <DownloadIcon size={20} />
           </motion.button>
 
           {/* Modal */}

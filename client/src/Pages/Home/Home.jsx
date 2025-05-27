@@ -168,7 +168,7 @@ const Home = () => {
 
         {/* Metrics & Statistics */}
         {adminMetrics && Object.keys(adminMetrics).length >= 1 && (
-          <section className="border-2 border-neutral/60 rounded-md shadow-md shadow-gray py-4">
+          <section className="border-y-2 border-neutral/60 rounded-md shadow-md shadow-gray py-4">
             {/* <p className="text-center text-lg text-neutral font-bold">
               ScoreBoard
             </p> */}
@@ -202,7 +202,7 @@ const Home = () => {
             providing a platform that is secure, transparent, and user-friendly.
           </p>
 
-          <p className="text-center text-lg text-blue-700 font-bold pt-2">
+          <p className="text-center text-lg text-blue-500 font-bold pt-2">
             Support Our Mission
           </p>
 
@@ -217,16 +217,16 @@ const Home = () => {
 
           <ul className="w-full list-disc list-inside text-neutral/75 text-sm flex flex-col gap-y-1">
             <li>
-              <span className="text-blue-700 font-bold">Khalti:</span> Donate
+              <span className="text-blue-500 font-bold">Khalti:</span> Donate
               with Khalti Id or Khalti QR pay
             </li>
 
             <li>
-              <span className="text-blue-700 font-bold">IME Pay:</span> Donate
+              <span className="text-blue-500 font-bold">IME Pay:</span> Donate
               with IME Pay or IME QR pay
             </li>
             <li>
-              <span className="text-blue-700 font-bold">
+              <span className="text-blue-500 font-bold">
                 Credit/Debit Cards:
               </span>{" "}
               Donate with MasterCard and Visa payments.
@@ -260,7 +260,7 @@ const Home = () => {
           <p className="text-neutral/75 text-xs">
             <span className="font-medium">Remember:</span> You can aslo support
             us by sharing this platform to your friends, family and relatives.{" "}
-            <span className="text-blue-700 font-bold underline">Share</span>
+            <span className="text-blue-500 font-bold underline">Share</span>
           </p>
         </section>
 
@@ -275,12 +275,12 @@ const Home = () => {
 
             <ol className="w-full text-neutral/80 text-sm list-decimal list-inside">
               <li>
-                Create an account as Candidate{" "}
+                Create an account{" "}
                 <span
                   onClick={() => handleSignup()}
-                  className="text-base font-bold underline"
+                  className="text-neutral text-base font-bold underline"
                 >
-                  Sign up
+                  Sign up as Candidate
                 </span>
               </li>
               <li>Filter, Search & Apply for Jobs</li>
@@ -294,12 +294,12 @@ const Home = () => {
 
             <ol className="w-full text-neutral/80 text-sm list-decimal list-inside">
               <li>
-                Create an account as Creator{" "}
+                Create an account{" "}
                 <span
                   onClick={() => handleSignup("creator")}
-                  className="text-base font-bold underline"
+                  className="text-neutral text-base font-bold underline"
                 >
-                  Sign up
+                  Sign up as Creator
                 </span>
               </li>
               <li>Post new Job from My Jobs Page</li>
@@ -319,7 +319,7 @@ const Home = () => {
             through our{" "}
             <span
               onClick={() => navigate("/contact-us")}
-              className="text-blue-700 font-bold underline"
+              className="text-blue-500 font-bold underline"
             >
               Contact Us
             </span>{" "}

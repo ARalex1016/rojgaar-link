@@ -37,7 +37,7 @@ export const ShareSocial = ({ metadata }) => {
           ease: "easeInOut",
         }}
         onClick={handleShare}
-        className="text-blue-700 bg-neutral/80 rounded-full border-2 border-transparent fixed bottom-menuHeight right-2 z-30 p-2 transition-all duration-300 hover:bg-neutral hover:border-blue-700"
+        className="text-blue-700 bg-neutral rounded-full border-2 border-transparent shadow-sm shadow-blue-700 fixed bottom-menuHeight right-2 z-30 p-2 transition-all duration-300 hover:bg-neutral hover:border-blue-700"
       >
         <Share2 size={18} />
       </motion.button>

@@ -98,10 +98,8 @@ const Signup = () => {
         {/* Sign up form Container */}
         <section className="w-full max-w-[450px] border-t-2 border-t-main/60 shadow-md shadow-main/60 rounded-xl flex flex-col items-center py-6">
           <h2 className="text-2xl text-main font-medium  text-center">
-            Sign Up{" "}
-            <span>
-              {roleFromState === "creator" ? "as Creator" : "Candidate"}
-            </span>
+            Sign Up as{" "}
+            <span>{roleFromState === "creator" ? "Creator" : "Candidate"}</span>
           </h2>
 
           {/* Message */}

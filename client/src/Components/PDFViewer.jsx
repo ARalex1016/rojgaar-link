@@ -1,23 +1,50 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { pdfjs, Document, Page } from "react-pdf";
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.mjs",
+  import.meta.url
+).toString();
 
 // Components
 import { ViewIcon, DownloadIcon, XIcon } from "./Icons";
+
+const PDF = ({ pdf }) => {
+  const [numPages, setNumPages] = useState();
+  const [pageNumber, setPageNumber] = useState(1);
+
+  function onDocumentLoadSuccess({ numPages }) {
+    setNumPages(numPages);
+  }
+
+  return (
+    <div>
+      <p className="text-neutral">
+        Page {pageNumber} of {numPages}
+      </p>
+      <Document file={pdf} onLoadSuccess={onDocumentLoadSuccess}>
+        <Page pageNumber={pageNumber} />
+      </Document>
+    </div>
+  );
+};
 
 const PdfDisplay = ({ url, title, close }) => {
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-        <div className="bg-darkGray shadow-sm shadow-gray rounded-lg w-[90%] h-[90%] flex flex-col gap-2 relative p-4 pt-4">
-          <button className="absolute top-2 right-2" onClick={close}>
-            <XIcon className="border-2 border-red !bg-red !text-neutral hover:border-neutral shadow-sm shadow-gray" />
-          </button>
+        <button className="absolute top-2 right-2 z-10" onClick={close}>
+          <XIcon className="border-2 border-red !bg-red !text-neutral hover:border-neutral shadow-sm shadow-gray" />
+        </button>
 
-          <iframe
+        <div className="w-[95%] h-[95%] bg-darkGray shadow-sm shadow-gray rounded-lg overflow-auto flex flex-col gap-2 p-4 pt-4">
+          {/* <iframe
             src={url}
             className="w-full h-full border-2 border-neutral rounded"
             title={title}
-          />
+          /> */}
+          <PDF pdf={url} />
         </div>
       </div>
     </>

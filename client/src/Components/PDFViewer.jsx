@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { pdfjs, Document, Page } from "react-pdf";
 
@@ -10,7 +10,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 // Components
 import { ViewIcon, DownloadIcon, XIcon } from "./Icons";
 
-const PDF = ({ pdf }) => {
+const PDFComp = ({ pdf, title }) => {
   const [numPages, setNumPages] = useState();
   const [pageNumber, setPageNumber] = useState(1);
 
@@ -19,14 +19,32 @@ const PDF = ({ pdf }) => {
   }
 
   return (
-    <div>
-      <p className="text-neutral">
-        Page {pageNumber} of {numPages}
-      </p>
-      <Document file={pdf} onLoadSuccess={onDocumentLoadSuccess}>
-        <Page pageNumber={pageNumber} />
-      </Document>
-    </div>
+    <>
+      <div className="flex flex-row justify-around px-2">
+        <p className="text-neutral font-medium">{title}</p>
+
+        <p className="text-neutral/75">
+          Page {pageNumber} of {numPages}
+        </p>
+      </div>
+
+      <div className="overflow-auto customScrollbarStyle">
+        <Document file={pdf} onLoadSuccess={onDocumentLoadSuccess}>
+          {Array.apply(null, Array(numPages))
+            .map((x, i) => i + 1)
+            .map((page, index) => {
+              return (
+                <Page
+                  key={index}
+                  pageNumber={page}
+                  renderTextLayer={false}
+                  renderAnnotationLayer={false}
+                />
+              );
+            })}
+        </Document>
+      </div>
+    </>
   );
 };
 
@@ -38,13 +56,8 @@ const PdfDisplay = ({ url, title, close }) => {
           <XIcon className="border-2 border-red !bg-red !text-neutral hover:border-neutral shadow-sm shadow-gray" />
         </button>
 
-        <div className="w-[95%] h-[95%] bg-darkGray shadow-sm shadow-gray rounded-lg overflow-auto flex flex-col gap-2 p-4 pt-4">
-          {/* <iframe
-            src={url}
-            className="w-full h-full border-2 border-neutral rounded"
-            title={title}
-          /> */}
-          <PDF pdf={url} />
+        <div className="w-[95%] h-[95%] bg-darkGray shadow-sm shadow-gray rounded-lg overflow-auto flex flex-col gap-2 p-2">
+          <PDFComp pdf={url} title={title} />
         </div>
       </div>
     </>
@@ -80,6 +93,17 @@ export const PDFViewer = ({ pdf, label, className }) => {
       }
     }
   };
+
+  useEffect(() => {
+    if (isPdfDisplayOpen) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
+    return () => {
+      document.body.classList.remove("no-scroll");
+    };
+  }, [isPdfDisplayOpen]);
 
   return (
     <>

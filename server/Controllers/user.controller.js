@@ -286,6 +286,13 @@ export const uploadResume = async (req, res) => {
   const { user } = req;
 
   try {
+    if (!req.file) {
+      return res.status(400).json({
+        status: "fail",
+        message: "File not selected!",
+      });
+    }
+
     if (!req.file || req.file.mimetype !== "application/pdf") {
       return res.status(400).json({
         status: "fail",

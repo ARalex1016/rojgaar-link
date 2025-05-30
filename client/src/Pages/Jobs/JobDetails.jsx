@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+import { AlertBox, ConfirmAlertBox } from "../../Components/AlertBox";
 
 // Components
 import BackButton from "../../Components/BackButton";
@@ -248,6 +250,11 @@ const Job = () => {
             <Title>Last Submission Date</Title>
             <Detail>{getDateDetails(job.lastSubmissionDate, false)}</Detail>
 
+            <Title>Created At</Title>
+            <Detail>
+              {getDateDetails(job?.creatorDetails?.createdAt, false)}
+            </Detail>
+
             {/* Status */}
             {!isCandidate && (
               <>
@@ -283,7 +290,7 @@ const Job = () => {
           </section>
 
           {/* Application Details */}
-          {(jobCreator || isAdmin) && (
+          {(jobCreator || isAdmin) && job.status === "active" && (
             <section className="w-full bg-black shadow-inner-lg shadow-neutral/40 rounded-md grid grid-cols-2 gap-x-2 gap-y-2 px-8 py-4 my-2">
               <h2 className="text-neutral text-center text-lg font-medium col-span-2">
                 Application Details
@@ -316,12 +323,28 @@ const Job = () => {
                 {job?.applicationDetails?.rejected}
               </p>
 
-              <button
+              <motion.button
+                variants={{
+                  initia: {
+                    scale: 1,
+                  },
+                  hover: {
+                    scale: 1.05,
+                  },
+                  tap: {
+                    scale: 0.95,
+                  },
+                }}
+                whileHover="hover"
+                whileTap="tap"
+                transition={{
+                  duration: 0.15,
+                }}
                 onClick={() => navigate("applications")}
                 className="w-full text-neutral/80 text-lg bg-main/80 rounded-md col-span-2 py-1 hover:text-neutral hover:bg-main mt-1"
               >
                 View All Applications
-              </button>
+              </motion.button>
             </section>
           )}
 
@@ -341,11 +364,6 @@ const Job = () => {
                 <p className="text-black/80 text-sm col-span-2">Email</p>
                 <p className="text-black text-xs font-medium  col-span-3 leading-4">
                   {job.creatorDetails.creatorEmail}
-                </p>
-
-                <p className="text-black/80 text-sm col-span-2">Created At</p>
-                <p className="text-black text-xs font-medium  col-span-3 leading-4">
-                  {getDateDetails(job.creatorDetails.createdAt, false)}
                 </p>
 
                 {isAdmin && (
@@ -410,6 +428,7 @@ const Job = () => {
           )}
 
           {/* Action Buttons */}
+
           {/* Apply & Save (for Candidate) */}
           {isAuthenticated && isCandidate && (
             <section className="w-full flex flex-row justify-between mt-4">

@@ -12,21 +12,19 @@ export const AlertBox = async ({ title, text, icon, draggable }) => {
 };
 
 export const ConfirmAlertBox = async ({
-  title,
-  text,
-  icon,
-  showCancelButton = true,
+  title = "Are you sure?",
+  text = "You won't be able to revert this!",
   confirmButtonText = "Confirm",
   cancelButtonText = "Cancel",
   reverseButtons = true,
 }) => {
-  return Swal.fire({
+  const result = await Swal.fire({
     title,
     text,
-    icon,
-    showCancelButton,
+    icon: "warning",
+    showCancelButton: true,
     confirmButtonText,
     cancelButtonText,
-    reverseButtons,
   });
+  return result.isConfirmed;
 };

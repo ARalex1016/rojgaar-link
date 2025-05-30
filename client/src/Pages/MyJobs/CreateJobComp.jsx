@@ -204,6 +204,7 @@ export const CreateJobComp = ({ onClose }) => {
         <p className="text-neutral/60 text-xs font-semibold -mb-3">
           Required Experience Level
         </p>
+
         <section className="col-span-2 flex flex-row justify-between pr-2">
           <RadioInput
             label="Beginer"
@@ -255,7 +256,7 @@ export const CreateJobComp = ({ onClose }) => {
         <p className="text-white/80 text-xs">
           <span className="text-white font-bold">Note: </span>Your contact
           details (email and phone number) will be visible to the candidates you
-          hire.
+          shortlisted or hire.
         </p>
 
         {/* Submit Button */}

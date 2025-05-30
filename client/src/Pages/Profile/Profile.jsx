@@ -103,30 +103,21 @@ const Profile = () => {
 
   const handleUploadWithConfirmation = async (file) => {
     try {
-      const result = await ConfirmAlertBox({
+      const confirmed = await ConfirmAlertBox({
         title: "Replace existing resume?",
         text: "Uploading a new resume will replace your current one. Do you want to proceed?",
-        icon: "warning",
         confirmButtonText: "Yes, replace it!",
       });
 
-      if (result.isConfirmed) {
-        // User confirmed, proceed with upload
-        const response = await handleResumeUpload(file);
-
-        return response;
-      } else {
-        // User cancelled upload, just return or do nothing
-        return null;
+      if (confirmed) {
+        await handleResumeUpload(file);
       }
     } catch (error) {
-      // Handle error gracefully
-      await Swal.fire({
+      AlertBox({
         title: "Upload failed",
         text: error.message || "Something went wrong during the upload.",
         icon: "error",
       });
-      throw error; // rethrow if you want to handle it higher up
     }
   };
 

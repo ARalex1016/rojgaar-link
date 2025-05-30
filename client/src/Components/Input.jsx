@@ -483,7 +483,6 @@ export const PDFUpload = ({ handlePdfUpload, className }) => {
         fileInputRef.current.value = ""; // Clear the input field
       }
     } catch (error) {
-      console.log(error);
     } finally {
       setIsUploadingFile(false);
     }

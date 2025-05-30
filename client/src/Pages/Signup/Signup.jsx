@@ -71,6 +71,8 @@ const Signup = () => {
       setMessage("");
       AlertBox({ title: res.message, icon: "success" });
 
+      navigate("/jobs");
+
       // Send Email With OTP
       // try {
       //   let res = await sendEmailWithOTP();
@@ -90,7 +92,7 @@ const Signup = () => {
     if (roleFromState === "creator") {
       setUserData((prev) => ({ ...prev, role: "creator" }));
     }
-  }, [roleFromState]);
+  }, [roleFromState, userData?.role]);
 
   return (
     <>
@@ -153,6 +155,7 @@ const Signup = () => {
                 name="gender"
                 value="male"
                 id="male"
+                checked={userData.gender === "male"}
                 handleInputChange={handleInputChange}
               />
 
@@ -161,6 +164,7 @@ const Signup = () => {
                 name="gender"
                 value="female"
                 id="female"
+                checked={userData.gender === "female"}
                 handleInputChange={handleInputChange}
               />
 
@@ -169,6 +173,7 @@ const Signup = () => {
                 name="gender"
                 value="other"
                 id="other"
+                checked={userData.gender === "other"}
                 handleInputChange={handleInputChange}
               />
             </div>

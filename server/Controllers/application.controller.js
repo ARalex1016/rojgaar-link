@@ -12,6 +12,13 @@ import {
 export const applyJob = async (req, res) => {
   const { user, job } = req;
 
+  if (!user.eligible) {
+    return res.status(400).json({
+      status: "fail",
+      message: "You are not Eligible to apply for job yet!",
+    });
+  }
+
   try {
     const alreadyApplied = await Application.findOne({
       candidateId: user._id,
@@ -29,13 +36,6 @@ export const applyJob = async (req, res) => {
     const candidateProfile = await CandidateProfile.findOne({
       userId: user._id,
     }).select("_id");
-
-    if (!user.eligible) {
-      return res.status(400).json({
-        status: "fail",
-        message: "You are not Eligible to apply for job yet!",
-      });
-    }
 
     // Apply for job
     const application = await Application.create({

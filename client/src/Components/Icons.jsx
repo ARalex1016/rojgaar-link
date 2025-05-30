@@ -2,6 +2,7 @@
 import {
   X,
   Plus,
+  Minus,
   Download,
   ArrowRight,
   LoaderCircle,
@@ -37,12 +38,24 @@ export const XIcon = ({ handleClick, size = 30, className }) => {
   );
 };
 
-export const PlusIcon = ({ handleClick, className }) => {
+export const PlusIcon = ({ handleClick, size = 30, className }) => {
   return (
     <>
       <Plus
         onClick={handleClick}
-        size={30}
+        size={size}
+        className={`bg-transparent rounded-full p-1 hover:text-neutral ${className}`}
+      />
+    </>
+  );
+};
+
+export const MinusIcon = ({ handleClick, size = 30, className }) => {
+  return (
+    <>
+      <Minus
+        onClick={handleClick}
+        size={size}
         className={`bg-transparent rounded-full p-1 hover:text-neutral ${className}`}
       />
     </>

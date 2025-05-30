@@ -125,6 +125,15 @@ export const createJob = async (req, res) => {
     lastSubmissionDate,
   } = req.body;
 
+  const { user } = req;
+
+  if (!user.eligible) {
+    return res.status(400).json({
+      status: "fail",
+      message: "You are not Eligible to apply for job yet!",
+    });
+  }
+
   if (
     !title ||
     !description ||

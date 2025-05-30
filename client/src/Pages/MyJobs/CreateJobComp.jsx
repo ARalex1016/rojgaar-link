@@ -14,6 +14,7 @@ import {
   DateInput,
   RadioInput,
 } from "../../Components/Input";
+import { AlertBox } from "../../Components/AlertBox";
 
 // React Icons
 import { BiLoaderAlt } from "react-icons/bi";
@@ -94,11 +95,17 @@ export const CreateJobComp = ({ onClose }) => {
     try {
       let res = await createJob(jobData);
 
-      toast.success(res.message);
+      AlertBox({
+        title: "Wait for Admin's Approval",
+        text: res.message,
+        icon: "success",
+      });
 
       setJobData(initialJobData);
+
+      onClose();
     } catch (error) {
-      toast.error(error.message);
+      AlertBox({ title: error.message, icon: "error" });
     } finally {
       setIsSubmitting(false);
     }

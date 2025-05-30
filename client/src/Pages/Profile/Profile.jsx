@@ -135,8 +135,9 @@ const Profile = () => {
 
     try {
       let res = await updatedProfileDetails(profileInfo);
-      toast.success(res.message);
+      AlertBox({ title: res.message, icon: "success" });
     } catch (error) {
+      AlertBox({ title: error.message, icon: "error" });
     } finally {
       setIsUpdatingProfile(false);
     }

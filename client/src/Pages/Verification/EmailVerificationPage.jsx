@@ -8,6 +8,7 @@ import { useAuthStore } from "../../Store/useAuthStore";
 
 // Components
 import { LoadingCircle } from "../../Components/Loading";
+import { AlertBox } from "../../Components/AlertBox";
 
 const EmailVerificationPage = () => {
   const { user, verifyEmail } = useAuthStore();
@@ -79,10 +80,10 @@ const EmailVerificationPage = () => {
     try {
       let res = await verifyEmail(otp);
 
-      toast.success(res.message);
+      AlertBox({ title: res.message, icon: "success" });
       navigate(-1);
     } catch (error) {
-      toast.error(error.message);
+      AlertBox({ title: error.message, icon: "error" });
     } finally {
       setVerifyingOtp(false);
     }

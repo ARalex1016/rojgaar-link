@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { pdfjs, Document, Page } from "react-pdf";
 
+// Components
+import { PlusIcon, MinusIcon } from "./Icons";
+
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
   import.meta.url
@@ -28,7 +31,10 @@ const PDFComp = ({ pdf, title }) => {
         </p>
       </div>
 
-      <div className="overflow-auto customScrollbarStyle">
+      <div
+        className="overflow-auto customScrollbarStyle"
+        style={{ touchAction: "pan-y" }}
+      >
         <Document file={pdf} onLoadSuccess={onDocumentLoadSuccess}>
           {Array.apply(null, Array(numPages))
             .map((x, i) => i + 1)

@@ -7,6 +7,7 @@
     "dev": "vite",
     "start": "npm run dev",
     "build": "vite build",
+    "update-browserslist": "npx update-browserslist-db@latest",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -19,6 +20,7 @@
     "@stripe/stripe-js": "^7.0.0",
     "axios": "^1.7.9",
     "country-state-city": "^3.2.1",
+    "formik": "^2.4.6",
     "framer-motion": "^11.15.0",
     "job-searching": "file:..",
     "lucide-react": "^0.483.0",
@@ -34,6 +36,7 @@
     "react-select-country-list": "^2.2.3",
     "react-world-flags": "^1.6.0",
     "sweetalert2": "^11.21.2",
+    "yup": "^1.6.1",
     "zustand": "^5.0.3"
   },
   "devDependencies": {

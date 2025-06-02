@@ -10,6 +10,7 @@ import CreateJobComp from "./CreateJobComp";
 import TabsWithCounter from "../../Components/Tabs";
 import NoData from "../../Components/NoData";
 import Pagination from "../../Components/Pagination";
+import CreateJobMultiStep from "./CreateJobMultiStep";
 
 // Store
 import { useAuthStore } from "../../Store/useAuthStore";
@@ -144,7 +145,7 @@ const MyJobs = () => {
         )}
 
         {isOpenNewJob && (
-          <CreateJobComp onClose={() => setIsOpenNewJob(false)} />
+          <CreateJobMultiStep onClose={() => setIsOpenNewJob(false)} />
         )}
       </div>
     </>

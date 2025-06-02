@@ -99,10 +99,19 @@ const Job = () => {
     try {
       const res = await saveJob(jobId);
 
-      toast.success(res.message);
+      AlertBox({
+        title: "Saved",
+        text: res.message,
+        icon: "success",
+      });
+
       setJob((pre) => ({ ...pre, hasSaved: true }));
     } catch (error) {
-      toast.error(error.message);
+      AlertBox({
+        title: "Something went wrong!",
+        text: error.message,
+        icon: "error",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -114,10 +123,19 @@ const Job = () => {
     try {
       const res = await removeJob(jobId);
 
-      toast.success(res.message);
+      AlertBox({
+        title: "Removed",
+        text: res.message,
+        icon: "success",
+      });
+
       setJob((pre) => ({ ...pre, hasSaved: false }));
     } catch (error) {
-      toast.error(error.message);
+      AlertBox({
+        title: "Remove failed",
+        text: error.message || "Something went wrong during removing the job.",
+        icon: "error",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -130,10 +148,19 @@ const Job = () => {
     try {
       const res = await applyJob(jobId);
 
-      toast.success(res.message);
+      AlertBox({
+        title: "Applied Successfully!",
+        text: res.message,
+        icon: "success",
+      });
+
       setJob((pre) => ({ ...pre, hasApplied: true }));
     } catch (error) {
-      toast.error(error.message);
+      AlertBox({
+        title: "Something went wrong!",
+        text: error.message,
+        icon: "error",
+      });
     } finally {
       setIsApplying(false);
     }
@@ -185,22 +212,41 @@ const Job = () => {
 
   // Admin || Creator
   const handleDelete = async () => {
-    setIsDeleting(true);
-
     try {
-      const res = await deleteJob(job._id);
+      let confirmed = await ConfirmAlertBox({
+        title: "Are you sure?",
+        text: "All the applications of this job will also be deleted permanently",
+        confirmButtonText: "Delete",
+        confirmButtonColor: "#DC143C",
+        cancelButtonColor: "#636363",
+      });
 
-      toast.success(res);
+      if (confirmed) {
+        setIsDeleting(true);
+        try {
+          const res = await deleteJob(job._id);
 
-      setJob(null);
-      navigate(-1);
+          await AlertBox({
+            title: "Deleted",
+            text: res.message,
+            icon: "success",
+          });
 
-      await updateCounter();
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
-      setIsDeleting(false);
-    }
+          setJob(null);
+          navigate(-1);
+
+          await updateCounter();
+        } catch (error) {
+          AlertBox({
+            title: "Delete failed",
+            text: error.message || "Something went wrong.",
+            icon: "error",
+          });
+        } finally {
+          setIsDeleting(false);
+        }
+      }
+    } catch (error) {}
   };
 
   return (

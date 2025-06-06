@@ -15,7 +15,7 @@ import { XIcon, PlusIcon, LoaderCircleIcon } from "./../../Components/Icons";
 import { AlertBox } from "../../Components/AlertBox";
 
 // Custom Hooks
-import { useMultiStepForm } from "../../CustomHooks/useMultiStepForm";
+import { useMultiStepForm } from "../../Hooks/useMultiStepForm";
 
 // Store
 import { useJobStore } from "../../Store/useJobStore";
@@ -245,19 +245,18 @@ const CandidateRequirements = ({
   );
 };
 
-const DeadlineJobs = ({ jobData, handleInputChange }) => {
+const DeadlineJobs = ({ jobData, handleDateChange }) => {
   return (
     <>
       <Title>Deadline Date for Job application</Title>
-
       {/* Last Submission Date */}
-      <DateInput
+      {/* <DateInput
         label="Last Submission Date"
         id="lastSubmissionDate"
         name="lastSubmissionDate"
         value={jobData.lastSubmissionDate}
         handleInputChange={handleInputChange}
-      />
+      /> */}
     </>
   );
 };
@@ -330,6 +329,15 @@ const CreateJobMultiStep = ({ onClose }) => {
     }));
   };
 
+  const handleDateChange = (value) => {
+    console.log(value);
+
+    setJobData((pre) => ({
+      ...pre,
+      lastSubmissionDate: value,
+    }));
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
@@ -366,7 +374,7 @@ const CreateJobMultiStep = ({ onClose }) => {
         handleExperienceLevelChange={handleExperienceLevelChange}
         setJobData={setJobData}
       />,
-      <DeadlineJobs jobData={jobData} handleInputChange={handleInputChange} />,
+      <DeadlineJobs jobData={jobData} handleDateChange={handleDateChange} />,
     ]);
 
   return (

@@ -21,11 +21,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["admin", "creator", "candidate"],
       default: "candidate",
-      required: true,
+      // required: true,
     },
     gender: {
       type: String,
       enum: ["male", "female", "other"],
+    },
+    dateOfBirth: {
+      type: Date,
+      required: true,
     },
     profilePic: {
       type: String,

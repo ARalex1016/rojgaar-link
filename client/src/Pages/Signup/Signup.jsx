@@ -28,7 +28,7 @@ const Signup = () => {
   const location = useLocation();
   const roleFromState = location.state?.role || "";
 
-  const { isSigningIn, signup, sendEmailWithOTP } = useAuthStore();
+  const { isSigningIn, signup } = useAuthStore();
 
   const initialData = {
     name: "",

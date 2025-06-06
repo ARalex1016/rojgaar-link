@@ -5,10 +5,13 @@ import {
   Minus,
   Download,
   ArrowRight,
+  CalendarIcon,
   LoaderCircle,
   Upload,
   Eye,
   BadgeCheck,
+  CircleX,
+  CircleCheckBig,
 } from "lucide-react";
 
 export const PNGIcon = ({ handleClick, png, className }) => {
@@ -78,6 +81,14 @@ export const ArrowRightIcon = ({ className, size = 24 }) => {
   );
 };
 
+export const CalendarIconComp = ({ className, size = 24 }) => {
+  return (
+    <>
+      <CalendarIcon size={size} className={`${className}`} />
+    </>
+  );
+};
+
 export const LoaderCircleIcon = ({ className }) => {
   return (
     <>
@@ -106,6 +117,22 @@ export const BadgeCheckIcon = ({ className, size = 24 }) => {
   return (
     <>
       <BadgeCheck size={size} className={`${className}`} />
+    </>
+  );
+};
+
+export const CircleXIcon = ({ className, size = 24 }) => {
+  return (
+    <>
+      <CircleX size={size} className={`${className}`} />
+    </>
+  );
+};
+
+export const CircleCheckBigIcon = ({ className, size = 24 }) => {
+  return (
+    <>
+      <CircleCheckBig size={size} className={`${className}`} />
     </>
   );
 };

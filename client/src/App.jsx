@@ -9,6 +9,7 @@ import {
 import RootLayout from "./Layout/RootLayout";
 import Home from "./Pages/Home/Home";
 import Signup from "./Pages/Signup/Signup";
+import SignupMultiStep from "./Pages/Signup/SignupMultiStep";
 import Login from "./Pages/Login/Login";
 import NotFound from "./Pages/NotFound";
 import Profile from "./Pages/Profile/Profile";
@@ -111,7 +112,7 @@ function App() {
           path: "signup",
           element: (
             <RedirectAuthenticateUser>
-              <Signup />
+              <SignupMultiStep />
             </RedirectAuthenticateUser>
           ),
         },

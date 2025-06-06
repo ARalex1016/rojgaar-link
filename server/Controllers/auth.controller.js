@@ -16,21 +16,41 @@ import { generateOTPandSendVerificationEmail } from "../utils/generateOTPandSend
 import { checkEligibility } from "../utils/checkEligibility.js";
 
 export const signup = async (req, res) => {
-  const { name, email, gender, password, confirmPassword, role } = req.body;
+  const {
+    name,
+    email,
+    gender,
+    dateOfBirth,
+    password,
+    confirmPassword,
+    phone,
+    location,
+    role,
+  } = req.body;
 
-  if (!name || !email || !gender || !password || !confirmPassword) {
+  if (
+    !name ||
+    !email ||
+    !gender ||
+    !dateOfBirth ||
+    !phone ||
+    !password ||
+    !confirmPassword ||
+    !location?.country ||
+    !location?.state
+  ) {
     return res.status(400).json({
       status: "fail",
       message: "All fields are required!",
     });
   }
 
-  // if (role === "admin") {
-  //   return res.status(400).json({
-  //     status: "fail",
-  //     message: "You do not have permission to perform this action!",
-  //   });
-  // }
+  if (role === "admin") {
+    return res.status(400).json({
+      status: "fail",
+      message: "You do not have permission to perform this action!",
+    });
+  }
 
   try {
     const isEmailExists = await User.findOne({ email });
@@ -58,13 +78,32 @@ export const signup = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const user = await User.create({ ...req.body, password: hashedPassword });
+
+    const user = await User.create({
+      name,
+      email,
+      gender,
+      dateOfBirth,
+      role,
+      password: hashedPassword,
+    });
+
+    const profileData = {
+      userId: user._id,
+      contact: {
+        phoneNumber: phone,
+      },
+      location: {
+        country: location.country,
+        state: location.state,
+      },
+    };
 
     // Create Candidate || Creator Profile
     if (user.role === "candidate") {
-      await CandidateProfile.create({ userId: user._id });
+      await CandidateProfile.create(profileData);
     } else if (user.role === "creator") {
-      await CreatorProfile.create({ userId: user._id });
+      await CreatorProfile.create(profileData);
     }
 
     // Update Admin Metrics
@@ -74,7 +113,6 @@ export const signup = async (req, res) => {
     const token = generateJwtToken(user, res);
 
     const { password: _, ...userWithoutPassword } = user.toObject();
-
     // Success
     const response = {
       status: "success",
@@ -90,8 +128,6 @@ export const signup = async (req, res) => {
     // Success
     res.status(201).json(response);
   } catch (error) {
-    console.log(error);
-
     // Error
     res.status(500).json({
       status: "error",

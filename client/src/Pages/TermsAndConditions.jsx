@@ -13,7 +13,7 @@ const TermsAndConditions = ({ onClose }) => {
             <button
               onClick={onClose}
               aria-label="Close Terms and Conditions"
-              className="text-gray-600 rounded-full hover:text-neutral hover:bg-black p-[2px]"
+              className="text-red rounded-full hover:text-neutral hover:bg-red p-[2px]"
             >
               <XIcon />
             </button>

@@ -15,8 +15,7 @@ import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { Copy, CircleCheckBig } from "lucide-react";
 
 // Mui
-import Box from "@mui/material/Box";
-import Slider from "@mui/material/Slider";
+import { Slider, Box } from "@mui/material";
 
 // Store
 import { useJobStore } from "../Store/useJobStore";
@@ -309,6 +308,9 @@ export const DateInput = ({ label, name, id, value, handleInputChange }) => {
           onBlur={() => setIsFocused(value ? true : false)}
           className={`${customStyles} pr-4`}
           style={{
+            color: "rgba(var(--neutral), 0.60)",
+            fontWeight: "500",
+            MozAppearance: "textfield",
             backgroundColor: "transparent",
           }}
         />
@@ -570,6 +572,8 @@ export const SelectSimple = ({
   handleSelect,
   className,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <>
       <Select
@@ -578,7 +582,14 @@ export const SelectSimple = ({
         value={value ? options.find((o) => o.label === value) : null}
         onChange={(selectedValue) => handleSelect(selectedValue)}
         placeholder={placeholder}
-        styles={customSelectStyles}
+        styles={{
+          ...customSelectStyles,
+          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+        }}
+        menuPortalTarget={document.body}
+        menuIsOpen={isOpen}
+        onFocus={() => setIsOpen(true)}
+        onBlur={() => setIsOpen(false)}
         className={`w-full ${className}`}
       />
     </>
@@ -598,6 +609,9 @@ export const CountryStateSelect = ({
     }))
   );
   const [states, setStates] = useState([]);
+
+  const [countryIsOpen, setCountryIsOpen] = useState(false);
+  const [stateIsOpen, setStateIsOpen] = useState(false);
 
   const handleCountryChange = (selectedCountry) => {
     const newCountry = {
@@ -644,9 +658,17 @@ export const CountryStateSelect = ({
           name="country"
           options={countries}
           value={countries.find((c) => c.label === country) || null}
+          onFocus={() => setCountryIsOpen(true)}
+          onBlur={() => setCountryIsOpen(false)}
           onChange={(selectedOption) => handleCountryChange(selectedOption)}
           placeholder="Select country"
-          styles={customSelectStyles}
+          styles={{
+            ...customSelectStyles,
+            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+          }}
+          menuPortalTarget={document.body}
+          autoFocus={false}
+          menuIsOpen={countryIsOpen}
           className={`w-full ${className}`}
         />
 
@@ -654,9 +676,17 @@ export const CountryStateSelect = ({
           name="state"
           options={states}
           value={states.find((s) => s.label === state) || null}
+          onFocus={() => setStateIsOpen(true)}
+          onBlur={() => setStateIsOpen(false)}
           onChange={(selectedOption) => handleStateChange(selectedOption)}
           placeholder="States"
-          styles={customSelectStyles}
+          styles={{
+            ...customSelectStyles,
+            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+          }}
+          menuPortalTarget={document.body}
+          autoFocus={false}
+          menuIsOpen={stateIsOpen}
           className={`w-full ${className}`}
         />
       </div>
@@ -665,6 +695,8 @@ export const CountryStateSelect = ({
 };
 
 export const SortSelect = ({ value, handleSortChange, className }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const options = [
     { value: "low_to_high", label: "Salary: Low to High" },
     { value: "high_to_low", label: "Salary: High to Low" },
@@ -678,7 +710,14 @@ export const SortSelect = ({ value, handleSortChange, className }) => {
         value={options.find((sortBy) => sortBy.value === value) || null}
         onChange={handleSortChange}
         placeholder="Sort by"
-        styles={customSelectStyles}
+        styles={{
+          ...customSelectStyles,
+          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+        }}
+        menuPortalTarget={document.body}
+        menuIsOpen={isOpen}
+        onFocus={() => setIsOpen(true)}
+        onBlur={() => setIsOpen(false)}
         className={`w-full ${className}`}
       />
     </>
@@ -691,6 +730,8 @@ export const CategorySelect = ({
   handleCategoryChange,
   className,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const { categories } = useJobStore();
 
   const selectedOptions = categories?.filter((category) =>
@@ -714,7 +755,14 @@ export const CategorySelect = ({
         }
         placeholder={placeholder || "Select upto 5 categories"}
         isSearchable
-        styles={customSelectStyles}
+        styles={{
+          ...customSelectStyles,
+          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+        }}
+        menuPortalTarget={document.body}
+        menuIsOpen={isOpen}
+        onFocus={() => setIsOpen(true)}
+        onBlur={() => setIsOpen(false)}
         className={`${className}`}
       />
     </>
@@ -728,6 +776,7 @@ export const SocialMediaSelect = ({
 }) => {
   const [link, setLink] = useState("");
   const [selectedSocial, setSelectedSocial] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSelect = (e) => {
     setSelectedSocial(e.value);
@@ -761,7 +810,14 @@ export const SocialMediaSelect = ({
           value={options.find((opt) => opt.value === selectedSocial) || null}
           placeholder="Select an option..."
           onChange={handleSelect}
-          styles={customSelectStyles}
+          styles={{
+            ...customSelectStyles,
+            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+          }}
+          menuPortalTarget={document.body}
+          menuIsOpen={isOpen}
+          onFocus={() => setIsOpen(true)}
+          onBlur={() => setIsOpen(false)}
           className={`w-3/12 ${className}`}
         />
 

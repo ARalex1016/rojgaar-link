@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
-import * as yup from "yup";
+import * as Yup from "yup";
 
 // Components
-import { BackgroundWithFooter } from "../../Components/Background";
+import { BackgroundWithOutFooter } from "../../Components/Background";
 import {
   FloatingLabelInput,
   CountryStateSelect,
@@ -12,11 +12,13 @@ import {
   DateInput,
   PasswordInput,
 } from "../../Components/Input";
-import { LoaderCircleIcon } from "./../../Components/Icons";
+import {
+  LoaderCircleIcon,
+  CircleXIcon,
+  CircleCheckBigIcon,
+} from "./../../Components/Icons";
 import { AlertBox } from "../../Components/AlertBox";
 import TermsAndConditions from "../TermsAndConditions";
-import { CircleXIcon, CircleCheckBigIcon } from "./../../Components/Icons";
-import { ProgressMobileStepper } from "../../Components/Stepper";
 
 // Custom Hooks
 import { useMultiStepForm } from "../../Hooks/useMultiStepForm";
@@ -26,18 +28,15 @@ import { useAuthStore } from "../../Store/useAuthStore";
 
 // Validation schema
 const validationSchema = [
-  yup.object().shape({
-    name: yup.string().required("Name is required"),
-    email: yup
-      .string()
+  Yup.object().shape({
+    name: Yup.string().required("Name is required"),
+    email: Yup.string()
       .email("Enter a valid email")
       .required("Email is required"),
-    phone: yup
-      .string()
+    phone: Yup.string()
       .matches(/^\d{10,}$/, "Phone number must be at least 10 digits")
       .required("Phone number is required"),
-    dateOfBirth: yup
-      .date()
+    dateOfBirth: Yup.date()
       .required("Date of Birth is required")
       .typeError("Enter a valid date")
       .max(new Date(), "Date of Birth cannot be in the future")
@@ -47,33 +46,31 @@ const validationSchema = [
         (value) =>
           value && new Date(value) <= new Date(Date.now() - 567648000000) // Check if date is at least 18 years ago
       ),
-    gender: yup
-      .string()
+    gender: Yup.string()
       .oneOf(["male", "female", "other"], "Gender is required")
       .required("Gender is required"),
   }),
-  yup.object().shape({
-    password: yup
-      .string()
+  Yup.object().shape({
+    password: Yup.string()
       .min(8, "Password must be at least 8 characters")
       .max(20, "Password cannot exceed 20 characters")
       .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
       .matches(/[a-z]/, "Password must contain at least one lowercase letter")
       .matches(/\d/, "Password must contain at least one number")
       .required("Password is required"),
-    confirmPassword: yup
-      .string()
-      .oneOf([yup.ref("password")], "Passwords must match")
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password")], "Passwords must match")
       .required("Confirm Password is required"),
   }),
-  yup.object().shape({
-    location: yup.object().shape({
-      country: yup.string().required("Country is required"),
-      state: yup.string().required("State is required"),
+  Yup.object().shape({
+    location: Yup.object().shape({
+      country: Yup.string().required("Country is required"),
+      state: Yup.string().required("State is required"),
     }),
-    termsAccepted: yup
-      .boolean()
-      .oneOf([true], "You must accept the terms and conditions"),
+    termsAccepted: Yup.boolean().oneOf(
+      [true],
+      "You must accept the terms and conditions"
+    ),
   }),
 ];
 
@@ -85,14 +82,14 @@ const Title = ({ children, className }) => {
   );
 };
 
-const ErrorMessage = ({ visibility = false, children, className }) => {
+const ErrorMessage = ({ children, className }) => {
   return (
     <p
       className={`text-red text-xs transition-opacity duration-0 py-[2px] ${
-        visibility ? "opacity-100" : "opacity-0"
+        children ? "opacity-100" : "opacity-0"
       } ${className}`}
     >
-      {visibility ? children : "Error"}
+      {children || "Error"}
     </p>
   );
 };
@@ -180,11 +177,7 @@ const PersonalDetails = ({ userData, firstError, handleInputChange }) => {
           value={userData.name}
           handleInputChange={handleInputChange}
         />
-        {
-          <ErrorMessage visibility={firstError.name}>
-            {firstError.name}
-          </ErrorMessage>
-        }
+        {<ErrorMessage>{firstError.name}</ErrorMessage>}
 
         {/* Email */}
         <FloatingLabelInput
@@ -194,9 +187,7 @@ const PersonalDetails = ({ userData, firstError, handleInputChange }) => {
           value={userData.email}
           handleInputChange={handleInputChange}
         />
-        <ErrorMessage visibility={firstError.email}>
-          {firstError.email}
-        </ErrorMessage>
+        <ErrorMessage>{firstError.email}</ErrorMessage>
 
         {/* Phone Number */}
         <FloatingLabelInput
@@ -207,9 +198,7 @@ const PersonalDetails = ({ userData, firstError, handleInputChange }) => {
           value={userData.phone}
           handleInputChange={handleInputChange}
         />
-        <ErrorMessage visibility={firstError.phone}>
-          {firstError.phone}
-        </ErrorMessage>
+        <ErrorMessage>{firstError.phone}</ErrorMessage>
 
         {/* Date of Birth */}
         <DateInput
@@ -220,9 +209,7 @@ const PersonalDetails = ({ userData, firstError, handleInputChange }) => {
           handleInputChange={handleInputChange}
         />
 
-        <ErrorMessage visibility={firstError.dateOfBirth}>
-          {firstError.dateOfBirth}
-        </ErrorMessage>
+        <ErrorMessage>{firstError.dateOfBirth}</ErrorMessage>
 
         {/* Gender Radio Input */}
 
@@ -255,9 +242,7 @@ const PersonalDetails = ({ userData, firstError, handleInputChange }) => {
           />
         </div>
 
-        <ErrorMessage visibility={firstError.gender}>
-          {firstError.gender}
-        </ErrorMessage>
+        <ErrorMessage>{firstError.gender}</ErrorMessage>
       </div>
     </>
   );
@@ -284,7 +269,7 @@ const AccountSecurityDetails = ({
           value={userData.password}
           handleInputChange={handleInputChange}
         />
-        {/* <ErrorMessage visibility={firstError.password}>
+        {/* <ErrorMessage>
           {firstError.password}
         </ErrorMessage> */}
 
@@ -297,9 +282,7 @@ const AccountSecurityDetails = ({
             value={userData.confirmPassword}
             handleInputChange={handleInputChange}
           />
-          <ErrorMessage visibility={firstError.confirmPassword}>
-            {firstError.confirmPassword}
-          </ErrorMessage>
+          <ErrorMessage>{firstError.confirmPassword}</ErrorMessage>
         </div>
       </div>
     </>
@@ -307,28 +290,72 @@ const AccountSecurityDetails = ({
 };
 
 // Step 3
-const LocationDetails = ({ userData, firstError, handleLocationChange }) => {
+const LocationDetails = ({
+  userData,
+  firstError,
+  handleLocationChange,
+  handleTermsChange,
+}) => {
+  const [openTermsAndCondition, setOpenTermsAndCondition] = useState(false);
+
   return (
     <>
       <Title>Location</Title>
 
-      <div className="w-full h-full flex flex-col items-start gap-y-4 overflow-visible relative">
-        {/* Countries && State*/}
-        <CountryStateSelect
-          country={userData.location.country}
-          state={userData.location.state}
-          onLocationChange={handleLocationChange}
-          className="w-full"
-        />
-        {!firstError["location.state"] && (
-          <ErrorMessage visibility={firstError["location.country"]}>
-            {firstError["location.country"]}
-          </ErrorMessage>
-        )}
+      <div className="w-full flex-grow flex flex-col overflow-visible relative">
+        <div className="w-full">
+          {/* Countries && State*/}
+          <CountryStateSelect
+            country={userData.location.country}
+            state={userData.location.state}
+            onLocationChange={handleLocationChange}
+            className="w-full"
+          />
+          {!firstError["location.state"] && (
+            <ErrorMessage>{firstError["location.country"]}</ErrorMessage>
+          )}
 
-        <ErrorMessage visibility={firstError["location.state"]}>
-          {firstError["location.state"]}
-        </ErrorMessage>
+          <ErrorMessage>{firstError["location.state"]}</ErrorMessage>
+        </div>
+
+        <div className="absolute bottom-0">
+          {/* Terms And Conditions */}
+          <div className={`w-full flex flex-row gap-x-1 px-2`}>
+            <input
+              type="checkbox"
+              name="termsAccepted"
+              id="terms&conditions"
+              checked={userData.termsAccepted}
+              onChange={handleTermsChange}
+            />
+
+            <label
+              htmlFor="terms&conditions"
+              className="text-neutral/90 text-xs"
+            >
+              Accept{" "}
+              <span
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setOpenTermsAndCondition(true);
+                }}
+                className="text-neutral font-bold underline"
+              >
+                Terms & Conditions
+              </span>{" "}
+              to Continue
+            </label>
+          </div>
+
+          <ErrorMessage className="px-2">
+            {firstError.termsAccepted}
+          </ErrorMessage>
+        </div>
+
+        {openTermsAndCondition && (
+          <TermsAndConditions onClose={() => setOpenTermsAndCondition(false)} />
+        )}
       </div>
     </>
   );
@@ -358,7 +385,6 @@ const SignupMultiStep = () => {
 
   const [userData, setUserData] = useState(initialData);
   const [firstError, setFirstError] = useState({});
-  const [openTermsAndCondition, setOpenTermsAndCondition] = useState(false);
 
   const handleInputChange = (e) => {
     const { value, name } = e.target;
@@ -408,6 +434,7 @@ const SignupMultiStep = () => {
         userData={userData}
         firstError={firstError}
         handleLocationChange={handleLocationChange}
+        handleTermsChange={handleTermsChange}
       />,
     ]);
 
@@ -455,12 +482,8 @@ const SignupMultiStep = () => {
 
   return (
     <>
-      <BackgroundWithFooter className="flex-col">
-        <section className="w-full bg-primary shadow-md shadow-main rounded-md p-4 flex flex-col relative">
-          <p className="text-neutral/75 text-xs font-medium absolute top-2 left-4">
-            Step {currentStepIndex + 1} of {steps.length}
-          </p>
-
+      <BackgroundWithOutFooter className="flex-col">
+        <section className="w-full border-t-2 border-t-main/60 shadow-md shadow-main/60 rounded-md p-4 flex flex-col">
           <h2 className="text-xl text-main font-medium  text-center">
             Sign Up as{" "}
             <span>{roleFromState === "creator" ? "Creator" : "Candidate"}</span>
@@ -470,7 +493,7 @@ const SignupMultiStep = () => {
           <div className="w-full flex-grow overflow-x-hidden customScrollbarStyle">
             {/* Form & Slider */}
             <form
-              className="flex flex-row transition-transform duration-500"
+              className="w-full flex flex-row transition-transform duration-500"
               style={{
                 transform: `translateX(-${
                   currentStepIndex * (100 / steps.length)
@@ -483,10 +506,9 @@ const SignupMultiStep = () => {
                 return (
                   <div
                     key={index}
-                    className="w-full overflow-y-auto customScrollbarStyle"
+                    className="w-full overflow-y-auto customScrollbarStyle flex flex-col"
                     style={{
                       width: `${100 / steps.length}%`,
-                      height: "100%",
                     }}
                   >
                     {step}
@@ -494,56 +516,10 @@ const SignupMultiStep = () => {
                 );
               })}
             </form>
-
-            {/* Terms And Conditions */}
-            <div
-              className={`w-full flex flex-row gap-x-1 px-2 mt-2 ${
-                isLastStep ? "visible" : "invisible"
-              }`}
-            >
-              <input
-                type="checkbox"
-                name="termsAccepted"
-                id="terms&conditions"
-                checked={userData.termsAccepted}
-                onChange={handleTermsChange}
-              />
-
-              <label
-                htmlFor="terms&conditions"
-                className="text-neutral/90 text-xs"
-              >
-                Accept{" "}
-                <span
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setOpenTermsAndCondition(true);
-                  }}
-                  className="text-neutral font-bold underline"
-                >
-                  Terms & Conditions
-                </span>{" "}
-                to Continue
-              </label>
-            </div>
-
-            <ErrorMessage
-              visibility={firstError.termsAccepted}
-              className="px-2"
-            >
-              {firstError.termsAccepted}
-            </ErrorMessage>
-
-            {openTermsAndCondition && (
-              <TermsAndConditions
-                onClose={() => setOpenTermsAndCondition(false)}
-              />
-            )}
           </div>
 
           {/* Action Button */}
-          <div className="justify-end flex flex-row gap-4 mt-2">
+          <div className="flex flex-row justify-between items-center gap-4 mt-4">
             <motion.button
               variants={{
                 initial: {
@@ -564,10 +540,14 @@ const SignupMultiStep = () => {
               }}
               disabled={isFirstStep}
               onClick={back}
-              className="min-w-20 text-neutral/75 font-medium bg-red/75 rounded-md py-1 cursor-pointer hover:text-neutral hover:bg-red disabled:bg-gray disabled:cursor-not-allowed"
+              className="min-w-20 text-neutral/75 font-medium bg-red/75 rounded-md py-1 cursor-pointer hover:text-neutral hover:bg-red disabled:bg-gray/60 disabled:cursor-not-allowed"
             >
               Back
             </motion.button>
+
+            <p className="text-neutral/80 text-sm font-medium">
+              {currentStepIndex + 1} / {steps.length}
+            </p>
 
             <motion.button
               variants={{
@@ -602,14 +582,6 @@ const SignupMultiStep = () => {
               )}
             </motion.button>
           </div>
-
-          <ProgressMobileStepper
-            steps={steps.length}
-            activeStep={currentStepIndex}
-            next={isLastStep ? handleSignUp : handleNext}
-            back={back}
-            actionTextLastStep="Sign Up"
-          />
         </section>
 
         {/* Login Navigation */}
@@ -622,7 +594,7 @@ const SignupMultiStep = () => {
             Log in
           </span>
         </p>
-      </BackgroundWithFooter>
+      </BackgroundWithOutFooter>
     </>
   );
 };

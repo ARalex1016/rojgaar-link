@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // Component
+import { BackgroundWithOutFooter } from "../../Components/Background";
 import {
   FloatingLabelInput,
   PasswordInput,
@@ -62,7 +63,7 @@ const Login = () => {
 
   return (
     <>
-      <div className="min-h-[80vh] flex justify-center items-center">
+      <BackgroundWithOutFooter>
         {/* Log in form Container */}
         <section className="w-full max-w-[450px] border-t-2 border-t-main/60 shadow-md shadow-main/60 rounded-xl flex flex-col items-center py-6">
           <h2 className="text-2xl text-main font-medium  text-center">
@@ -122,7 +123,7 @@ const Login = () => {
             </span>
           </p>
         </section>
-      </div>
+      </BackgroundWithOutFooter>
     </>
   );
 };

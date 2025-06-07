@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import * as yup from "yup";
+import * as Yup from "yup";
 
 // Components
 import {
@@ -23,48 +23,85 @@ import { useJobStore } from "../../Store/useJobStore";
 
 // Validation schema
 const validationSchema = [
-  yup.object().shape({
-    title: yup
-      .string()
+  Yup.object().shape({
+    title: Yup.string()
       .min(3, "Job title must be at least 3 characters long.")
       .max(100, "Job title cannot exceed 100 characters")
       .required("Job title is required"),
-    description: yup
-      .string()
-      .min(20, "Job description must be at least 20 characters long.")
-      .required("Job description is required."),
-    category: yup
-      .array()
-      .of(yup.string())
-      .min(1, "At least one category is required.")
-      .required("Category is required."),
-    otherCategory: yup
-      .string()
-      .min(3, "Other category must be at least 3 characters.")
-      .nullable(),
-    maximumWorkers: yup
-      .number()
+    salary: Yup.number()
+      .positive("Salary must be a positive number")
+      .typeError("Salary must be a valid  number")
+      .required("Salary is required"),
+    category: Yup.array()
+      .of(Yup.string().nullable())
+      .min(1, "Select at least one category.")
+      .max(1, "Only one category can be selected.")
+      .required("Category is required.")
+      .default([""]),
+    // .test(
+    //   "category-and-otherCategory",
+    //   "If 'Others' is selected, specify the category in the 'Other Category' field.",
+    //   function (category) {
+    //     const { otherCategory } = this.parent;
+    //     if (category?.[0] === "Others" && !otherCategory) {
+    //       return false;
+    //     }
+    //     if (category?.[0] !== "Others" && otherCategory) {
+    //       return false;
+    //     }
+    //     return true;
+    //   }
+    // ),
+    otherCategory: Yup.string().nullable().default(""),
+    // .when("category", {
+    //   is: (category) => category?.[0] === "Others",
+    //   then: Yup.string()
+    //     .required(
+    //       "Other category must be specified when 'Others' is selected."
+    //     )
+    //     .min(3, "Other category must be at least 3 characters long."),
+    //   otherwise: Yup.string()
+    //     .nullable()
+    //     .test(
+    //       "no-otherCategory",
+    //       "Other category must be empty if not selecting 'Others'.",
+    //       (value) => !value
+    //     ),
+    // }),
+    maximumWorkers: Yup.number()
       .required("Maximum workers is required.")
       .integer("Maximum workers must be an integer.")
       .min(1, "Maximum workers must be at least 1."),
+    description: Yup.string()
+      .min(20, "Job description must be at least 20 characters long.")
+      .required("Job description is required."),
   }),
-  yup.object().shape({
-    experienceLevel: yup.string().required("Experience level is required."),
-    requirements: yup
-      .array()
+  Yup.object().shape({
+    experienceLevel: Yup.string().required("Experience level is required."),
+    requirements: Yup.array()
       .of(
-        yup.string().min(3, "Each requirement must be at least 3 characters.")
+        Yup.string().min(3, "Each requirement must be at least 3 characters.")
       )
       .nullable(),
   }),
-  yup.object().shape({
-    location: yup.object().shape({
-      country: yup.string().required("Country is required"),
-      state: yup.string().required("State is required"),
+  Yup.object().shape({
+    companyName: Yup.string()
+      .required("Company name is required")
+      .min(3, "Company name must be at least 3 characters long.")
+      .max(100, "Company name cannot exceed 100 characters"),
+    location: Yup.object().shape({
+      country: Yup.string().required("Country is required"),
+      state: Yup.string().required("State is required"),
     }),
-    termsAccepted: yup
-      .boolean()
-      .oneOf([true], "You must accept the terms and conditions"),
+  }),
+  Yup.object().shape({
+    lastSubmissionDate: Yup.date()
+      .required("Last submission date is required")
+      .min(new Date(), "Last submission date must be in the future")
+      .max(
+        new Date(new Date() + 30 * 24 * 60 * 60 * 1000),
+        "Last submission date cannot be more than 30 days in the future"
+      ),
   }),
 ];
 
@@ -76,12 +113,30 @@ const Title = ({ children, className }) => {
   );
 };
 
-const JobDetails = ({ jobData, handleInputChange, handleCategoryChange }) => {
+const ErrorMessage = ({ children, className }) => {
+  return (
+    <p
+      className={`text-red text-xs transition-opacity duration-0 py-[2px] ${
+        children ? "opacity-100" : "opacity-0"
+      } ${className}`}
+    >
+      {children || "Error"}
+    </p>
+  );
+};
+
+// Step 1
+const JobDetails = ({
+  jobData,
+  firstError,
+  handleInputChange,
+  handleCategoryChange,
+}) => {
   return (
     <>
       <Title>Job Information</Title>
 
-      <div className="flex flex-col gap-y-4">
+      <div className="flex flex-col">
         {/* Title */}
         <FloatingLabelInput
           label="Title"
@@ -90,6 +145,8 @@ const JobDetails = ({ jobData, handleInputChange, handleCategoryChange }) => {
           value={jobData.title}
           handleInputChange={handleInputChange}
         />
+
+        <ErrorMessage>{firstError.title}</ErrorMessage>
 
         {/* Salary */}
         <div className="flex flex-row items-center gap-x-1">
@@ -104,6 +161,8 @@ const JobDetails = ({ jobData, handleInputChange, handleCategoryChange }) => {
           <p className="text-neutral text-sm font-medium">/month</p>
         </div>
 
+        <ErrorMessage>{firstError.salary}</ErrorMessage>
+
         {/* Category */}
         <CategorySelect
           selectedCategory={jobData.category}
@@ -111,6 +170,8 @@ const JobDetails = ({ jobData, handleInputChange, handleCategoryChange }) => {
           placeholder="Select a Category"
           className="col-span-2"
         />
+
+        <ErrorMessage>{firstError.category}</ErrorMessage>
 
         {/* Other Category */}
         {jobData.category.includes("Others") && (
@@ -124,6 +185,8 @@ const JobDetails = ({ jobData, handleInputChange, handleCategoryChange }) => {
           />
         )}
 
+        <ErrorMessage>{firstError.otherCategory}</ErrorMessage>
+
         {/* Maximum Workers */}
         <FloatingLabelInput
           label="Total Workers Required"
@@ -135,6 +198,8 @@ const JobDetails = ({ jobData, handleInputChange, handleCategoryChange }) => {
           className="w-1/2"
         />
 
+        <ErrorMessage>{firstError.maximumWorkers}</ErrorMessage>
+
         {/* Description */}
         <TextAreaFloatingLabel
           label="Description"
@@ -143,45 +208,17 @@ const JobDetails = ({ jobData, handleInputChange, handleCategoryChange }) => {
           value={jobData.description}
           handleInputChange={handleInputChange}
         />
+
+        <ErrorMessage>{firstError.description}</ErrorMessage>
       </div>
     </>
   );
 };
 
-const CompanyDetails = ({
-  jobData,
-  handleInputChange,
-  handleLocationChange,
-}) => {
-  return (
-    <>
-      <Title>Company Information</Title>
-
-      <div className="flex flex-col gap-y-4">
-        {/* Company */}
-        <FloatingLabelInput
-          label="Company Name"
-          name="companyName"
-          type="text"
-          id="companyName"
-          value={jobData.companyName}
-          handleInputChange={handleInputChange}
-        />
-
-        {/* Countries && State*/}
-        <CountryStateSelect
-          country={jobData.location.country}
-          state={jobData.location.state}
-          onLocationChange={handleLocationChange}
-          className="w-full"
-        />
-      </div>
-    </>
-  );
-};
-
+// Step 2
 const CandidateRequirements = ({
   jobData,
+  firstError,
   handleExperienceLevelChange,
   setJobData,
 }) => {
@@ -214,9 +251,9 @@ const CandidateRequirements = ({
     <>
       <Title>Candidate Requirements</Title>
 
-      <div className="w-full flex flex-col items-start gap-y-4">
+      <div className="w-full flex flex-col items-start">
         {/* Required Experience Level */}
-        <p className="text-neutral/60 text-sm font-semibold -mb-3">
+        <p className="text-neutral/60 text-sm font-semibold">
           Required Experience Level
         </p>
 
@@ -248,6 +285,8 @@ const CandidateRequirements = ({
             handleInputChange={handleExperienceLevelChange}
           />
         </section>
+
+        <ErrorMessage>{firstError.experienceLevel}</ErrorMessage>
 
         <p className="text-neutral/60 text-sm font-semibold -mb-3">
           Requirements for the job
@@ -293,6 +332,43 @@ const CandidateRequirements = ({
   );
 };
 
+// Step 3
+const CompanyDetails = ({
+  jobData,
+  firstError,
+  handleInputChange,
+  handleLocationChange,
+}) => {
+  return (
+    <>
+      <Title>Company Information</Title>
+
+      <div className="flex flex-col">
+        {/* Company */}
+        <FloatingLabelInput
+          label="Company Name"
+          name="companyName"
+          type="text"
+          id="companyName"
+          value={jobData.companyName}
+          handleInputChange={handleInputChange}
+        />
+
+        <ErrorMessage>{firstError.companyName}</ErrorMessage>
+
+        {/* Countries && State*/}
+        <CountryStateSelect
+          country={jobData.location.country}
+          state={jobData.location.state}
+          onLocationChange={handleLocationChange}
+          className="w-full"
+        />
+      </div>
+    </>
+  );
+};
+
+// Step 4
 const DeadlineJobs = ({ jobData, handleDateChange }) => {
   return (
     <>
@@ -314,21 +390,23 @@ const CreateJobMultiStep = ({ onClose }) => {
 
   const initialJobData = {
     title: "",
-    description: "",
     salary: "",
+    category: [""],
+    otherCategory: "",
+    maximumWorkers: "",
+    description: "",
+    experienceLevel: "",
+    requirements: [],
+    companyName: "",
     location: {
       country: "",
       state: "",
     },
-    companyName: "",
-    category: [],
-    otherCategory: "",
-    maximumWorkers: "",
-    experienceLevel: "",
-    requirements: [],
     lastSubmissionDate: "",
   };
+
   const [jobData, setJobData] = useState(initialJobData);
+  const [firstError, setFirstError] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
@@ -386,7 +464,63 @@ const CreateJobMultiStep = ({ onClose }) => {
     }));
   };
 
+  const { currentStepIndex, step, steps, isFirstStep, isLastStep, next, back } =
+    useMultiStepForm([
+      <JobDetails
+        jobData={jobData}
+        firstError={firstError}
+        handleInputChange={handleInputChange}
+        handleCategoryChange={handleCategoryChange}
+      />,
+      <CandidateRequirements
+        jobData={jobData}
+        firstError={firstError}
+        handleExperienceLevelChange={handleExperienceLevelChange}
+        setJobData={setJobData}
+      />,
+      <CompanyDetails
+        jobData={jobData}
+        firstError={firstError}
+        handleInputChange={handleInputChange}
+        handleLocationChange={handleLocationChange}
+      />,
+      <DeadlineJobs
+        jobData={jobData}
+        firstError={firstError}
+        handleDateChange={handleDateChange}
+      />,
+    ]);
+
+  const validateStep = async () => {
+    try {
+      await validationSchema[currentStepIndex].validate(jobData, {
+        abortEarly: false,
+      });
+      setFirstError({});
+      return true;
+    } catch (err) {
+      if (err.inner && err.inner.length > 0) {
+        // Get only the first error
+        const errorFirst = err.inner[0];
+
+        setFirstError({ [errorFirst.path]: errorFirst.message });
+      } else {
+        setFirstError({});
+      }
+      return false;
+    }
+  };
+
+  const handleNext = async () => {
+    const isValid = await validateStep();
+    if (isValid) next();
+  };
+
   const handleSubmit = async () => {
+    const isValid = await validateStep();
+
+    if (!isValid) return;
+
     setIsSubmitting(true);
     try {
       let res = await createJob(jobData);
@@ -405,30 +539,10 @@ const CreateJobMultiStep = ({ onClose }) => {
     }
   };
 
-  const { currentStepIndex, step, steps, isFirstStep, isLastStep, next, back } =
-    useMultiStepForm([
-      <JobDetails
-        jobData={jobData}
-        handleInputChange={handleInputChange}
-        handleCategoryChange={handleCategoryChange}
-      />,
-      <CompanyDetails
-        jobData={jobData}
-        handleInputChange={handleInputChange}
-        handleLocationChange={handleLocationChange}
-      />,
-      <CandidateRequirements
-        jobData={jobData}
-        handleExperienceLevelChange={handleExperienceLevelChange}
-        setJobData={setJobData}
-      />,
-      <DeadlineJobs jobData={jobData} handleDateChange={handleDateChange} />,
-    ]);
-
   return (
     <>
       <section className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center px-sideSpacing">
-        <div className="w-full h-[90%] bg-primary shadow-md shadow-main rounded-md p-4 flex flex-col relative">
+        <div className="w-full bg-primary shadow-md shadow-main rounded-md p-4 flex flex-col relative">
           {/* X Button */}
           <motion.button
             variants={{
@@ -453,15 +567,19 @@ const CreateJobMultiStep = ({ onClose }) => {
             <XIcon className="!bg-red !text-neutral transition-all duration-200 hover:border-neutral shadow-sm shadow-gray" />
           </motion.button>
 
+          <h2 className="text-xl text-main font-medium  text-center">
+            Create new Job
+          </h2>
+
           <p className="text-neutral/75 text-sm">
             Step {currentStepIndex + 1} of {steps.length}
           </p>
 
           {/* Slider Container */}
-          <div className="w-full flex-grow overflow-hidden">
+          <div className="w-full flex-grow overflow-x-hidden customScrollbarStyle">
             {/* Form & Slider */}
-            <div
-              className="h-full flex flex-row transition-transform duration-500"
+            <form
+              className="w-full flex flex-row transition-transform duration-500"
               style={{
                 transform: `translateX(-${
                   currentStepIndex * (100 / steps.length)
@@ -474,7 +592,7 @@ const CreateJobMultiStep = ({ onClose }) => {
                 return (
                   <div
                     key={index}
-                    className="w-full h-full overflow-y-auto customScrollbarStyle pt-2 pb-4"
+                    className="w-full overflow-y-auto customScrollbarStyle flex flex-col"
                     style={{
                       width: `${100 / steps.length}%`,
                     }}
@@ -483,11 +601,11 @@ const CreateJobMultiStep = ({ onClose }) => {
                   </div>
                 );
               })}
-            </div>
+            </form>
           </div>
 
           {/* Action Button */}
-          <div className="justify-end flex flex-row gap-4">
+          <div className="flex flex-row justify-between items-center gap-4 mt-4">
             <motion.button
               variants={{
                 initial: {
@@ -508,10 +626,14 @@ const CreateJobMultiStep = ({ onClose }) => {
               }}
               disabled={isFirstStep}
               onClick={back}
-              className="min-w-20 text-neutral/75 font-medium bg-red/75 rounded-md py-1 cursor-pointer hover:text-neutral hover:bg-red disabled:bg-gray disabled:cursor-not-allowed"
+              className="min-w-20 text-neutral/75 font-medium bg-red/75 rounded-md py-1 cursor-pointer hover:text-neutral hover:bg-red disabled:bg-gray/60 disabled:cursor-not-allowed"
             >
               Back
             </motion.button>
+
+            <p className="text-neutral/80 text-sm font-medium">
+              {currentStepIndex + 1} / {steps.length}
+            </p>
 
             <motion.button
               variants={{
@@ -532,14 +654,14 @@ const CreateJobMultiStep = ({ onClose }) => {
                 duration: 0.2,
               }}
               disabled={isSubmitting}
-              onClick={isLastStep ? handleSubmit : next}
+              onClick={isLastStep ? handleSubmit : handleNext}
               className="min-w-20 text-neutral/75 font-medium bg-main/75 rounded-md py-1 cursor-pointer hover:text-neutral hover:bg-main disabled:bg-gray disabled:cursor-not-allowed"
             >
               {isLastStep ? (
                 isSubmitting ? (
                   <LoaderCircleIcon className="animate-spin mx-auto" />
                 ) : (
-                  "Submit"
+                  "Sign Up"
                 )
               ) : (
                 "Next"

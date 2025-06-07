@@ -1,9 +1,11 @@
+import ReactDOM from "react-dom";
+
 // Components
 import { XIcon } from "lucide-react";
 
 const TermsAndConditions = ({ onClose }) => {
-  return (
-    <div className="fixed inset-0 bg-primary bg-opacity-50 z-20 flex justify-center items-center px-sideSpacing py-menuHeight">
+  const content = (
+    <div className="fixed inset-0 bg-opacity-50 z-20 flex justify-center items-center px-sideSpacing py-menuHeight">
       <div className="bg-white rounded-md p-6 w-full max-w-3xl h-full overflow-y-auto customScrollbarStyle shadow-xl">
         {/* Title */}
         <div className="flex justify-between items-center mb-4">
@@ -79,6 +81,7 @@ const TermsAndConditions = ({ onClose }) => {
       </div>
     </div>
   );
+  return ReactDOM.createPortal(content, document.body);
 };
 
 export default TermsAndConditions;

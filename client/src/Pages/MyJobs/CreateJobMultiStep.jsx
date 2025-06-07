@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import * as yup from "yup";
 
 // Components
 import {
@@ -19,6 +20,53 @@ import { useMultiStepForm } from "../../Hooks/useMultiStepForm";
 
 // Store
 import { useJobStore } from "../../Store/useJobStore";
+
+// Validation schema
+const validationSchema = [
+  yup.object().shape({
+    title: yup
+      .string()
+      .min(3, "Job title must be at least 3 characters long.")
+      .max(100, "Job title cannot exceed 100 characters")
+      .required("Job title is required"),
+    description: yup
+      .string()
+      .min(20, "Job description must be at least 20 characters long.")
+      .required("Job description is required."),
+    category: yup
+      .array()
+      .of(yup.string())
+      .min(1, "At least one category is required.")
+      .required("Category is required."),
+    otherCategory: yup
+      .string()
+      .min(3, "Other category must be at least 3 characters.")
+      .nullable(),
+    maximumWorkers: yup
+      .number()
+      .required("Maximum workers is required.")
+      .integer("Maximum workers must be an integer.")
+      .min(1, "Maximum workers must be at least 1."),
+  }),
+  yup.object().shape({
+    experienceLevel: yup.string().required("Experience level is required."),
+    requirements: yup
+      .array()
+      .of(
+        yup.string().min(3, "Each requirement must be at least 3 characters.")
+      )
+      .nullable(),
+  }),
+  yup.object().shape({
+    location: yup.object().shape({
+      country: yup.string().required("Country is required"),
+      state: yup.string().required("State is required"),
+    }),
+    termsAccepted: yup
+      .boolean()
+      .oneOf([true], "You must accept the terms and conditions"),
+  }),
+];
 
 const Title = ({ children, className }) => {
   return (

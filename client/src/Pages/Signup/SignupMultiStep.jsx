@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 
 // Components
+import { BackgroundWithFooter } from "../../Components/Background";
 import {
   FloatingLabelInput,
   CountryStateSelect,
@@ -15,6 +16,7 @@ import { LoaderCircleIcon } from "./../../Components/Icons";
 import { AlertBox } from "../../Components/AlertBox";
 import TermsAndConditions from "../TermsAndConditions";
 import { CircleXIcon, CircleCheckBigIcon } from "./../../Components/Icons";
+import { ProgressMobileStepper } from "../../Components/Stepper";
 
 // Custom Hooks
 import { useMultiStepForm } from "../../Hooks/useMultiStepForm";
@@ -453,7 +455,7 @@ const SignupMultiStep = () => {
 
   return (
     <>
-      <div className="w-full h-[75vh] mt-4">
+      <BackgroundWithFooter className="flex-col">
         <section className="w-full bg-primary shadow-md shadow-main rounded-md p-4 flex flex-col relative">
           <p className="text-neutral/75 text-xs font-medium absolute top-2 left-4">
             Step {currentStepIndex + 1} of {steps.length}
@@ -600,8 +602,17 @@ const SignupMultiStep = () => {
               )}
             </motion.button>
           </div>
+
+          <ProgressMobileStepper
+            steps={steps.length}
+            activeStep={currentStepIndex}
+            next={isLastStep ? handleSignUp : handleNext}
+            back={back}
+            actionTextLastStep="Sign Up"
+          />
         </section>
 
+        {/* Login Navigation */}
         <p className="text-sm text-white/50 text-center mt-2">
           Already have account?{" "}
           <span
@@ -611,7 +622,7 @@ const SignupMultiStep = () => {
             Log in
           </span>
         </p>
-      </div>
+      </BackgroundWithFooter>
     </>
   );
 };

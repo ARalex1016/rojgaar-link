@@ -1,4 +1,4 @@
-const Background = ({ className, children }) => {
+export const Background = ({ className, children }) => {
   return (
     <>
       <main
@@ -10,4 +10,15 @@ const Background = ({ className, children }) => {
   );
 };
 
-export default Background;
+export const BackgroundWithFooter = ({ className, children }) => {
+  return (
+    <>
+      <main
+        className={`flex justify-center items-center ${className}`}
+        style={{ minHeight: "calc(100dvh - menuHeight)" }}
+      >
+        {children}
+      </main>
+    </>
+  );
+};

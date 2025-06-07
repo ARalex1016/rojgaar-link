@@ -5,7 +5,7 @@ import { Toaster } from "react-hot-toast";
 // Components
 import Header from "../Components/Header/Header";
 import Footer from "../Components/Footer/Footer";
-import Background from "../Components/Background";
+import { Background } from "../Components/Background";
 import SideSpacing from "../Components/SideSpacing";
 import { LoadingLinear } from "../Components/Loading";
 import { ShareSocial } from "../Components/ShareSocial/ShareSocial";

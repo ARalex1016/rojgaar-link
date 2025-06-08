@@ -89,6 +89,16 @@ const MyJobs = () => {
   return (
     <>
       <div className="w-full">
+        {/* Add New Job Button */}
+        {isCreator && (
+          <button
+            onClick={() => setIsOpenNewJob((pre) => !pre)}
+            className="text-neutral/80 text-xs font-medium bg-customBlue/80 rounded-md flex flex-row justify-center items-center gap-x-1 px-2 py-1 transition-all duration-200 float-end shadow-sm shadow-customBlue/80 mt-2 hover:text-neutral hover:bg-customBlue hover:px-4"
+          >
+            <IoMdAdd style={{ fontSize: "24px" }} /> Add New
+          </button>
+        )}
+
         {/*Tabs with Counters*/}
         <section className="w-full flex flex-row  justify-around flex-nowrap gap-x-4 overflow-auto scrollbar-hide pt-2 my-2">
           {tabs.map((tab, index) => {
@@ -105,14 +115,14 @@ const MyJobs = () => {
           })}
 
           {/* Add New Job Button */}
-          {isCreator && (
+          {/* {isCreator && (
             <button
               onClick={() => setIsOpenNewJob((pre) => !pre)}
               className="text-neutral/80 text-xs font-normal bg-customBlue rounded-md flex flex-row justify-center items-center gap-x-1 px-2 py-2 transition-all duration-200 float-right fixed bottom-menuHeight right-sideSpacing z-30 shadow-sm shadow-customBlue/80 group md:relative md:bottom-0 md:right-0 md:py-0 md:px-3 hover:text-neutral hover:px-3"
             >
               <IoMdAdd style={{ fontSize: "24px" }} /> Add New
             </button>
-          )}
+          )} */}
         </section>
 
         <p className="text-neutral/70 text-sm">

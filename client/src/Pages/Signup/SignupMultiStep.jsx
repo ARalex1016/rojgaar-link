@@ -76,7 +76,7 @@ const validationSchema = [
 
 const Title = ({ children, className }) => {
   return (
-    <h2 className={`text-neutral/75 text-base text-center mb-4 ${className}`}>
+    <h2 className={`text-neutral/80 text-base text-center mb-4 ${className}`}>
       {children}
     </h2>
   );

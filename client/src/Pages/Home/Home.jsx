@@ -48,14 +48,14 @@ const Home = () => {
               Connecting Nepali Talent with Global Opportunities
             </h2>
 
-            <p className="text-gray text-xs">
+            <p className="text-gray text-xs mb-2">
               Find jobs abroad or recruit skilled candidates transparently and
               securely
             </p>
 
             {/* Call to Action Buttons */}
             {!isAuthenticated && (
-              <div className="flex flex-col gap-y-2 pt-2">
+              <div className="flex flex-col gap-y-2">
                 <motion.button
                   variants={{
                     initial: {

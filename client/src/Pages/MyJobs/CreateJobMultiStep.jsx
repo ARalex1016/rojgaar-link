@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import * as Yup from "yup";
 
@@ -278,7 +278,7 @@ const CandidateRequirements = ({
         <div className="w-full flex flex-col gap-y- mt-2">
           {jobData.requirements.map((req, index) => {
             return (
-              <>
+              <React.Fragment key={index}>
                 <div key={index} className="flex flex-row">
                   <p className="w-[3ch] text-neutral text-center bg-transparent flex items-center">
                     {index + 1}.
@@ -305,7 +305,7 @@ const CandidateRequirements = ({
                 <ErrorMessage>
                   {firstError[`requirements[${index}]`]}
                 </ErrorMessage>
-              </>
+              </React.Fragment>
             );
           })}
         </div>
@@ -463,32 +463,40 @@ const CreateJobMultiStep = ({ onClose }) => {
     }));
   };
 
-  const { currentStepIndex, step, steps, isFirstStep, isLastStep, next, back } =
-    useMultiStepForm([
-      <JobDetails
-        jobData={jobData}
-        firstError={firstError}
-        handleInputChange={handleInputChange}
-        handleCategoryChange={handleCategoryChange}
-      />,
-      <CandidateRequirements
-        jobData={jobData}
-        firstError={firstError}
-        handleExperienceLevelChange={handleExperienceLevelChange}
-        setJobData={setJobData}
-      />,
-      <CompanyDetails
-        jobData={jobData}
-        firstError={firstError}
-        handleInputChange={handleInputChange}
-        handleLocationChange={handleLocationChange}
-      />,
-      <DeadlineJobs
-        jobData={jobData}
-        firstError={firstError}
-        handleInputChange={handleInputChange}
-      />,
-    ]);
+  const {
+    currentStepIndex,
+    step,
+    steps,
+    isFirstStep,
+    isLastStep,
+    next,
+    back,
+    goTo,
+  } = useMultiStepForm([
+    <JobDetails
+      jobData={jobData}
+      firstError={firstError}
+      handleInputChange={handleInputChange}
+      handleCategoryChange={handleCategoryChange}
+    />,
+    <CandidateRequirements
+      jobData={jobData}
+      firstError={firstError}
+      handleExperienceLevelChange={handleExperienceLevelChange}
+      setJobData={setJobData}
+    />,
+    <CompanyDetails
+      jobData={jobData}
+      firstError={firstError}
+      handleInputChange={handleInputChange}
+      handleLocationChange={handleLocationChange}
+    />,
+    <DeadlineJobs
+      jobData={jobData}
+      firstError={firstError}
+      handleInputChange={handleInputChange}
+    />,
+  ]);
 
   const validateStep = async () => {
     try {
@@ -548,6 +556,7 @@ const CreateJobMultiStep = ({ onClose }) => {
       });
 
       setJobData(initialJobData);
+      goTo(0);
     } catch (error) {
       AlertBox({ title: "Error", text: error.message, icon: "error" });
     } finally {

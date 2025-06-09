@@ -43,6 +43,10 @@ const jobSchema = new mongoose.Schema(
       type: String,
       enum: ["beginer", "intermediate", "skilled"],
     },
+    requirements: {
+      type: [String],
+      required: true,
+    },
     maximumWorkers: {
       type: Number,
       required: true,

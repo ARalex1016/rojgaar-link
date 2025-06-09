@@ -121,6 +121,7 @@ export const createJob = async (req, res) => {
     category,
     otherCategory,
     experienceLevel,
+    requirements,
     maximumWorkers,
     lastSubmissionDate,
   } = req.body;
@@ -143,6 +144,7 @@ export const createJob = async (req, res) => {
     !location.state ||
     !companyName ||
     !experienceLevel ||
+    !requirements ||
     !maximumWorkers ||
     !lastSubmissionDate
   ) {
@@ -179,6 +181,7 @@ export const createJob = async (req, res) => {
         state: location.state,
       },
       experienceLevel,
+      requirements,
       maximumWorkers,
       lastSubmissionDate,
       creatorId: req.user._id,

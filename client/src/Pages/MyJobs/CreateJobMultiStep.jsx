@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import * as Yup from "yup";
 
@@ -275,38 +275,42 @@ const CandidateRequirements = ({
         </p>
 
         {/* Requirements Inputs */}
-        <div className="w-full flex flex-col gap-y-2 mt-2">
+        <div className="w-full flex flex-col gap-y- mt-2">
           {jobData.requirements.map((req, index) => {
             return (
-              <div key={index} className="flex flex-row">
-                <p className="w-[3ch] text-neutral text-center bg-transparent flex items-center">
-                  {index + 1}.
-                </p>
+              <>
+                <div key={index} className="flex flex-row">
+                  <p className="w-[3ch] text-neutral text-center bg-transparent flex items-center">
+                    {index + 1}.
+                  </p>
 
-                <input
-                  type="text"
-                  value={req}
-                  onChange={(e) => handleRequirementsChange(e, index)}
-                  className="w-full text-neutral text-sm px-2 py-1 bg-transparent border-[1px] border-r-0 border-main focus:outline-none"
-                />
+                  <input
+                    type="text"
+                    value={req}
+                    onChange={(e) => handleRequirementsChange(e, index)}
+                    className="w-full text-neutral text-sm px-2 py-1 bg-transparent border-[1px] border-r-0 border-main focus:outline-none"
+                  />
 
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleDeleteRequirements(index);
-                  }}
-                  className="bg-transparent border-[1px] border-l-0 border-main rounded-r-md"
-                >
-                  <XIcon size={28} className="!text-red !bg-transparent" />
-                </button>
-              </div>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleDeleteRequirements(index);
+                    }}
+                    className="bg-transparent border-[1px] border-l-0 border-main rounded-r-md"
+                  >
+                    <XIcon size={28} className="!text-red !bg-transparent" />
+                  </button>
+                </div>
+                {/* Error Message for Specific Requirement */}
+                <ErrorMessage>
+                  {firstError[`requirements[${index}]`]}
+                </ErrorMessage>
+              </>
             );
           })}
         </div>
 
-        <ErrorMessage>
-          {firstError.requirements || firstError["requirements[0]"]}
-        </ErrorMessage>
+        <ErrorMessage>{firstError.requirements}</ErrorMessage>
 
         {jobData.requirements.length < 10 ? (
           <button
@@ -314,7 +318,7 @@ const CandidateRequirements = ({
               e.preventDefault();
               handleAddRequirements();
             }}
-            className="text-neutral bg-blue-700 rounded-md flex items-center transition-all duration-200 px-4 hover:px-6 mt-2"
+            className="text-neutral bg-blue-700 rounded-md flex items-center transition-all duration-200 px-4 hover:px-6"
           >
             Add <PlusIcon size={28} />
           </button>
@@ -400,7 +404,7 @@ const CreateJobMultiStep = ({ onClose }) => {
     maximumWorkers: "",
     description: "",
     experienceLevel: "",
-    requirements: [""],
+    requirements: [],
     companyName: "",
     location: {
       country: "",
@@ -488,7 +492,12 @@ const CreateJobMultiStep = ({ onClose }) => {
 
   const validateStep = async () => {
     try {
-      await validationSchema[currentStepIndex].validate(jobData, {
+      const sanitizedJobData = {
+        ...jobData,
+        category: jobData.category || [],
+      };
+
+      await validationSchema[currentStepIndex].validate(sanitizedJobData, {
         abortEarly: false,
       });
       setFirstError({});
@@ -507,9 +516,20 @@ const CreateJobMultiStep = ({ onClose }) => {
   };
 
   const handleNext = async () => {
+    if (jobData.category.includes("Others")) {
+      if (jobData.otherCategory.trim() === "") {
+        setFirstError({ otherCategory: "Please mention the other category." });
+        return;
+      } else if (jobData.otherCategory.length < 3) {
+        setFirstError({
+          otherCategory: "Other category must be at least 3 characters long.",
+        });
+        return;
+      }
+    }
+
     const isValid = await validateStep();
     if (isValid) next();
-    // next();
   };
 
   const handleSubmit = async () => {

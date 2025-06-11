@@ -8,8 +8,8 @@ export const ShareSocial = () => {
 
   const metadata = {
     title: "Rojgaar Link",
-    image: `${baseUrl}/Images/nepali-flag-bg.jpg`,
-    description: "Find your next career move with ease...",
+    image: `${baseUrl}/Images/rojgaar-link-social-preview-img.jpg`,
+    description: "Find Better Opportunities",
     url: baseUrl,
   };
 
@@ -40,6 +40,7 @@ export const ShareSocial = () => {
           duration: 0.1,
           ease: "easeInOut",
         }}
+        aria-label="Share this page"
         onClick={handleShare}
         className="text-blue-700 bg-neutral rounded-full border-2 border-transparent shadow-sm shadow-blue-700 fixed bottom-menuHeight right-2 z-30 p-2 transition-all duration-300 hover:bg-neutral hover:border-blue-700"
       >

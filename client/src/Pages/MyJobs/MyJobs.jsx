@@ -170,9 +170,13 @@ const MyJobs = () => {
           )} */}
         </section>
 
-        {tabs.map((tab) => {
+        {tabs.map((tab, index) => {
           if (tab.name === activeTab) {
-            return <MessageBox>{tab.message}</MessageBox>;
+            return (
+              <div key={index}>
+                <MessageBox>{tab.message}</MessageBox>
+              </div>
+            );
           }
         })}
 

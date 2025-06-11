@@ -284,6 +284,11 @@ const CandidateRequirements = ({
                   <input
                     type="text"
                     value={req}
+                    placeholder={
+                      index === 0
+                        ? "Minimum 2 years of experience required"
+                        : ""
+                    }
                     onChange={(e) => handleRequirementsChange(e, index)}
                     className="w-full text-neutral text-sm px-2 py-1 bg-transparent border-[1px] border-r-0 border-main focus:outline-none"
                   />

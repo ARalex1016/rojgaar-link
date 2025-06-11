@@ -32,7 +32,7 @@ import {
 import { jobCategories } from "../lib/jobCategories.js";
 
 // Utils
-import limiter from "../utils/limiter.js";
+import { sensitiveRateLimiter } from "../utils/limiter.js";
 
 const router = express.Router();
 
@@ -70,14 +70,20 @@ router.get(
 router.post(
   "/create",
   protect,
+  sensitiveRateLimiter({ max15Minutes: 5, maxWeekly: 20 }),
   authorize("creator"),
-  limiter(15, 5),
   createJob
 );
 
 router.patch("/:jobId", protect, authorize("creator"), updateJob);
 
-router.post("/:jobId/save", protect, authorize("candidate"), saveJob);
+router.post(
+  "/:jobId/save",
+  protect,
+  sensitiveRateLimiter({ max15Minutes: 5, maxWeekly: 20 }),
+  authorize("candidate"),
+  saveJob
+);
 
 router.post("/:jobId/remove", protect, authorize("candidate"), removeJob);
 

@@ -167,7 +167,7 @@ const Home = () => {
         </section>
 
         {/* Metrics & Statistics */}
-        {/* {adminMetrics && Object.keys(adminMetrics).length >= 1 && (
+        {adminMetrics && Object.keys(adminMetrics).length >= 1 && (
           <section className="border-y-2 border-neutral/60 rounded-md shadow-md shadow-gray py-4">
             <div className="flex flex-row justify-around">
               <ScoreBoard
@@ -181,7 +181,7 @@ const Home = () => {
               />
             </div>
           </section>
-        )} */}
+        )}
 
         {/* Our Mission & Support Us */}
         <section className="bg-black rounded-md shadow-md shadow-gray px-4 py-4 flex flex-col gap-y-1 justify-center items-center">
@@ -261,7 +261,7 @@ const Home = () => {
         </section>
 
         {/* How it works */}
-        <section className="border-[1px] border-neutral rounded-md shadow-md shadow-gray flex flex-col gap-y-2 pb-2 my-2">
+        <section className="border-[1px] border-neutral rounded-md shadow-md shadow-gray flex flex-col gap-y-2 pb-2">
           <p className="text-center text-lg text-neutral font-bold border-b-[1px] border-neutral shadow-md shadow-gray py-1">
             How It Works
           </p>

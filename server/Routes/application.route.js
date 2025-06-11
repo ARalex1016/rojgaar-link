@@ -25,12 +25,21 @@ import { validateJobStatus } from "../Middleware/validate.middleware.js";
 router.param("jobId", jobIdParamHandler);
 router.param("applicationId", applicationIdParamHandler);
 
+// Utils
+import { sensitiveRateLimiter } from "../utils/limiter.js";
+
 // All Routes
 router.get("/applied", protect, authorize("candidate"), getAllAppliedJobs);
 
 router.get("/:jobId/", protect, authorize("creator"), getCreatorApplications);
 
-router.post("/:jobId/apply", protect, authorize("candidate"), applyJob);
+router.post(
+  "/:jobId/apply",
+  protect,
+  sensitiveRateLimiter({ max15Minutes: 5, maxWeekly: 20 }),
+  authorize("candidate"),
+  applyJob
+);
 
 router.patch(
   "/:jobId/:applicationId/shortlist",

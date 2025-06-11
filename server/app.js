@@ -1,6 +1,10 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import helmet from "helmet";
+import sanitize from "express-mongo-sanitize";
+import xss from "xss-clean";
+import hpp from "hpp";
 
 // Route
 import authRouter from "./Routes/auth.route.js";
@@ -12,8 +16,17 @@ import chatRouter from "./Routes/chat.route.js";
 import donationRouter from "./Routes/donation.route.js";
 import contactRouter from "./Routes/contact.route.js";
 
+// Utils
+import { globalRateLimiter } from "./utils/limiter.js";
+
 const app = express();
-app.use(express.json({ limit: "10mb" }));
+
+app.use(helmet());
+app.use("/api", globalRateLimiter);
+app.use(express.json({ limit: "10kb" }));
+app.use(sanitize());
+app.use(xss());
+app.use(hpp());
 app.use(cookieParser());
 
 app.use(

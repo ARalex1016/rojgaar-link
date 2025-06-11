@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Store
@@ -25,6 +25,7 @@ const Link = ({ to, children }) => {
 /* ALl Nav Links */
 const NavBar = ({ closeNavBar }) => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const { isAdmin, isCreator, isCandidate, isAuthenticated, logout } =
     useAuthStore();
@@ -38,6 +39,10 @@ const NavBar = ({ closeNavBar }) => {
       closeNavBar();
     } catch (error) {}
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <>
@@ -53,6 +58,8 @@ const NavBar = ({ closeNavBar }) => {
       <Link to="/user">User</Link>
 
       <Link to="/support-us">Support Us</Link>
+
+      <Link to="/contact-us">Contact Us</Link>
 
       {isAuthenticated ? (
         <p

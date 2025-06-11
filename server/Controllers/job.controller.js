@@ -131,7 +131,7 @@ export const createJob = async (req, res) => {
   if (!user.eligible) {
     return res.status(400).json({
       status: "fail",
-      message: "You are not Eligible to apply for job yet!",
+      message: "You are not Eligible to create a job post yet!",
     });
   }
 

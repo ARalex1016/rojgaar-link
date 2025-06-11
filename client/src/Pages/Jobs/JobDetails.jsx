@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
-import { AlertBox, ConfirmAlertBox } from "../../Components/AlertBox";
+import {
+  AlertBox,
+  ConfirmAlertBox,
+  CloseAlertBox,
+} from "../../Components/AlertBox";
 
 // Components
 import BackButton from "../../Components/BackButton";
@@ -43,6 +47,7 @@ const Job = () => {
 
   const { user, isAuthenticated, isAdmin, isCreator, isCandidate } =
     useAuthStore();
+
   const {
     getJobById,
     getCounters,
@@ -87,6 +92,11 @@ const Job = () => {
         job?.creatorDetails?.creatorId === user?._id
     );
   }, [job, isAuthenticated, isCreator, user]);
+
+  window.navigateToProfile = () => {
+    CloseAlertBox(); // Close the AlertBox
+    navigate("/profile"); // Navigate to the profile
+  };
 
   const updateCounter = async () => {
     await getCounters();
@@ -156,6 +166,15 @@ const Job = () => {
 
       setJob((pre) => ({ ...pre, hasApplied: true }));
     } catch (error) {
+      if (error.message === "You are not Eligible to apply for job yet!") {
+        AlertBox({
+          title: "Something went wrong!",
+          text: error.message,
+          icon: "error",
+          footer: `Go to your <span style="cursor: pointer; color: blue;" onclick="window.navigateToProfile()">Profile</span> to update eligibility.`,
+        });
+        return;
+      }
       AlertBox({
         title: "Something went wrong!",
         text: error.message,
@@ -325,8 +344,27 @@ const Job = () => {
               <span className="opacity-60">Hired</span>
             </p>
 
+            {/* Requirements */}
+            <div className="col-span-7">
+              <h2 className="text-neutral text-lg font-medium">
+                Job Requirements
+              </h2>
+
+              <ol className="list-decimal list-inside text-neutral/80 text-sm">
+                {job?.requirements?.length > 0 ? (
+                  job.requirements.map((req, index) => (
+                    <li key={index} className="mb-1">
+                      {capitalize(req)}
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-neutral/60">No requirements specified</li>
+                )}
+              </ol>
+            </div>
+
             {/* Description */}
-            <div className="col-span-7 min-h-24 text-center bg-gray/20 shadow-inner shadow-neutral/40  rounded-md px-4 py-2 my-2">
+            <div className="col-span-7 min-h-24 text-center bg-gray/10 shadow-inner shadow-neutral/40  rounded-md px-4 py-2 my-2">
               <h2 className="text-orange/70 text-lg font-medium mb-1">
                 Description
               </h2>

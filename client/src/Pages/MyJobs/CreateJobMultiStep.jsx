@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import * as Yup from "yup";
 
@@ -13,7 +14,7 @@ import {
   DateInput,
 } from "../../Components/Input";
 import { XIcon, PlusIcon, LoaderCircleIcon } from "./../../Components/Icons";
-import { AlertBox } from "../../Components/AlertBox";
+import { AlertBox, CloseAlertBox } from "../../Components/AlertBox";
 
 // Custom Hooks
 import { useMultiStepForm } from "../../Hooks/useMultiStepForm";
@@ -129,17 +130,13 @@ const JobDetails = ({
         <ErrorMessage>{firstError.title}</ErrorMessage>
 
         {/* Salary */}
-        <div className="flex flex-row items-center gap-x-1">
-          <SalaryInputWithCurrency
-            id="salary"
-            name="salary"
-            value={jobData.salary}
-            handleSalaryChange={handleInputChange}
-            className="w-4/5"
-          />
-
-          <p className="text-neutral text-sm font-medium">/month</p>
-        </div>
+        <SalaryInputWithCurrency
+          id="salary"
+          name="salary"
+          value={jobData.salary}
+          handleSalaryChange={handleInputChange}
+          className="w-4/5"
+        />
 
         <ErrorMessage>{firstError.salary}</ErrorMessage>
 
@@ -175,7 +172,7 @@ const JobDetails = ({
           id="maximumWorkers"
           value={jobData.maximumWorkers}
           handleInputChange={handleInputChange}
-          className="w-1/2"
+          className="w-1/2 !text-[12px]"
         />
 
         <ErrorMessage>{firstError.maximumWorkers}</ErrorMessage>
@@ -396,6 +393,8 @@ const DeadlineJobs = ({ jobData, firstError, handleInputChange }) => {
 const CreateJobMultiStep = ({ onClose }) => {
   const { categories, createJob } = useJobStore();
 
+  const navigate = useNavigate();
+
   const initialJobData = {
     title: "",
     salary: "",
@@ -540,6 +539,11 @@ const CreateJobMultiStep = ({ onClose }) => {
     if (isValid) next();
   };
 
+  window.navigateToProfile = () => {
+    CloseAlertBox(); // Close the AlertBox
+    navigate("/profile"); // Navigate to the profile
+  };
+
   const handleSubmit = async () => {
     const isValid = await validateStep();
 
@@ -558,6 +562,15 @@ const CreateJobMultiStep = ({ onClose }) => {
       setJobData(initialJobData);
       goTo(0);
     } catch (error) {
+      if (error.message === "You are not Eligible to create a job post yet!") {
+        AlertBox({
+          title: "Error",
+          text: error.message,
+          icon: "error",
+          footer: `Go to your <span style="cursor: pointer; color: blue;" onclick="window.navigateToProfile()">Profile</span> to update eligibility.`,
+        });
+        return;
+      }
       AlertBox({ title: "Error", text: error.message, icon: "error" });
     } finally {
       setIsSubmitting(false);

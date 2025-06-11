@@ -2,21 +2,15 @@ import Swal from "sweetalert2";
 
 // icon = success || error || warning || info || question
 
-export const AlertBox = async ({ title, text, icon, draggable }) => {
+export const AlertBox = async ({ title, text, icon, draggable, footer }) => {
   return Swal.fire({
     title,
     text,
     icon,
     draggable,
+    footer,
   });
 };
-
-// Alert Box Example
-// AlertBox({
-//         title: "Upload failed",
-//         text: error.message || "Something went wrong during the upload.",
-//         icon: "error",
-//       });
 
 export const ConfirmAlertBox = async ({
   title = "Are you sure?",
@@ -39,4 +33,8 @@ export const ConfirmAlertBox = async ({
     reverseButtons,
   });
   return result.isConfirmed;
+};
+
+export const CloseAlertBox = () => {
+  Swal.close();
 };

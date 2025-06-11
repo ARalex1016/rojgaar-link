@@ -15,10 +15,13 @@ import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { Copy, CircleCheckBig } from "lucide-react";
 
 // Mui
-import { Slider, Box } from "@mui/material";
+import { Slider, Box, capitalize } from "@mui/material";
 
 // Store
 import { useJobStore } from "../Store/useJobStore";
+
+// Utils
+import { validateSocialLink } from "../Utils/LinkManager";
 
 const customStyles =
   "w-full text-white text-base bg-transparent border-2 border-main/80 outline-none focus:border-white pl-3 py-2 rounded-md mobilesm:text-sm sm:text-base";
@@ -778,11 +781,11 @@ export const SocialMediaSelect = ({
   const [selectedSocial, setSelectedSocial] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleSelect = (e) => {
+  const handleSelectChange = (e) => {
     setSelectedSocial(e.value);
   };
 
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     setLink(e.target.value);
   };
 
@@ -797,6 +800,10 @@ export const SocialMediaSelect = ({
       return;
     }
 
+    let isValid = validateSocialLink(link, selectedSocial);
+
+    if (!isValid) return;
+
     handleAddSocialLink(link, selectedSocial);
 
     setLink("");
@@ -809,7 +816,7 @@ export const SocialMediaSelect = ({
           options={options}
           value={options.find((opt) => opt.value === selectedSocial) || null}
           placeholder="Select an option..."
-          onChange={handleSelect}
+          onChange={handleSelectChange}
           styles={{
             ...customSelectStyles,
             menuPortal: (base) => ({ ...base, zIndex: 9999 }),
@@ -818,7 +825,7 @@ export const SocialMediaSelect = ({
           menuIsOpen={isOpen}
           onFocus={() => setIsOpen(true)}
           onBlur={() => setIsOpen(false)}
-          className={`w-3/12 ${className}`}
+          className={`w-4/12 ${className}`}
         />
 
         <input
@@ -826,14 +833,14 @@ export const SocialMediaSelect = ({
           name="socialLink"
           id="socialLink"
           value={link}
-          placeholder="Link here..."
-          onChange={handleChange}
-          className={`w-6/12 ${customStyles} border-r-0 rounded-none`}
+          placeholder={`${capitalize(selectedSocial || "")} link here...`}
+          onChange={handleInputChange}
+          className={`${customStyles} w-6/12 border-r-0 rounded-none`}
         />
 
         <button
           onClick={handleAddSocial}
-          className="w-3/12 text-neutral text-sm font-medium bg-customBlue border-none outline-none rounded-r-md cursor-pointer px-1"
+          className="w-2/12 text-neutral text-sm font-medium bg-customBlue border-none outline-none rounded-r-md cursor-pointer px-1"
         >
           <PlusIcon className="m-auto" />
         </button>
@@ -933,11 +940,17 @@ export const SalaryInputWithCurrency = ({
   id,
   name,
   value,
+  currency = "$",
+  period = "month",
   handleSalaryChange,
   className,
 }) => {
   return (
-    <div className={`flex flex-row ${className}`}>
+    <div
+      className={`w-full flex flex-row border-2 border-main rounded-md focus-within:border-white ${className}`}
+    >
+      <p className="text-neutral text-center px-2 py-1">{currency}</p>
+
       <input
         id={id}
         name={name}
@@ -945,13 +958,15 @@ export const SalaryInputWithCurrency = ({
         value={value}
         placeholder="Salary"
         onChange={handleSalaryChange}
-        className={`${customStyles} rounded-tr-none rounded-br-none`}
+        className={`${customStyles} rounded-none border-y-0 border-x-2 border-main`}
         style={{
           MozAppearance: "textfield",
           WebkitAppearance: "none",
           appearance: "none",
         }}
       />
+
+      <p className="text-neutral text-center px-2 py-1">/{period}</p>
     </div>
   );
 };

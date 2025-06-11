@@ -6,7 +6,6 @@ import { SocialMediaSelect } from "./Input";
 
 // Utils
 import { capitalize } from "../Utils/StringManager";
-import { isValidURL } from "../Utils/StringManager";
 
 // Icons
 import { X, Facebook, Instagram, Youtube } from "lucide-react";
@@ -59,33 +58,18 @@ export const SocialLinkAddOrDelete = ({
   socialMediaObj = {},
   setProfileInfo,
 }) => {
-  const [options, setOptions] = useState(null);
-
-  const socialMediaArray = Object.entries(socialMediaObj).filter(
-    ([keyframes, value]) => value
+  const socialMediaArray = Object.entries(socialMediaObj || {}).filter(
+    ([platform, value]) => value
   );
 
-  useEffect(() => {
-    if (Object.keys(socialMediaObj) >= 1) {
-      const socialArray = Object.entries(socialMediaObj)
-        .filter(([platform, value]) => value === "")
-        .map(([platform, value]) => ({
-          value: platform,
-          label: capitalize(platform),
-        }));
-
-      setOptions(socialArray);
-    }
-  }, [socialMediaObj]);
+  const options = Object.entries(socialMediaObj)
+    .filter(([platform, value]) => value === "")
+    .map(([platform]) => ({
+      value: platform,
+      label: capitalize(platform),
+    }));
 
   const handleAddSocialLink = (link, platform) => {
-    let isValid = isValidURL(link);
-
-    if (!isValid) {
-      toast.error("Link isn't valid!");
-      return;
-    }
-
     setProfileInfo((pre) => ({
       ...pre,
       contact: {

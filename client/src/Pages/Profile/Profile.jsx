@@ -136,7 +136,17 @@ const Profile = () => {
 
   useEffect(() => {
     if (profile) {
-      setProfileInfo(profile);
+      setProfileInfo({
+        ...profile,
+        contact: {
+          ...profile.contact,
+          socialMedia: {
+            facebook: profile.contact?.socialMedia?.facebook || "",
+            instagram: profile.contact?.socialMedia?.instagram || "",
+            ...profile.contact?.socialMedia,
+          },
+        },
+      });
     } else {
       let fetchProfile = async () => {
         try {
@@ -165,9 +175,8 @@ const Profile = () => {
           </div>
 
           {/* User Information */}
+          <SubTitle>User Information</SubTitle>
           <div className="w-full flex flex-col gap-y-4 my-4">
-            <SubTitle>User Information</SubTitle>
-
             <FloatingLabelInput
               label="Name"
               name="name"
@@ -201,12 +210,19 @@ const Profile = () => {
               value={capitalize(user?.gender)}
               readOnly={true}
             />
+
+            <FloatingLabelInput
+              label="Date of Birth"
+              name="dateOfBirth"
+              id="dateOfBirth"
+              value={getDateDetails(user?.dateOfBirth, false)}
+              readOnly={true}
+            />
           </div>
 
-          {/* Contact Information */}
-          <div className="my-4 flex flex-col gap-y-2">
-            <SubTitle>Contact Information</SubTitle>
-
+          {/* Contact & Location Information */}
+          <SubTitle>Contact & Location Information</SubTitle>
+          <div className="my-4 flex flex-col gap-y-4">
             <PhoneNumberInput
               value={profileInfo?.contact?.phoneNumber}
               handlePhoneNumberChange={handlePhoneNumberChange}
@@ -215,13 +231,11 @@ const Profile = () => {
             {/* <SocialMediaLinks socialMedia={profileInfo?.contact?.socialMedia} /> */}
 
             <SocialLinkAddOrDelete
-              socialMediaObj={profileInfo?.contact?.socialMedia}
+              socialMediaObj={profileInfo?.contact?.socialMedia || {}}
               setProfileInfo={setProfileInfo}
             />
-          </div>
 
-          {/* Location */}
-          <div className="my-4">
+            {/* Location */}
             <CountryStateSelect
               country={profileInfo?.location?.country}
               state={profileInfo?.location?.state}
@@ -266,9 +280,8 @@ const Profile = () => {
           )}
 
           {/* Account Information */}
-          <div className="my-4">
-            <SubTitle>Account Information</SubTitle>
-
+          <SubTitle>Account Information</SubTitle>
+          <div>
             {user && (
               <Row>
                 <Para>Member Since</Para>

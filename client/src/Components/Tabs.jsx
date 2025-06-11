@@ -28,8 +28,8 @@ const TabsWithCounter = ({
         onClick={() => setActiveTab(children)}
         className={`min-w-20 w-auto flex-shrink-0 text-neutral/80 font-medium rounded-md px-4 py-1 hover:text-neutral ${
           activeTab === children
-            ? "bg-main/80 hover:bg-main"
-            : "bg-gray/80 hover:bg-gray"
+            ? "bg-main/75 hover:bg-main"
+            : "bg-gray/75 hover:bg-gray"
         } ${className}`}
       >
         {capitalize(children)}

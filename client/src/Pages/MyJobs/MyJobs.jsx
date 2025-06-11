@@ -16,6 +16,16 @@ import CreateJobMultiStep from "./CreateJobMultiStep";
 import { useAuthStore } from "../../Store/useAuthStore";
 import { useJobStore } from "../../Store/useJobStore";
 
+const MessageBox = ({ className, children }) => {
+  return (
+    <p
+      className={`text-sm bg-neutral/75 rounded-md px-2 py-1 my-1 ${className}`}
+    >
+      {children}
+    </p>
+  );
+};
+
 const MyJobs = () => {
   const { isCreator, isCandidate } = useAuthStore();
   const { counters, customRequest } = useJobStore();
@@ -29,8 +39,43 @@ const MyJobs = () => {
   const [isOpenNewJob, setIsOpenNewJob] = useState(false);
 
   const tabs = isCandidate
-    ? ["applied", "saved"]
-    : ["pending", "active", "filled", "expired", "suspended"];
+    ? [
+        {
+          name: "applied",
+          message: "Track the status of jobs you have applied for here.",
+        },
+        {
+          name: "saved",
+          message:
+            "View jobs you’ve saved for quick access or future reference.",
+        },
+      ]
+    : [
+        {
+          name: "pending",
+          message:
+            "These jobs are awaiting admin's approval and will be listed once approved.",
+        },
+        {
+          name: "active",
+          message: "These jobs are live and available for candidates to apply.",
+        },
+        {
+          name: "filled",
+          message:
+            "These jobs have reached their worker limit and are no longer accepting applications.",
+        },
+        {
+          name: "expired",
+          message:
+            "These jobs have passed their application deadline and are no longer accepting candidates.",
+        },
+        {
+          name: "suspended",
+          message:
+            "These jobs have been suspended and are currently unavailable to candidates.",
+        },
+      ];
 
   const apiEndpoints = {
     applied: "/application/applied?",
@@ -93,7 +138,7 @@ const MyJobs = () => {
         {isCreator && (
           <button
             onClick={() => setIsOpenNewJob((pre) => !pre)}
-            className="text-neutral/80 text-xs font-medium bg-customBlue/80 rounded-md flex flex-row justify-center items-center gap-x-1 px-2 py-1 transition-all duration-200 float-end shadow-sm shadow-customBlue/80 mt-2 hover:text-neutral hover:bg-customBlue hover:px-3"
+            className="text-neutral/80 text-xs font-medium bg-customBlue/80 rounded-md flex flex-row justify-center items-center gap-x-1 px-2 py-1 transition-all duration-200 float-end mt-2 hover:text-neutral hover:bg-customBlue hover:shadow-sm hover:shadow-neutral/75 hover:px-3"
           >
             <IoMdAdd style={{ fontSize: "24px" }} /> Add New
           </button>
@@ -105,11 +150,11 @@ const MyJobs = () => {
             return (
               <TabsWithCounter
                 key={index}
-                counter={counters && counters[tab]}
+                counter={counters && counters[tab.name]}
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
               >
-                {tab}
+                {tab.name}
               </TabsWithCounter>
             );
           })}
@@ -125,6 +170,12 @@ const MyJobs = () => {
           )} */}
         </section>
 
+        {tabs.map((tab) => {
+          if (tab.name === activeTab) {
+            return <MessageBox>{tab.message}</MessageBox>;
+          }
+        })}
+
         <p className="text-neutral/70 text-sm">
           Total Jobs Found :{" "}
           <span className="text-neutral font-bold">
@@ -133,7 +184,7 @@ const MyJobs = () => {
         </p>
 
         {/* Job Cards */}
-        <section className="w-full min-h-40 flex justify-around gap-x-8 gap-y-10 flex-wrap py-4">
+        <section className="w-full min-h-40 flex justify-around gap-x-8 gap-y-10 flex-wrap mt-4">
           {jobs?.data?.length > 0 ? (
             jobs?.data?.map((job) => {
               return (

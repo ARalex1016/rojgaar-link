@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import { BackgroundWithOutFooter } from "../../Components/Background";
 import {
   FloatingLabelInput,
+  PhoneNumberInput,
   CountryStateSelect,
   RadioInput,
   DateInput,
@@ -163,7 +164,12 @@ const PasswordValidation = ({ userData }) => {
 };
 
 // Step 1
-const PersonalDetails = ({ userData, firstError, handleInputChange }) => {
+const PersonalDetails = ({
+  userData,
+  firstError,
+  handleInputChange,
+  handlePhoneNumberChange,
+}) => {
   return (
     <>
       <Title>Personal Information</Title>
@@ -190,13 +196,9 @@ const PersonalDetails = ({ userData, firstError, handleInputChange }) => {
         <ErrorMessage>{firstError.email}</ErrorMessage>
 
         {/* Phone Number */}
-        <FloatingLabelInput
-          label="Phone Number"
-          type="number"
-          name="phone"
-          id="phone"
+        <PhoneNumberInput
           value={userData.phone}
-          handleInputChange={handleInputChange}
+          handlePhoneNumberChange={handlePhoneNumberChange}
         />
         <ErrorMessage>{firstError.phone}</ErrorMessage>
 
@@ -395,6 +397,13 @@ const SignupMultiStep = () => {
     }));
   };
 
+  const handlePhoneNumberChange = (phone) => {
+    setUserData((pre) => ({
+      ...pre,
+      phone,
+    }));
+  };
+
   const handleLocationChange = (newLocation) => {
     setUserData((prevUserData) => ({
       ...prevUserData,
@@ -424,6 +433,7 @@ const SignupMultiStep = () => {
         userData={userData}
         firstError={firstError}
         handleInputChange={handleInputChange}
+        handlePhoneNumberChange={handlePhoneNumberChange}
       />,
       <AccountSecurityDetails
         userData={userData}

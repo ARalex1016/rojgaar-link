@@ -75,6 +75,35 @@ body {
   display: none;
 }
 
+/* Phone Input CSS Start */
+.flag-dropdown .selected-flag {
+  &:hover {
+    background-color: rgba(var(--neutral), 0.9) !important;
+  }
+}
+.country-list .search {
+  color: black !important; /* set text color */
+  background-color: #333 !important; /* or any background */
+
+  .search-box {
+    color: white;
+    background-color: #333 !important; /* or any background */
+  }
+}
+.country-list .country {
+  &:hover {
+    background-color: #333 !important;
+  }
+}
+.country-list .highlight {
+  background-color: black !important;
+
+  &:hover {
+    background-color: black !important;
+  }
+}
+/* Phone Input End */
+
 @media (min-width: 500px) {
   :root {
     --sideSpacing: 32px;

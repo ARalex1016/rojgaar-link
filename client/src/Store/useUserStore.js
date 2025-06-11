@@ -25,7 +25,7 @@ export const useUserStore = create((set) => ({
     }
   },
 
-  updatedProfileDetails: async (profileInfo) => {
+  updateProfileDetails: async (profileInfo) => {
     useAuthStore.getState().setLoader(true);
 
     try {

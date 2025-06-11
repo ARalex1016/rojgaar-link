@@ -158,7 +158,6 @@ export const login = async (req, res) => {
     }
 
     const isPasswordMatched = await bcrypt.compare(password, user.password);
-
     if (!isPasswordMatched) {
       return res.status(400).json({
         status: "fail",
@@ -167,18 +166,14 @@ export const login = async (req, res) => {
     }
 
     // TODO: Add this user in online users (in real-time)
-
     const token = generateJwtToken(user, res);
-
     const { password: _, ...userWithoutPassword } = user.toObject();
-
     // Success
     const response = {
       status: "success",
       message: "Logged in successfully!",
       data: userWithoutPassword,
     };
-
     // Include token only in development
     if (process.env.NODE_ENV === "development") {
       response.token = token;

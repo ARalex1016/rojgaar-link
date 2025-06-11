@@ -58,8 +58,8 @@ const Para = ({ className, children }) => {
 };
 
 const Profile = () => {
-  const { user, isCandidate } = useAuthStore();
-  const { profile, getProfile, updatedProfileDetails, uploadResume } =
+  const { user, isCandidate, isCreator } = useAuthStore();
+  const { profile, getProfile, updateProfileDetails, uploadResume } =
     useUserStore();
 
   const [profileInfo, setProfileInfo] = useState({});
@@ -125,7 +125,7 @@ const Profile = () => {
     setIsUpdatingProfile(true);
 
     try {
-      let res = await updatedProfileDetails(profileInfo);
+      let res = await updateProfileDetails(profileInfo);
       AlertBox({ title: res.message, icon: "success" });
     } catch (error) {
       AlertBox({ title: error.message, icon: "error" });
@@ -301,6 +301,24 @@ const Profile = () => {
                 </Para>
               </Row>
             )}
+          </div>
+
+          {/* Eligibility Criteria Information */}
+          <div className="bg-neutral rounded-md px-4 py-1 mt-4">
+            <SubTitle className="text-primary text-center">
+              Eligibility Criteria
+            </SubTitle>
+
+            <ol className="list-decimal list-inside">
+              <li>
+                You need to verify your Email{" "}
+                {!user.isEmailVerified && <VerifyEmailButton />}
+              </li>
+
+              <li>You need to have a valid phone number</li>
+
+              {isCandidate && <li>You need to upload your resume as pdf</li>}
+            </ol>
           </div>
         </section>
       )}

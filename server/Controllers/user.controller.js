@@ -194,7 +194,7 @@ export const updateUserDetail = async (req, res) => {
   }
 };
 
-export const updatedProfileDetails = async (req, res) => {
+export const updateProfileDetails = async (req, res) => {
   const { user } = req;
 
   try {

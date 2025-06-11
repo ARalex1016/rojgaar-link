@@ -5,7 +5,7 @@ import { Country, State } from "country-state-city";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import toast from "react-hot-toast";
-import { motion } from "framer-motion";
+import { color, motion } from "framer-motion";
 
 // Components
 import { LoaderCircleIcon, PlusIcon, UploadIcon, XIcon } from "./Icons";
@@ -365,14 +365,14 @@ export const RadioInput = ({
 };
 
 export const PhoneNumberInput = ({ value, handlePhoneNumberChange }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
   const handleInputChange = (phone, countryData) => {
     const { dialCode } = countryData;
-
     // Extract raw number (remove country code)
     const rawNumber = phone.startsWith(dialCode)
       ? phone.slice(dialCode.length)
       : phone;
-
     // Validate phone number length
     if (rawNumber.length <= 10) {
       handlePhoneNumberChange(phone);
@@ -384,6 +384,44 @@ export const PhoneNumberInput = ({ value, handlePhoneNumberChange }) => {
       country={"us"}
       value={value}
       onChange={(phone, countryData) => handleInputChange(phone, countryData)}
+      enableSearch={true} // <-- enable searchable dropdown
+      searchPlaceholder="Search by country or code"
+      containerStyle={{
+        display: "flex",
+        alignItems: "center",
+        width: "100%",
+      }}
+      inputStyle={{
+        flex: 1,
+        width: "100%",
+        color: "white",
+        fontSize: "12px",
+        backgroundColor: "transparent",
+        border: isFocused
+          ? "2px solid white"
+          : "2px solid rgba(89, 39, 229, 0.8)",
+        outline: "none",
+        padding: "8px 0 8px 50px",
+        borderRadius: "0.375rem",
+      }}
+      buttonStyle={{
+        backgroundColor: "transparent",
+        border: "none",
+        borderRight: isFocused
+          ? "2px solid white"
+          : "2px solid rgba(89, 39, 229, 0.8)",
+        color: "white",
+      }}
+      dropdownStyle={{
+        width: "auto",
+        overflowY: "auto",
+        whiteSpace: "nowrap",
+        backgroundColor: "black",
+      }}
+      inputProps={{
+        onFocus: () => setIsFocused(true),
+        onBlur: () => setIsFocused(false),
+      }}
     />
   );
 };

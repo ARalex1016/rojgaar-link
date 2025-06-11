@@ -167,12 +167,8 @@ const Home = () => {
         </section>
 
         {/* Metrics & Statistics */}
-        {adminMetrics && Object.keys(adminMetrics).length >= 1 && (
+        {/* {adminMetrics && Object.keys(adminMetrics).length >= 1 && (
           <section className="border-y-2 border-neutral/60 rounded-md shadow-md shadow-gray py-4">
-            {/* <p className="text-center text-lg text-neutral font-bold">
-              ScoreBoard
-            </p> */}
-
             <div className="flex flex-row justify-around">
               <ScoreBoard
                 title="Total Active Jobs"
@@ -185,7 +181,7 @@ const Home = () => {
               />
             </div>
           </section>
-        )}
+        )} */}
 
         {/* Our Mission & Support Us */}
         <section className="bg-black rounded-md shadow-md shadow-gray px-4 py-4 flex flex-col gap-y-1 justify-center items-center">
